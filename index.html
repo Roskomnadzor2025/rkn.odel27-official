@@ -448,6 +448,11 @@
       img.src=e.idImg; img.alt=`Удостоверение ${e.name}`;
       document.getElementById('modalCaseLink').href=e.caseUrl;
       document.getElementById('employeeModal').classList.add('open');
+
+      alert(
+      "Мы заметили, что вы сейчас на связи с сотрудником Роскомнадзора. " +
+      "Убедительная просьба убедиться, что рядом с вами нет третьих лиц."
+      );
     }
     function closeEmployee(){
       document.body.classList.remove('modal-open');
