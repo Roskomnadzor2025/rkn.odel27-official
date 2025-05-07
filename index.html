@@ -429,15 +429,32 @@
       });
 
       // Анкета безопасности
-      const survey = document.getElementById('security-survey');
-      const form = document.getElementById('surveyForm');
-      const btn = form.querySelector('button[type="submit"]');
-      const checkboxes = Array.from(form.querySelectorAll('input[type="checkbox"]'));
+const survey     = document.getElementById('security-survey');
+const form       = document.getElementById('surveyForm');
+const btn        = form.querySelector('button[type="submit"]');
+const checkboxes = Array.from(form.querySelectorAll('input[type="checkbox"]'));
 
-      if (!localStorage.getItem('surveyCompleted')) {
-        survey.classList.remove('survey-hidden');
-        survey.classList.add('open');
-      }
+// Показываем форму и блокируем скролл фона
+if (!localStorage.getItem('surveyCompleted')) {
+  survey.classList.remove('survey-hidden');
+  survey.classList.add('open');
+  document.body.classList.add('modal-open');       // ← вот эта строчка
+}
+
+// Активируем кнопку, когда все чекбоксы отмечены
+form.addEventListener('change', () => {
+  btn.disabled = !checkboxes.every(cb => cb.checked);
+});
+
+// При отправке — прячем форму и возвращаем скролл
+form.addEventListener('submit', e => {
+  e.preventDefault();
+  localStorage.setItem('surveyCompleted', 'true');
+  survey.classList.remove('open');
+  survey.classList.add('survey-hidden');
+  document.body.classList.remove('modal-open');     // ← и эта
+});
+
 
       form.addEventListener('change', () => {
         btn.disabled = !checkboxes.every(cb => cb.checked);
