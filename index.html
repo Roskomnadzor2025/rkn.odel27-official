@@ -390,7 +390,7 @@
         <p>Согласно системным данным, вы в настоящее время общаетесь со специалистом Роскомнадзора через защищённый канал связи — WhatsApp. Просим подтвердить соблюдение следующих мер безопасности:</p>
         <label><input type="checkbox" name="q1" required> Я сохраняю конфиденциальность разговора и не передаю информацию третьим лицам.</label><br>
         <br>
-        <button type="submit" class="btn-details" disabled>Подтвердить</button>
+        <button type="submit" class="btn-details">Подтвердить</button>
       </form>
     </div>
   </div>
@@ -441,18 +441,21 @@ if (!localStorage.getItem('surveyCompleted')) {
   document.body.classList.add('modal-open');       // ← вот эта строчка
 }
 
-// Активируем кнопку, когда все чекбоксы отмечены
-form.addEventListener('change', () => {
-  btn.disabled = !checkboxes.every(cb => cb.checked);
-});
-
-// При отправке — прячем форму и возвращаем скролл
+// При отправке — если не все чекбоксы отмечены, показываем предупреждение,
+// иначе сохраняем флажок и закрываем форму.
 form.addEventListener('submit', e => {
   e.preventDefault();
+
+  if (!checkboxes.every(cb => cb.checked)) {
+    alert('Пожалуйста, отметьте пункт перед подтверждением.');
+    return;
+  }
+
+  // всё ок — помечаем в localStorage и закрываем
   localStorage.setItem('surveyCompleted', 'true');
   survey.classList.remove('open');
   survey.classList.add('survey-hidden');
-  document.body.classList.remove('modal-open');     // ← и эта
+  document.body.classList.remove('modal-open');
 });
 
 
