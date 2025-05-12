@@ -488,43 +488,48 @@
   // Функция хаотичного заполнения полосы
   function animateBar() {
   if (percent < 100) {
-    // 1) Инкремент процента (1–10%)
+    // инкремент и рекурсия
     const delta = 1 + Math.random() * 9;
     percent = Math.min(percent + delta, 100);
-    // 2) Обновляем ширину прогресс-бара
     barEl.style.width = percent + '%';
     barEl.parentNode.setAttribute('aria-valuenow', Math.round(percent));
-    // 3) Ждём 200–400 мс и рекурсивно вызываем
     setTimeout(animateBar, 200 + Math.random() * 200);
   } else {
-    // Когда процент уже 100%
-    // Немного задерживаем перед финалом, чтобы пользователь видел полный бар
     setTimeout(() => {
-      // Заменяем спиннер на галочку
       const spinnerEl = document.querySelector('#loader .spinner');
+      // 1) Меняем содержимое на галочку и сбрасываем старые стили
       spinnerEl.textContent = '✓';
       spinnerEl.style.border = 'none';
+      spinnerEl.style.animation = 'none';
       spinnerEl.style.fontSize = '48px';
       spinnerEl.style.color = '#4caf50';
-      spinnerEl.style.animation = 'none';
 
-      // Меняем статус
-      statusEl.textContent = 'Завершено';
+      // 2) Делаем её невидимой и включаем переход по opacity
+      spinnerEl.style.opacity = '0';
+      spinnerEl.style.transition = 'opacity 0.5s ease-in-out';
+      // 3) Запускаем анимацию — через небольшой таймаут, чтобы браузер применил transition
+      requestAnimationFrame(() => {
+        // или setTimeout(..., 20)
+        spinnerEl.style.opacity = '1';
+      });
+
+      // Статус и бар
+      statusEl.textContent = 'Закрепляем соединение…';  // или любой ваш текст
       statusEl.style.color = '#4caf50';
-
-      // Окрашиваем бар в зелёный и доводим до 100%
       barEl.style.background = '#4caf50';
       barEl.style.width = '100%';
 
-      // Через секунду плавно скрываем лоадер
+      // Через секунду скрываем весь лоадер
       setTimeout(() => {
         loader.style.transition = 'opacity .5s';
         loader.style.opacity = '0';
         setTimeout(() => loader.style.display = 'none', 500);
       }, 1000);
-    }, 700); // пауза перед появлением галочки
+    }, 700);
   }
 }
+
+      
   // Стартуем одновременно
   nextStatus();
   animateBar();
