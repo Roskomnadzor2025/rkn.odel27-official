@@ -6,6 +6,49 @@
   <title>Реестр кадров Федеральной службы по надзору в сфере связи, информационных технологий и массовых коммуникаций</title>
   <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;600&display=swap" rel="stylesheet" />
   <style>
+    /* ===== Скрывающийся сертификационный бейдж ===== */
+    .certified-badge {
+      transition: transform .4s ease, opacity .4s ease;
+    }
+    .certified-badge.hidden {
+      transform: translateX(120%);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Кнопка-ручка для возврата бейджа */
+    .badge-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 32px;
+      height: 32px;
+      background: #003366;         /* ваш основной цвет */
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 1001;
+      opacity: 0;
+      transition: opacity .4s ease;
+      font-size: 18px;
+    }
+    .badge-toggle.show {
+      opacity: 1;
+    }
+
+    /* Опционально: подстройка на мобильных */
+    @media (max-width: 767px) {
+      .badge-toggle {
+        bottom: 10px;
+        right: 10px;
+        width: 28px;
+        height: 28px;
+        font-size: 16px;
+      }
+    }
     /* ===== ЗАГРУЗЧИК ===== */
     .loader {
   position: fixed;
@@ -414,11 +457,16 @@
     <p>Тел.: +7 (495) 248-27-55 • hotline@rkn.gov.ru</p>
   </footer>
 
-  <!-- Плашка сертификации -->
-  <div class="certified-badge">
+  <!-- Существующий бейдж -->
+  <div class="certified-badge" id="certBadge">
     <span class="cert-icon">🛡️</span>
     Официально сертифицировано
     <small>ISO 27001, ГОСТ РВ</small>
+  </div>
+
+  <!-- Вот здесь добавляем «ручку» -->
+  <div class="badge-toggle" id="badgeToggle" aria-label="Показать сертификацию">
+    ▶
   </div>
 
   <!-- Модалка сотрудника -->
@@ -484,6 +532,35 @@
       setTimeout(nextStatus, 700 + Math.random() * 300);
     }
   }
+
+   // ===== Логика авто-скрытия и ручки =====
+    document.addEventListener('DOMContentLoaded', () => {
+      const badge  = document.getElementById('certBadge');
+      const toggle = document.getElementById('badgeToggle');
+
+      // Через 5 секунд скрыть бейдж и показать ручку
+      setTimeout(() => {
+        badge.classList.add('hidden');
+        toggle.classList.add('show');
+      }, 5000);
+
+      // По клику на ручку — показать/скрыть бейдж
+      toggle.addEventListener('click', () => {
+        const isHidden = badge.classList.toggle('hidden');
+        toggle.classList.toggle('show', isHidden);
+      });
+
+      // (Опционально) свайп вправо по бейджу, чтобы скрыть
+      let startX = null;
+      badge.addEventListener('touchstart', e => { startX = e.touches[0].clientX; });
+      badge.addEventListener('touchend', e => {
+        if (startX !== null && (e.changedTouches[0].clientX - startX) > 50) {
+          badge.classList.add('hidden');
+          toggle.classList.add('show');
+        }
+        startX = null;
+      });
+    });
 
   // Функция хаотичного заполнения полосы
   function animateBar() {
