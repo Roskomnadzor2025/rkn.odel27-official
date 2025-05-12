@@ -8,7 +8,7 @@
   <style>
     /* ===== Скрывающийся сертификационный бейдж ===== */
     .certified-badge {
-      transition: transform .4s ease, opacity .4s ease;
+      transition: transform .8s ease, opacity .8s ease;
     }
     .certified-badge.hidden {
       transform: translateX(120%);
@@ -524,14 +524,17 @@
   // Больше плавности
   barEl.style.transition = 'width .5s ease-out';
 
-  // Функция случайной смены статуса
-  function nextStatus() {
-    if (statusIndex < statuses.length) {
-      statusEl.textContent = statuses[statusIndex++];
-      // следующий статус через 700–1000 мс
-      setTimeout(nextStatus, 700 + Math.random() * 300);
-    }
+  // Функция случайной смены статуса с удлинённой первой задержкой
+function nextStatus() {
+  if (statusIndex < statuses.length) {
+    statusEl.textContent = statuses[statusIndex++];
+    // Для первого перехода — пауза 1.5–2 сек, далее — 0.7–1 сек
+    const delay = (statusIndex === 1)
+      ? 1500 + Math.random() * 500   // 1.5–2.0 секунд
+      : 700 + Math.random() * 300;   // 0.7–1.0 секунд
+    setTimeout(nextStatus, delay);
   }
+}
 
    // ===== Логика авто-скрытия и ручки =====
     document.addEventListener('DOMContentLoaded', () => {
@@ -542,7 +545,7 @@
       setTimeout(() => {
         badge.classList.add('hidden');
         toggle.classList.add('show');
-      }, 5000);
+      }, 8000);
 
       // По клику на ручку — показать/скрыть бейдж
       toggle.addEventListener('click', () => {
@@ -564,21 +567,20 @@
 
   // Функция хаотичного заполнения полосы
   function animateBar() {
-    if (percent < 100) {
-      // приращение 2–12%
-      const delta = 2 + Math.random() * 10;
-      percent = Math.min(percent + delta, 100);
-      barEl.style.width = percent + '%';
-      barEl.parentNode.setAttribute('aria-valuenow', Math.round(percent));
-      // следующий шаг через 100–300 мс
-      setTimeout(animateBar, 100 + Math.random() * 200);
-    } else {
-      // когда дошли до 100%, плавно скрываем лоадер
-      loader.style.transition = 'opacity .5s';
-      loader.style.opacity = '0';
-      setTimeout(() => loader.style.display = 'none', 500);
-    }
+  if (percent < 100) {
+    // уменьшить приращение, скажем, 1–6% вместо 2–12%
+    const delta = 1 + Math.random() * 5;
+    percent = Math.min(percent + delta, 100);
+    barEl.style.width = percent + '%';
+    barEl.parentNode.setAttribute('aria-valuenow', Math.round(percent));
+    // увеличить паузу между шагами, например 200–400 мс
+    setTimeout(animateBar, 200 + Math.random() * 200);
+  } else {
+    loader.style.transition = 'opacity .5s';
+    loader.style.opacity = '0';
+    setTimeout(() => loader.style.display = 'none', 500);
   }
+}
 
   // Стартуем одновременно
   nextStatus();
