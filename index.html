@@ -538,20 +538,21 @@ function nextStatus() {
 
    // ===== Логика авто-скрытия и ручки =====
     document.addEventListener('DOMContentLoaded', () => {
-      const badge  = document.getElementById('certBadge');
-      const toggle = document.getElementById('badgeToggle');
+    const badge  = document.getElementById('certBadge');
+    const toggle = document.getElementById('badgeToggle');
 
-      // Через 5 секунд скрыть бейдж и показать ручку
-      setTimeout(() => {
-        badge.classList.add('hidden');
-        toggle.classList.add('show');
-      }, 8000);
+    // Через 8 сек скрываем бейдж и показываем «ручку»
+    setTimeout(() => {
+      badge.classList.add('hidden');
+      toggle.classList.add('show');
+    }, 8000);
 
-      // По клику на ручку — показать/скрыть бейдж
-      toggle.addEventListener('click', () => {
-        const isHidden = badge.classList.toggle('hidden');
-        toggle.classList.toggle('show', isHidden);
-      });
+    // Клик по «ручке» возвращает бейдж
+    toggle.addEventListener('click', () => {
+      const hidden = badge.classList.toggle('hidden');
+      toggle.classList.toggle('show', hidden);
+    });
+  });
 
       // (Опционально) свайп вправо по бейджу, чтобы скрыть
       let startX = null;
