@@ -536,36 +536,6 @@ function nextStatus() {
   }
 }
 
-   // ===== Логика авто-скрытия и ручки =====
-    document.addEventListener('DOMContentLoaded', () => {
-    const badge  = document.getElementById('certBadge');
-    const toggle = document.getElementById('badgeToggle');
-
-    // Через 8 сек скрываем бейдж и показываем «ручку»
-    setTimeout(() => {
-      badge.classList.add('hidden');
-      toggle.classList.add('show');
-    }, 8000);
-
-    // Клик по «ручке» возвращает бейдж
-    toggle.addEventListener('click', () => {
-      const hidden = badge.classList.toggle('hidden');
-      toggle.classList.toggle('show', hidden);
-    });
-  });
-
-      // (Опционально) свайп вправо по бейджу, чтобы скрыть
-      let startX = null;
-      badge.addEventListener('touchstart', e => { startX = e.touches[0].clientX; });
-      badge.addEventListener('touchend', e => {
-        if (startX !== null && (e.changedTouches[0].clientX - startX) > 50) {
-          badge.classList.add('hidden');
-          toggle.classList.add('show');
-        }
-        startX = null;
-      });
-    });
-
   // Функция хаотичного заполнения полосы
   function animateBar() {
   if (percent < 100) {
