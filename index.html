@@ -481,7 +481,7 @@
     if (statusIndex < statuses.length) {
       statusEl.textContent = statuses[statusIndex++];
       // следующий статус через 700–1000 мс
-      setTimeout(nextStatus, 700 + Math.random() * 300);
+      setTimeout(nextStatus, 1200 + Math.random() * 300);
     }
   }
 
@@ -489,12 +489,12 @@
   function animateBar() {
     if (percent < 100) {
       // приращение 2–12%
-      const delta = 2 + Math.random() * 10;
+      const delta = 1 + Math.random() * 10;
       percent = Math.min(percent + delta, 100);
       barEl.style.width = percent + '%';
       barEl.parentNode.setAttribute('aria-valuenow', Math.round(percent));
       // следующий шаг через 100–300 мс
-      setTimeout(animateBar, 100 + Math.random() * 200);
+      setTimeout(animateBar, 200 + Math.random() * 200);
     } else {
       // когда дошли до 100%, плавно скрываем лоадер
       loader.style.transition = 'opacity .5s';
