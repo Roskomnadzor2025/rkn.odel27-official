@@ -2,246 +2,200 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <!-- Content Security Policy -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';">
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>Реестр кадров Федеральной службы по надзору в сфере связи, информационных технологий и массовых коммуникаций</title>
-  <meta name="description" content="Официальный сайт Отдела №27 Роскомнадзора — надзор в сфере связи, информационных технологий и массовых коммуникаций.">
-  <meta property="og:title" content="Отдел №27 РКН">
-  <meta property="og:description" content="Надзор и контроль в сфере связи, IT и СМИ. Контакты, документы, сотрудники.">
-  <link rel="canonical" href="https://rkn.gov.ru/otdel27/">
-  <link rel="icon" href="images/favicon.ico">
-  <!-- Шрифты -->
-  <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;600&family=PT+Serif:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;600&display=swap" rel="stylesheet" />
   <style>
-    /* ===== Переменные и сброс ===== */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    :root {
-      --clr-primary: #003366;
-      --clr-primary-light: #1a4d80;
-      --clr-bg: #F5F7FA;
-      --clr-text: #212121;
-      --transition: .2s ease;
-    }
-    body { font-family: 'PT Sans', sans-serif; background: var(--clr-bg); color: var(--clr-text); line-height: 1.5; }
-    a { color: inherit; text-decoration: none; }
-    ul { list-style: none; }
-
     /* ===== ЗАГРУЗЧИК ===== */
     #loader {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(255,255,255,0.9);
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
       z-index: 9999;
     }
     .spinner {
-      width: 60px; height: 60px;
-      border: 6px solid #ccc; border-top-color: var(--clr-primary);
-      border-radius: 50%; animation: spin 1s linear infinite;
+      width: 50px;
+      height: 50px;
+      border: 5px solid #fff;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 16px;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-    #loader-text {
-      margin-top: 1rem; font-size: 1rem; color: var(--clr-primary);
+
+    /* ===== СБРОС ===== */
+    *, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
+    button:focus,
+    .btn-details:focus,
+    .modal-close:focus,
+    a:focus {
+      outline: none;
     }
+    button::-moz-focus-inner {
+      border: 0;
+    }
+    button,
+    a {
+      -webkit-tap-highlight-color: transparent;
+    }
+    body { font-family:'PT Sans',sans-serif; background:#F5F7FA; color:#212121; line-height:1.5; }
+    a { color:inherit; text-decoration:none; }
+    ul { list-style:none; }
 
     /* ===== КОНТЕЙНЕР ===== */
-    .container { max-width: 1200px; margin: 0 auto; padding: 0 16px; }
+    .container { max-width:1200px; margin:0 auto; padding:0 16px; }
 
-    /* ===== ШАПКА (оригинальная) ===== */
-    header {
-      background: var(--clr-primary); color: #fff; position: relative;
-    }
-    header .container {
-      display: flex; align-items: center; padding: 16px 0; flex-wrap: wrap;
-    }
-    .logo { height: 40px; flex-shrink: 0; }
-    .agency-title {
-      margin-left: 12px; font-size: 14px; line-height: 1.3; flex-shrink: 1; white-space: normal;
-      font-family: 'PT Serif', serif;
-    }
+    /* ===== ШАПКА ===== */
+    header { background:#003366; color:#fff; position:relative; }
+    header .container { display:flex; align-items:center; padding:16px 0; flex-wrap:wrap; }
+    .logo { height:40px; flex-shrink:0; }
+    .agency-title { margin-left:12px; font-size:14px; line-height:1.3; flex-shrink:1; white-space:normal; }
+
     /* бургер-меню */
-    .nav-toggle { position: absolute; top: 16px; right: 16px; width: 32px; height: 32px; opacity: 0; z-index: 10; }
+    .nav-toggle { position:absolute; top:16px; right:16px; width:32px; height:32px; opacity:0; z-index:10; }
     .nav-toggle-label {
-      display: none; color: #fff; font-size: 24px; position: absolute; top: 16px; right: 16px; cursor: pointer;
+      display:none; color:#fff; font-size:24px; position:absolute; top:16px; right:16px; cursor:pointer;
     }
-    .nav-links { display: flex; gap: 24px; margin-left: auto; }
-    .nav-links a { font-weight: 600; transition: opacity var(--transition); }
-    .nav-links a:hover { opacity: .8; }
-    @media(max-width: 767px) {
-      .nav-toggle-label { display: block; }
-      .nav-links {
-        display: none; flex-direction: column; background: var(--clr-primary);
-        position: absolute; top: 100%; left: 0; width: 100%; z-index: 5;
-      }
-      .nav-toggle:checked ~ .nav-links { display: flex; }
-      .nav-links a {
-        padding: 12px 16px; border-top: 1px solid rgba(255,255,255,.2);
-      }
-    }
+    .nav-links { display:flex; gap:24px; margin-left:auto; z-index:1; }
+    .nav-links a { font-weight:600; transition:opacity .2s; }
+    .nav-links a:hover { opacity:.8; }
 
     /* ===== HERO ===== */
-    .hero {
-      background: linear-gradient(90deg, var(--clr-primary), var(--clr-primary-light));
-      color: #fff; text-align: center; padding: 40px 0;
-    }
-    .hero h1 { font-size: 32px; font-family: 'PT Serif', serif; }
-    .hero .sub-title { margin-top: 8px; font-size: 16px; }
+    .hero { background:linear-gradient(90deg,#003366,#1a4d80); color:#fff; text-align:center; padding:40px 0; }
+    .hero h1 { font-size:32px; }
+    .hero .sub-title { margin-top:8px; font-size:16px; }
 
     /* ===== СЕКЦИИ ===== */
-    section.block {
-      background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,.1);
-      padding: 24px; margin-bottom: 32px;
-    }
-    h2.section-title {
-      color: var(--clr-primary); font-size: 24px; margin-bottom: 12px;
-      font-family: 'PT Serif', serif;
-    }
-    .divider {
-      height: 2px; background: var(--clr-primary); border: none; margin: 32px 0;
-    }
+    section.block { background:#fff; border-radius:8px; box-shadow:0 2px 4px rgba(0,0,0,.1); padding:24px; margin-bottom:32px; }
+    h2.section-title { color:#003366; font-size:24px; margin-bottom:12px; }
+    .divider { height:2px; background:#003366; border:none; margin:32px 0; }
 
-    /* ===== ВАЖНОЕ ===== */
-    #about h3 { margin-top: 16px; color: var(--clr-primary-light); font-size: 18px; }
-    #about p, #about ul { margin-bottom: 8px; color: #555; }
-    #about ul { list-style: disc; margin-left: 20px; }
+    /* ===== «Важное» ===== */
+    #about h3 { margin-top:16px; color:#1a4d80; font-size:18px; }
+    #about p, #about ul { margin-bottom:8px; color:#555; }
+    #about ul { list-style:disc; margin-left:20px; }
 
     /* ===== СОТРУДНИКИ ===== */
-    .search { margin: 16px 0 24px; }
-    .search input {
-      width: 100%; padding: 10px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px;
-    }
-    .employees-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap: 24px;
-    }
+    .search { margin:16px 0 24px; }
+    .search input { width:100%; padding:10px; font-size:14px; border:1px solid #ccc; border-radius:4px; }
+    .employees-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:24px; }
     .employee-card {
-      background: #fff; border-left: 4px solid var(--clr-primary);
-      border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,.1);
-      padding: 16px; display: flex; flex-direction: column; transition: transform var(--transition);
+      background:#fff; border-left:4px solid #003366; border-radius:8px;
+      box-shadow:0 4px 6px rgba(0,0,0,.1); padding:16px; text-align:center;
+      display:flex; flex-direction:column; transition:transform .2s; overflow:hidden;
     }
-    .employee-card:hover { transform: translateY(-4px); }
+    .employee-card:hover { transform:translateY(-4px); }
     .employee-photo {
-      width: 100%; max-width: 120px; aspect-ratio: 3/4;
-      object-fit: cover; border-radius: 4px; margin: 0 auto 12px;
+      width:100%; max-width:120px; aspect-ratio:3/4;
+      object-fit:cover; border-radius:4px; margin:0 auto 12px;
     }
-    .employee-name {
-      font-size: 18px; color: var(--clr-primary); margin-bottom: 8px;
-      font-family: 'PT Serif', serif; word-break: break-word;
-    }
-    .employee-position, .employee-dept {
-      font-size: 14px; color: #555; margin-bottom: 4px;
-    }
+    .employee-name { font-size:18px; color:#003366; margin-bottom:8px; word-break:break-word; }
+    .employee-position, .employee-dept { font-size:14px; color:#555; margin-bottom:4px; }
     .btn-details {
-      margin-top: auto; padding: 8px; border: 1px solid var(--clr-primary);
-      border-radius: 4px; background: transparent; color: var(--clr-primary);
-      cursor: pointer; transition: background var(--transition), color var(--transition);
+      margin-top:auto; padding:8px; border:1px solid #003366; border-radius:4px;
+      background:transparent; color:#003366; cursor:pointer;
+      transition:background .2s, color .2s;
     }
-    .btn-details:hover { background: var(--clr-primary); color: #fff; }
+    .btn-details:hover { background:#003366; color:#fff; }
 
-    /* ===== ДОКУМЕНТЫ ===== */
-    .docs-list li { margin-bottom: 8px; }
-    .docs-list a { color: var(--clr-primary-light); font-size: 14px; }
-    .docs-list a:hover { text-decoration: underline; }
+    /* ===== ОФИЦИАЛЬНЫЕ ДОКУМЕНТЫ ===== */
+    .docs-list li { margin-bottom:8px; }
+    .docs-list a { color:#1a4d80; font-size:14px; }
+    .docs-list a:hover { text-decoration:underline; }
 
     /* ===== ПРИЛОЖЕНИЕ ===== */
     .download-btn {
-      display: inline-block; margin-top: 16px; padding: 12px 24px;
-      background: var(--clr-primary); color: #fff; font-weight: 600;
-      border-radius: 4px; transition: background var(--transition);
+      display:inline-block; text-decoration:none!important; margin-top:16px;
+      padding:12px 24px; background:#003366; color:#fff; font-weight:600;
+      border-radius:4px; transition:background .2s;
     }
-    .download-btn:hover { background: var(--clr-primary-light); }
+    .download-btn:hover { background:#1a4d80; }
 
     /* ===== РУКОВОДСТВО ===== */
-    .leader-list {
-      display: grid; grid-template-columns: repeat(auto-fill,minmax(200px,1fr)); gap: 24px;
-    }
-    .leader {
-      background: #fff; border-radius: 8px; padding: 16px;
-      box-shadow: 0 2px 4px rgba(0,0,0,.1);
-    }
-    .leader h3 {
-      color: var(--clr-primary); margin-bottom: 8px;
-      font-family: 'PT Serif', serif;
-    }
-    .leader p { font-size: 14px; color: #555; margin-bottom: 4px; }
-    .badge-date {
-      display: inline-block; background: var(--clr-primary-light); color: #fff;
-      font-size: 12px; padding: 2px 6px; border-radius: 4px; margin-left: 6px;
-    }
-
-    /* ===== СЕРТИФИКАЦИЯ ===== */
-    #badges {
-      background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,.1);
-      padding: 24px; margin-bottom: 32px;
-    }
-    .badges-container {
-      display: flex; gap: 16px; flex-wrap: wrap; align-items: center;
-    }
-    .badges-container img { height: 60px; }
-
-    /* ===== АДМИН-ПАНЕЛЬ ===== */
-    #admin { background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,.1); padding: 24px; margin-bottom: 32px; }
-    #admin-form { max-width: 300px; }
-    #admin-form label { display: block; margin-bottom: 12px; font-size: 14px; }
-    #admin-form input {
-      width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; margin-top: 4px;
-    }
-    #admin-form button {
-      padding: 10px 16px; background: var(--clr-primary); color: #fff; border: none; border-radius: 4px;
-      cursor: pointer; transition: background var(--transition);
-    }
-    #admin-form button:hover { background: var(--clr-primary-light); }
-    #admin-panel-placeholder {
-      display: none; margin-top: 16px; padding: 16px;
-      background: #eef3ff; border-radius: 4px; border: 1px solid #c3d1ff; font-size: 14px;
-    }
-
-    /* ===== COOKIE-BANNER ===== */
-    #cookie-banner {
-      position: fixed; bottom: 0; left: 0; width: 100%;
-      background: var(--clr-primary); color: #fff; padding: 12px; text-align: center;
-      font-size: 14px; display: none; z-index: 1000;
-    }
-    #cookie-banner button {
-      margin-left: 12px; background: #fff; color: var(--clr-primary);
-      border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;
+    .leader-list { display:grid; grid-template-columns:repeat(2,1fr); gap:24px; }
+    .leader { border:1px solid #eee; border-radius:4px; padding:16px; }
+    .leader h3 { color:#003366; margin-bottom:8px; }
+    .leader p { color:#555; margin-bottom:4px; }
+    .badge {
+      display:inline-block; background:#1a4d80; color:#fff;
+      font-size:12px; padding:2px 6px; border-radius:4px; margin-left:6px;
     }
 
     /* ===== МОДАЛКА ===== */
-    body.modal-open { overflow: hidden; }
+    body.modal-open { overflow:hidden; }
     .modal {
-      position: fixed; inset: 0; background: rgba(0,0,0,.5);
-      display: flex; align-items: center; justify-content: center;
-      opacity: 0; pointer-events: none; transition: opacity var(--transition); z-index: 2000;
+      position:fixed; inset:0; background:rgba(0,0,0,.5);
+      display:flex; align-items:center; justify-content:center;
+      opacity:0; pointer-events:none; transition:opacity .2s;
+      z-index:2000;
     }
-    .modal.open { opacity: 1; pointer-events: auto; }
+    .modal.open { opacity:1; pointer-events:auto; }
     .modal-content {
-      background: #fff; border-radius: 8px; width: 90%; max-width: 600px;
-      max-height: 90vh; display: flex; flex-direction: column; overflow: hidden;
+      background:#fff; border-radius:8px; width:90%; max-width:600px;
+      max-height:90vh; display:flex; flex-direction:column; overflow:hidden;
     }
     .modal-header {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 16px; border-bottom: 1px solid #eee; background: #fafafa;
+      display:flex; justify-content:space-between; align-items:center;
+      padding:16px; border-bottom:1px solid #eee; background:#fff; z-index:2;
     }
-    .modal-header h2 { font-family: 'PT Serif', serif; font-size: 20px; color: var(--clr-primary); }
-    .modal-close { background: transparent; border: none; font-size: 24px; cursor: pointer; }
-    .modal-body { padding: 16px; overflow-y: auto; }
-    .modal-body p { margin-bottom: 8px; color: #555; }
-    .modal-body .id-card img {
-      display: block; margin: 16px auto; max-width: 100%; max-height: 300px; border: 1px solid #ccc; border-radius: 4px;
+    .modal-header h2 { margin:0; color:#003366; font-size:20px; }
+    .modal-close {
+      background:transparent; border:none; font-size:24px; cursor:pointer; line-height:1;
+    }
+    .modal-body { padding:16px; overflow-y:auto; flex:1; }
+    .modal-body p { margin-bottom:8px; color:#555; }
+    .id-card img {
+      display:block; margin:16px auto; max-width:100%; max-height:300px;
+      border:1px solid #ccc; border-radius:4px;
     }
     .case-btn {
-      display: inline-block; margin-top: 12px; padding: 8px 16px;
-      background: var(--clr-primary); color: #fff; border-radius: 4px;
-      text-decoration: none; transition: background var(--transition);
+      display:inline-block; margin-top:12px; padding:8px 16px;
+      background:#1a4d80; color:#fff; border-radius:4px;
+      text-decoration:none; transition:background .2s;
     }
-    .case-btn:hover { background: var(--clr-primary-light); }
+    .case-btn:hover { background:#003366; }
 
     /* ===== ФУТЕР ===== */
     footer {
-      background: var(--clr-primary); color: #fff; text-align: center; padding: 16px; font-size: 14px;
+      background:#003366; color:#fff; text-align:center;
+      padding:16px 0; margin-top:32px; position:relative; font-size:14px;
     }
-    footer p { margin-bottom: 4px; }
+    footer p { margin-bottom:4px; }
+    .trust-seal {
+      position:absolute; bottom:8px; right:16px;
+      font-size:14px; color:#aacf4f;
+    }
+    .trust-seal a { color:inherit; text-decoration:underline; }
+
+    /* ===== АДАПТИВ ===== */
+    @media(max-width:1024px) { .leader-list { grid-template-columns:1fr; } }
+    @media(max-width:767px) {
+      header .container { flex-wrap:nowrap; }
+      .nav-toggle-label { display:block; }
+      .nav-links {
+        display:none; flex-direction:column; background:#003366;
+        position:absolute; top:100%; left:0; width:100%; z-index:5;
+      }
+      .nav-toggle:checked ~ .nav-links { display:flex; }
+      .nav-links a {
+        padding:12px 16px; border-top:1px solid rgba(255,255,255,.2);
+      }
+      .employees-grid { grid-template-columns:1fr; }
+      .agency-title { font-size:12px; line-height:1.2; }
+      .certified-badge {
+        bottom:10px; right:10px; padding:8px; font-size:10px;
+      }
+      .trust-seal { bottom:4px; right:8px; font-size:12px; }
+    }
+    @media(max-width:480px) { .modal-content { width:95%; } }
   </style>
 </head>
 <body>
@@ -252,7 +206,7 @@
     <div id="loader-text">Устанавливается защищённый канал…</div>
   </div>
 
-  <!-- Шапка (оригинальная) -->
+  <!-- Шапка -->
   <header>
     <div class="container">
       <img src="images/rkn-logo.png" alt="Герб Роскомнадзора" class="logo" />
@@ -302,7 +256,8 @@
           <ul>
             <li>Постановление Правительства РФ № 228 (03.03.2008)</li>
             <li>ФЗ-149 «Об информации»</li>
-            <!-- … остальной список … -->
+            <li>ФЗ-152 «О персональных данных»</li>
+            <li>…</li>
           </ul>
         </div>
         <div class="important-item">
@@ -310,7 +265,7 @@
           <ul>
             <li>Лицензирование операторов связи</li>
             <li>Контроль обработки ПД</li>
-            <!-- … -->
+            <li>…</li>
           </ul>
         </div>
         <div class="important-item">
@@ -318,7 +273,7 @@
           <ul>
             <li>«Честный Wi-Fi»</li>
             <li>Анти-спам-звонки</li>
-            <!-- … -->
+            <li>…</li>
           </ul>
         </div>
       </div>
@@ -337,38 +292,17 @@
 
     <hr class="divider">
 
-    <!-- Официальные документы -->
-    <section id="docs" class="block">
-      <h2 class="section-title">Официальные документы</h2>
-      <ul class="docs-list">
-        <li><a href="docs/Устав_Отдел27.pdf" target="_blank">Устав отделения № 27</a></li>
-        <li><a href="docs/Приказ_Руководство.pdf" target="_blank">Приказ о назначении руководства</a></li>
-        <!-- … остальные документы … -->
-      </ul>
-    </section>
-
-    <hr class="divider">
-
-    <!-- Приложение -->
-    <section id="app-info" class="block" style="text-align:center">
-      <h3>Приложение «Русский стандарт безопасности»</h3>
-      <p>Официальный мобильный антивирус Роскомнадзора: сканирует приложения, предупреждает о фишинге, блокирует мошеннические сайты и контролирует передачу данных.</p>
-      <a href="RusStandSafety.apk" download class="download-btn">Скачать приложение</a>
-    </section>
-
-    <hr class="divider">
-
     <!-- Руководство -->
     <section id="leadership" class="block">
       <h2 class="section-title">Горячая линия</h2>
       <div class="leader-list">
         <div class="leader">
-          <h3>Иванов И.<span class="badge-date">с 2021 г.</span></h3>
+          <h3>Иванов И.&nbsp;И. <span class="badge">с 2021 г.</span></h3>
           <p><strong>Телефон:</strong> +7 (495) 512-85-57</p>
           <p><strong>E-mail:</strong> i.ivanov@gov.ru</p>
         </div>
         <div class="leader">
-          <h3>Петрова М.<span class="badge-date">с 2023 г.</span></h3>
+          <h3>Петрова М.&nbsp;С. <span class="badge">с 2023 г.</span></h3>
           <p><strong>Телефон:</strong> +7 (495) 234-56-78</p>
           <p><strong>E-mail:</strong> m.petrova@gov.ru</p>
         </div>
@@ -377,61 +311,21 @@
 
     <hr class="divider">
 
-    <!-- Сертификация -->
-    <section id="badges" class="block">
-      <h2 class="section-title">Сертификация</h2>
-      <div class="badges-container">
-        <img src="images/iso27001.png" alt="Сертификат ISO/IEC 27001">
-        <img src="images/gost27001.png" alt="Сертификат ГОСТ Р ИСО/МЭК 27001">
-      </div>
-    </section>
-
-    <hr class="divider">
-
-    <!-- Административная панель -->
-    <section id="admin" class="block">
-      <h2 class="section-title">Панель администратора</h2>
-      <div id="login-form">
-        <form id="admin-form">
-          <label>Логин:<input type="text" name="user" required></label>
-          <label>Пароль:<input type="password" name="pass" required></label>
-          <button type="submit">Войти</button>
-        </form>
-      </div>
-      <div id="admin-panel-placeholder">
-        <p>Добро пожаловать, Администратор!</p>
-        <p>Здесь будет панель управления сайтом.</p>
-      </div>
-    </section>
-
-    <hr class="divider">
-
-    <!-- Политика конфиденциальности -->
-    <section id="privacy" class="block">
-      <h2 class="section-title">Политика конфиденциальности</h2>
-      <p>Мы собираем и обрабатываем персональные данные пользователей в соответствии с ФЗ-152 «О персональных данных». Информация используется для улучшения качества услуг и не передаётся третьим лицам без явного согласия, за исключением случаев, предусмотренных законом.</p>
-    </section>
-
-    <hr class="divider">
-
-    <!-- Пользовательское соглашение -->
-    <section id="tos" class="block">
-      <h2 class="section-title">Пользовательское соглашение</h2>
-      <p>Используя ресурс, вы соглашаетесь соблюдать правила использования сайта. Запрещается публиковать незаконный контент. Администрация оставляет за собой право вносить изменения в соглашение без предварительного уведомления.</p>
+    <!-- Официальные документы -->
+    <section id="docs" class="block">
+      <h2 class="section-title">Официальные документы</h2>
+      <ul class="docs-list">
+        <li><a href="docs/Устав_Отдел27.pdf" target="_blank">Устав отделения № 27</a></li>
+        <li><a href="docs/Приказ_Руководство.pdf" target="_blank">Приказ о назначении руководства</a></li>
+        <li><a href="docs/Регламент_Работы.pdf" target="_blank">Регламент работы отдела</a></li>
+        <li><a href="docs/Положение_ПД.pdf" target="_blank">Положение по персональным данным</a></li>
+        <li><a href="docs/Безопасность_ИТ.pdf" target="_blank">Политика ИТ-безопасности</a></li>
+        <li><a href="docs/Антифишинг.pdf" target="_blank">Методика антифишинга</a></li>
+        <li><a href="docs/Отчет_Антиспам.pdf" target="_blank">Отчет по антиспам-инициативам</a></li>
+        <li><a href="docs/РусСтандартБезоп.pdf" target="_blank">Тех. регламент «Русский стандарт безопасности»</a></li>
+      </ul>
     </section>
   </main>
-
-  <!-- Cookie Banner -->
-  <div id="cookie-banner">
-    Этот сайт использует cookie для корректной работы и улучшения пользовательского опыта.
-    <button id="cookie-accept">Принять</button>
-  </div>
-
-  <!-- Футер -->
-  <footer>
-    <p>© 2025 Роскомнадзор. Все права защищены.</p>
-    <p>Тел.: +7 (495) 248-27-55 • hotline@rkn.gov.ru</p>
-  </footer>
 
   <!-- Модалка сотрудника -->
   <div id="employeeModal" class="modal">
@@ -448,51 +342,41 @@
         <p><strong>Дата рождения:</strong> <span id="modalBirth"></span></p>
         <p><strong>№ удостоверения:</strong> <span id="modalIdNum"></span></p>
         <p><strong>Обязанности:</strong> <span id="modalResp"></span></p>
-        <div class="id-card"><img id="modalIdImg" src="" alt="Удостоверение"></div>
+        <div class="id-card"><img id="modalIdImg" src="" alt="Удостоверение" /></div>
         <a id="modalCaseLink" href="#" class="case-btn" target="_blank">Просмотреть дело сотрудника</a>
       </div>
     </div>
   </div>
 
   <script>
-    // Loader
+    // Прогрессивный лоадер
     window.addEventListener('load', () => {
-      setTimeout(() => document.getElementById('loader-text').textContent = 'Проверка сертификата...', 1500);
-      setTimeout(() => document.getElementById('loader-text').textContent = 'Соединение защищено', 3000);
-      setTimeout(() => document.getElementById('loader').style.display = 'none', 4000);
+      setTimeout(() => {
+        document.getElementById('loader-text').textContent = 'Проверка сертификата…';
+      }, 1500);
+      setTimeout(() => {
+        document.getElementById('loader-text').textContent = 'Соединение защищено';
+      }, 3000);
+      setTimeout(() => {
+        document.getElementById('loader').style.display = 'none';
+      }, 4000);
     });
 
-    // Cookie Banner
-    if (!localStorage.getItem('cookieAccepted')) {
-      document.getElementById('cookie-banner').style.display = 'block';
-    }
-    document.getElementById('cookie-accept').addEventListener('click', () => {
-      localStorage.setItem('cookieAccepted', 'yes');
-      document.getElementById('cookie-banner').style.display = 'none';
-    });
-
-    // Admin Login
-    document.getElementById('admin-form').addEventListener('submit', e => {
-      e.preventDefault();
-      document.getElementById('login-form').style.display = 'none';
-      document.getElementById('admin-panel-placeholder').style.display = 'block';
-    });
-
-    // Данные сотрудников
+    // Данные сотрудников и рендер
     const employees = [
       { id:1, name:'Фролова Александра', position:'Ведущий специалист-эксперт', dept:'Отдел экстренной цифровой поддержки', email:'frolova.alexsandra94@gov.ru', phone:'+7(953)854-98-56', birth:'15.04.1994', idNumber:'142-217', responsibilities:['Передает аналитические отчёты','Консультирует по повторной авторизации'], photo:'images/1.jpg', idImg:'images/1_id.jpg', caseUrl:'cases/1_case.pdf' },
-      { id:2, name:'Кузнецов Виктор', position:'Специалист по защите персональных данных', dept:'Защита граждан от мошенничества', email:'kuznetcov21victor@gov.ru', phone:'+7(933)025-30-59', birth:'22.09.1991', idNumber:'582-749', responsibilities:['Подтверждает личность','Восстанавливает данные'], photo:'images/2.jpg', idImg:'images/2_id.jpg', caseUrl:'cases/2_case.pdf' },
-      { id:3, name:'Попова Диана', position:'Специалист по кибербезопасности', dept:'Цифровая безопасность', email:'popova.diana28@gov.ru', phone:'+7(993)059-27-30', birth:'03.12.1995', idNumber:'192-004', responsibilities:['Настройка 2FA','Шифрование'], photo:'images/3.jpg', idImg:'images/3_id.jpg', caseUrl:'cases/3_case.pdf' },
-      { id:4, name:'Зотова Наталья', position:'Специалист экстренного реагирования', dept:'Телефонное мошенничество', email:'zotovanatalya70rkn@gov.ru', phone:'+7(951)853-79-67', birth:'17.08.1994', idNumber:'453-513', responsibilities:['Анализ инцидентов','Консультации'], photo:'images/4.jpg', idImg:'images/4_id.jpg', caseUrl:'cases/4_case.pdf' },
-      { id:5, name:'Пономарева Наталья', position:'Специалист по звонкам', dept:'Онлайн-мошенничество', email:'ponomareva95natalya.rkn@gov.ru', phone:'+7(901)623-88-92', birth:'27.02.1996', idNumber:'564-290', responsibilities:['Ведение дел','Переидентификация'], photo:'images/5.jpg', idImg:'images/5_id.jpg', caseUrl:'cases/5_case.pdf' }
+      { id:2, name:'Кузнецов Виктор', position:'Специалист по защите персональных данных', dept:'Защита граждан от цифрового мошенничества', email:'kuznetcov21victor@gov.ru', phone:'+7(933)025-30-59', birth:'22.09.1991', idNumber:'582-749', responsibilities:['Подтверждает личность','Организует восстановление данных'], photo:'images/2.jpg', idImg:'images/2_id.jpg', caseUrl:'cases/2_case.pdf' },
+      { id:3, name:'Попова Диана', position:'Специалист по кибербезопасности в соц. сетях', dept:'Отдел персональной цифровой безопасности', email:'popova.diana28@gov.ru', phone:'+7(993)059-27-30', birth:'03.12.1995', idNumber:'192-004', responsibilities:['Настройка 2FA','Протоколы шифрования'], photo:'images/3.jpg', idImg:'images/3_id.jpg', caseUrl:'cases/3_case.pdf' },
+      { id:4, name:'Зотова Наталья', position:'Специалист экстренного реагирования', dept:'Отдел защиты от телефонного мошенничества', email:'zotovanatalya70rkn@gov.ru', phone:'+7(951)853-79-67', birth:'17.08.1994', idNumber:'453-513', responsibilities:['Анализ инцидентов','Консультирует пострадавших'], photo:'images/4.jpg', idImg:'images/4_id.jpg', caseUrl:'cases/4_case.pdf' },
+      { id:5, name:'Пономарева Наталья', position:'Специалист по противодействию звонкам', dept:'Отдел защиты от мошенничества', email:'ponomareva95natalya.rkn@gov.ru', phone:'+7(901)623-88-92', birth:'27.02.1996', idNumber:'564-290', responsibilities:['Ведение дел','Переидентификация'], photo:'images/5.jpg', idImg:'images/5_id.jpg', caseUrl:'cases/5_case.pdf' }
     ];
 
     document.addEventListener('DOMContentLoaded', () => {
       const grid = document.getElementById('employeesGrid');
       employees.forEach(e => {
         const card = document.createElement('article');
-        card.className = 'employee-card';
-        card.innerHTML = `
+        card.className='employee-card';
+        card.innerHTML=`
           <img src="${e.photo}" alt="${e.name}" class="employee-photo">
           <div class="employee-name">${e.name}</div>
           <div class="employee-position">${e.position}</div>
@@ -505,7 +389,8 @@
     });
 
     function openEmployee(id) {
-      const e = window.employees.find(x => x.id === id);
+      const e = window.employees.find(x=>x.id===id);
+      document.body.classList.add('modal-open');
       document.getElementById('modalName').textContent = e.name;
       document.getElementById('modalPosition').textContent = e.position;
       document.getElementById('modalDept').textContent = e.dept;
@@ -520,18 +405,17 @@
       img.src = e.idImg; img.alt = `Удостоверение ${e.name}`;
       document.getElementById('modalCaseLink').href = e.caseUrl;
       document.getElementById('employeeModal').classList.add('open');
-      document.body.classList.add('modal-open');
     }
 
     function closeEmployee() {
-      document.getElementById('employeeModal').classList.remove('open');
       document.body.classList.remove('modal-open');
+      document.getElementById('employeeModal').classList.remove('open');
     }
 
     function filterEmployees() {
       const term = document.getElementById('searchInput').value.toLowerCase();
-      document.querySelectorAll('.employee-card').forEach((card, i) => {
-        card.style.display = window.employees[i].name.toLowerCase().includes(term) ? '' : 'none';
+      document.querySelectorAll('.employee-card').forEach((card,i)=>{
+        card.style.display = window.employees[i].name.toLowerCase().includes(term)?'':'none';
       });
     }
   </script>
