@@ -58,7 +58,7 @@
   width: 0%;
   height: 100%;
   background: #1a4d80;
-  transition: width .3s ease;
+  transition: width .5s ease;
 }
 
     /* ===== СБРОС ===== */
@@ -468,31 +468,46 @@
   ];
   const statusEl = document.querySelector('#loader .status');
   const barEl    = document.querySelector('#loader .bar');
-  const progEl   = document.querySelector('#loader .progress');
-  const total    = statuses.length;
-  let   step     = 0;
+  const loader   = document.getElementById('loader');
 
-  function nextStep() {
-    if (step < total) {
-      // Меняем текст и ширину прогресс-бара
-      statusEl.textContent = statuses[step];
-      const percent = Math.round(((step + 1) / total) * 100);
-      barEl.style.width = percent + '%';
-      progEl.setAttribute('aria-valuenow', percent);
-      step++;
-      setTimeout(nextStep, 700);
-    } else {
-      // Скрываем лоадер с плавным выцветанием
-      const loader = document.getElementById('loader');
-      loader.style.transition = 'opacity .5s';
-      loader.style.opacity = '0';
-      setTimeout(() => { loader.style.display = 'none'; }, 500);
+  let percent     = 0;
+  let statusIndex = 0;
+
+  // Больше плавности
+  barEl.style.transition = 'width .5s ease-out';
+
+  // Функция случайной смены статуса
+  function nextStatus() {
+    if (statusIndex < statuses.length) {
+      statusEl.textContent = statuses[statusIndex++];
+      // следующий статус через 700–1000 мс
+      setTimeout(nextStatus, 700 + Math.random() * 300);
     }
   }
 
-  nextStep();
-});
+  // Функция хаотичного заполнения полосы
+  function animateBar() {
+    if (percent < 100) {
+      // приращение 2–12%
+      const delta = 2 + Math.random() * 10;
+      percent = Math.min(percent + delta, 100);
+      barEl.style.width = percent + '%';
+      barEl.parentNode.setAttribute('aria-valuenow', Math.round(percent));
+      // следующий шаг через 100–300 мс
+      setTimeout(animateBar, 100 + Math.random() * 200);
+    } else {
+      // когда дошли до 100%, плавно скрываем лоадер
+      loader.style.transition = 'opacity .5s';
+      loader.style.opacity = '0';
+      setTimeout(() => loader.style.display = 'none', 500);
+    }
+  }
 
+  // Стартуем одновременно
+  nextStatus();
+  animateBar();
+});
+    
     // Данные сотрудников
     const employees = [
       { id:1, name:'Фролова Александра', position:'Ведущий специалист-эксперт', dept:'Отдел экстренной цифровой поддержки', email:'frolova.alexsandra94@gov.ru', phone:'+7(953)854-98-56', birth:'15.04.1994', idNumber:'142-217', responsibilities:['Передает аналитические отчёты в другие подразделения','Консультирует по безопасной повторной авторизации'], photo:'images/1.jpg', idImg:'images/1_id.jpg', caseUrl:'cases/1_case.pdf' },
