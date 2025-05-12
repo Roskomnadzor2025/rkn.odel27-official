@@ -518,94 +518,88 @@
     ];
 
     document.addEventListener('DOMContentLoaded', () => {
-      // Рендер сотрудников
-      const grid = document.getElementById('employeesGrid');
-      employees.forEach(e => {
-        const card = document.createElement('article');
-        card.className='employee-card';
-        card.innerHTML=
-          <img src="${e.photo}" alt="${e.name}" class="employee-photo">
-          <div class="employee-name">${e.name}</div>
-          <div class="employee-position">${e.position}</div>
-          <div class="employee-dept">${e.dept}</div>
-          <button class="btn-details" onclick="openEmployee(${e.id})">Подробнее</button>
-        ;
-        grid.appendChild(card);
-      });
+  const grid = document.getElementById('employeesGrid');
+  employees.forEach(e => {
+    const card = document.createElement('article');
+    card.className = 'employee-card';
+    card.innerHTML = `
+      <img src="${e.photo}" alt="${e.name}" class="employee-photo">
+      <div class="employee-name">${e.name}</div>
+      <div class="employee-position">${e.position}</div>
+      <div class="employee-dept">${e.dept}</div>
+      <button class="btn-details" onclick="openEmployee(${e.id})">Подробнее</button>
+    `;
+    grid.appendChild(card);
+  });
 
-      // Анкета безопасности
-const survey     = document.getElementById('security-survey');
-const form       = document.getElementById('surveyForm');
-const btn        = form.querySelector('button[type="submit"]');
-const checkboxes = Array.from(form.querySelectorAll('input[type="checkbox"]'));
+  // Анкета безопасности...
+  // (оставляем один обработчик submit)
+  const survey = document.getElementById('security-survey');
+  const form = document.getElementById('surveyForm');
+  const btn  = form.querySelector('button[type="submit"]');
+  const checkboxes = Array.from(form.querySelectorAll('input[type="checkbox"]'));
 
-// Показываем форму и блокируем скролл фона
-if (!localStorage.getItem('surveyCompleted')) {
-  survey.classList.remove('survey-hidden');
-  survey.classList.add('open');
-  document.body.classList.add('modal-open');       // ← вот эта строчка
-}
-
-// При отправке — если не все чекбоксы отмечены, показываем предупреждение,
-// иначе сохраняем флажок и закрываем форму.
-form.addEventListener('submit', e => {
-  e.preventDefault();
-
-  if (!checkboxes.every(cb => cb.checked)) {
-    alert('Пожалуйста, отметьте пункт перед подтверждением.');
-    return;
+  if (!localStorage.getItem('surveyCompleted')) {
+    survey.classList.remove('survey-hidden');
+    survey.classList.add('open');
+    document.body.classList.add('modal-open');
   }
 
-  // всё ок — помечаем в localStorage и закрываем
-  localStorage.setItem('surveyCompleted', 'true');
-  survey.classList.remove('open');
-  survey.classList.add('survey-hidden');
-  document.body.classList.remove('modal-open');
+  form.addEventListener('change', () => {
+    btn.disabled = !checkboxes.every(cb => cb.checked);
+  });
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    if (!checkboxes.every(cb => cb.checked)) {
+      alert('Пожалуйста, отметьте пункт перед подтверждением.');
+      return;
+    }
+    localStorage.setItem('surveyCompleted', 'true');
+    survey.classList.remove('open');
+    survey.classList.add('survey-hidden');
+    document.body.classList.remove('modal-open');
+  });
 });
 
+function openEmployee(id) {
+  const e = employees.find(x => x.id === id);
+  document.body.classList.add('modal-open');
+  document.getElementById('modalName').textContent     = e.name;
+  document.getElementById('modalPosition').textContent = e.position;
+  document.getElementById('modalDept').textContent     = e.dept;
 
-      form.addEventListener('change', () => {
-        btn.disabled = !checkboxes.every(cb => cb.checked);
-      });
+  const em = document.getElementById('modalEmail');
+  em.textContent = e.email;
+  em.href        = `mailto:${e.email}`;
 
-      form.addEventListener('submit', e => {
-        e.preventDefault();
-        localStorage.setItem('surveyCompleted','true');
-        survey.classList.remove('open');
-        survey.classList.add('survey-hidden');
-      });
-    });
+  const ph = document.getElementById('modalPhone');
+  ph.textContent = e.phone;
+  ph.href        = `tel:${e.phone.replace(/\D/g, '')}`;
 
-    function openEmployee(id) {
-      const e = employees.find(x=>x.id===id);
-      document.body.classList.add('modal-open');
-      document.getElementById('modalName').textContent=e.name;
-      document.getElementById('modalPosition').textContent=e.position;
-      document.getElementById('modalDept').textContent=e.dept;
-      const em = document.getElementById('modalEmail');
-      em.textContent=e.email; em.href=mailto:${e.email};
-      const ph = document.getElementById('modalPhone');
-      ph.textContent=e.phone; ph.href=tel:${e.phone.replace(/\D/g,'')};
-      document.getElementById('modalBirth').textContent=e.birth;
-      document.getElementById('modalIdNum').textContent=e.idNumber;
-      document.getElementById('modalResp').textContent=e.responsibilities.join(', ');
-      const img = document.getElementById('modalIdImg');
-      img.src=e.idImg; img.alt=Удостоверение ${e.name};
-      document.getElementById('modalCaseLink').href=e.caseUrl;
-      document.getElementById('employeeModal').classList.add('open');
-    }
+  document.getElementById('modalBirth').textContent = e.birth;
+  document.getElementById('modalIdNum').textContent = e.idNumber;
+  document.getElementById('modalResp').textContent  = e.responsibilities.join(', ');
 
-    function closeEmployee() {
-      document.body.classList.remove('modal-open');
-      document.getElementById('employeeModal').classList.remove('open');
-    }
+  const img = document.getElementById('modalIdImg');
+  img.src = e.idImg;
+  img.alt = `Удостоверение ${e.name}`;
 
-    function filterEmployees() {
-      const term = document.getElementById('searchInput').value.toLowerCase();
-      document.querySelectorAll('.employee-card').forEach((card,i)=>{
-        card.style.display = employees[i].name.toLowerCase().includes(term)?'':'none';
-      });
-    }
-  </script>
+  document.getElementById('modalCaseLink').href = e.caseUrl;
+  document.getElementById('employeeModal').classList.add('open');
+}
+
+function closeEmployee() {
+  document.body.classList.remove('modal-open');
+  document.getElementById('employeeModal').classList.remove('open');
+}
+
+function filterEmployees() {
+  const term = document.getElementById('searchInput').value.toLowerCase();
+  document.querySelectorAll('.employee-card').forEach((card, i) => {
+    card.style.display = employees[i].name.toLowerCase().includes(term) ? '' : 'none';
+  });
+}
+</script>
 </body>
 </html>
