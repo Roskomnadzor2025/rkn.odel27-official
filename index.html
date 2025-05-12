@@ -8,22 +8,23 @@
   <style>
     /* ===== ЗАГРУЗЧИК ===== */
     #loader {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: #ffffff; /* белый фон вместо rgba(0,0,0,0.8) */
-  color: #003366;       /* смените цвет текста/бордюра спиннера на тёмный */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  z-index: 9999;
+  background: #ffffff;      /* белый фон */
+  color: #003366;           /* чтобы тексты тоже были тёмными */
 }
+
+/* раньше было border:5px solid #fff; заменим на контрастный цвет */
 .spinner {
-  border: 5px solid #003366;       /* тёмный бордер */
-  border-top-color: transparent;   /* прозрачная «шапка» */
+  width: 50px;
+  height: 50px;
+  border: 5px solid #003366;      /* тёмно-синяя рамка */
+  border-top-color: transparent;  /* прозрачная «шапка» для видимости вращения */
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
 }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
 
     /* ===== СБРОС ===== */
     *, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
