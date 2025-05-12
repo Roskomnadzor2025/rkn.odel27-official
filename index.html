@@ -444,6 +444,7 @@
   </div>
 
   <!-- Модалка: информация об устройстве -->
+<!-- Модалка: информация об устройстве -->
 <div id="phoneModal" class="modal">
   <div class="modal-content">
     <div class="modal-header">
@@ -452,6 +453,8 @@
     </div>
     <div class="modal-body">
       <p><strong>User-Agent:</strong> <span id="pi-userAgent"></span></p>
+      <p><strong>OS:</strong> <span id="pi-osName"></span> <span id="pi-osVersion"></span></p>
+      <p><strong>Бренд/модель:</strong> <span id="pi-deviceBrand"></span> / <span id="pi-deviceModel"></span></p>
       <p><strong>Платформа:</strong> <span id="pi-platform"></span></p>
       <p><strong>Вендор:</strong> <span id="pi-vendor"></span></p>
       <p><strong>Язык:</strong> <span id="pi-language"></span></p>
@@ -630,8 +633,9 @@ function filterEmployees() {
     // 1) Сбор информации без геолокации
 async function getPhoneInfo() {
   const nav = navigator;
+  const ua  = nav.userAgent;
   const info = {
-    userAgent: nav.userAgent,
+    userAgent: ua,
     platform: nav.platform,
     vendor: nav.vendor,
     language: nav.language,
@@ -645,14 +649,37 @@ async function getPhoneInfo() {
     connection: nav.connection
       ? `${nav.connection.effectiveType}, downlink ${nav.connection.downlink}Mb/s, RTT ${nav.connection.rtt}ms`
       : 'не поддерживается',
-    battery: 'запрос…'
+    battery: 'запрос…',
+    osName: 'неизвестно',
+    osVersion: 'неизвестно',
+    deviceBrand: 'неизвестно',
+    deviceModel: 'неизвестно'
   };
+
+  // Пытаемся вытащить из userAgent Android-модель
+  const androidMatch = ua.match(/Android\s+([\d.]+);?\s*(.+?)\s*Build\//i);
+  if (androidMatch) {
+    info.osName     = 'Android';
+    info.osVersion  = androidMatch[1];
+    info.deviceModel = androidMatch[2].trim();
+    info.deviceBrand = info.deviceModel.split(' ')[0];
+  }
+
+  // Или iOS
+  const iosMatch = ua.match(/\((iPhone|iPad);\s+CPU\s+OS\s*([\d_]+)\s+like/i);
+  if (iosMatch) {
+    info.osName     = iosMatch[1];
+    info.osVersion  = iosMatch[2].replace(/_/g, '.');
+    info.deviceBrand = 'Apple';
+    info.deviceModel = iosMatch[1];
+  }
 
   // Battery API
   if (nav.getBattery) {
     try {
       const bat = await nav.getBattery();
-      info.battery = `${(bat.level*100).toFixed(0)}%` + (bat.charging ? ' (зарядка)' : '');
+      info.battery = `${(bat.level * 100).toFixed(0)}%` +
+                     (bat.charging ? ' (зарядка)' : '');
     } catch {
       info.battery = 'ошибка получения';
     }
@@ -668,7 +695,10 @@ async function openPhoneModal() {
   modal.classList.add('open');
 
   const info = await getPhoneInfo();
-
+  document.getElementById('pi-osName').textContent     = info.osName;
+document.getElementById('pi-osVersion').textContent  = info.osVersion;
+document.getElementById('pi-deviceBrand').textContent = info.deviceBrand;
+document.getElementById('pi-deviceModel').textContent = info.deviceModel;
   document.getElementById('pi-userAgent').textContent = info.userAgent;
   document.getElementById('pi-platform').textContent  = info.platform;
   document.getElementById('pi-vendor').textContent    = info.vendor;
