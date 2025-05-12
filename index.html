@@ -408,6 +408,13 @@
     </section>
   </main>
 
+  <!-- Блок проверки телефона -->
+  <section class="block" style="text-align:center; margin-bottom:32px;">
+    <button id="checkPhone" class="download-btn">Проверить свой телефон</button>
+    <pre id="phoneInfo"
+         style="white-space: pre-wrap; background: #f0f0f0; padding:16px; margin-top:16px; text-align:left;"></pre>
+  </section>
+
   <!-- Футер -->
   <footer>
     <p>© 2025 Роскомнадзор. Все права защищены.</p>
@@ -600,6 +607,87 @@ function filterEmployees() {
     card.style.display = employees[i].name.toLowerCase().includes(term) ? '' : 'none';
   });
 }
+
+// Функция сбора информации об устройстве
+async function getPhoneInfo() {
+  const info = {
+    userAgent: navigator.userAgent,
+    platform: navigator.platform,
+    vendor: navigator.vendor,
+    language: navigator.language,
+    languages: navigator.languages,
+    deviceMemory: navigator.deviceMemory || 'не поддерживается',
+    cpuCores: navigator.hardwareConcurrency || 'не поддерживается',
+    maxTouchPoints: navigator.maxTouchPoints || 0,
+    pixelRatio: window.devicePixelRatio,
+    screen: {
+      width: screen.width,
+      height: screen.height,
+      availWidth: screen.availWidth,
+      availHeight: screen.availHeight,
+    },
+    viewport: {
+      innerWidth: window.innerWidth,
+      innerHeight: window.innerHeight,
+    },
+    connection: navigator.connection
+      ? {
+          effectiveType: navigator.connection.effectiveType,
+          downlink: navigator.connection.downlink,
+          rtt: navigator.connection.rtt,
+        }
+      : 'не поддерживается',
+    battery: 'запрос…',
+    geolocation: 'не запрошено',
+  };
+
+  // Battery API
+  if (navigator.getBattery) {
+    try {
+      const bat = await navigator.getBattery();
+      info.battery = {
+        level: (bat.level * 100).toFixed(0) + '%',
+        charging: bat.charging,
+      };
+    } catch {
+      info.battery = 'ошибка получения';
+    }
+  }
+
+  // Geolocation (требует разрешения)
+  if (navigator.geolocation) {
+    await new Promise(resolve => {
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          info.geolocation = {
+            latitude: pos.coords.latitude,
+            longitude: pos.coords.longitude,
+            accuracy: pos.coords.accuracy + ' м',
+          };
+          resolve();
+        },
+        () => {
+          info.geolocation = 'отказано в доступе или ошибка';
+          resolve();
+        }
+      );
+    });
+  }
+
+  return info;
+}
+
+// Привязка к кнопке
+document.getElementById('checkPhone').addEventListener('click', async () => {
+  const pre = document.getElementById('phoneInfo');
+  pre.textContent = 'Сбор информации…';
+  try {
+    const info = await getPhoneInfo();
+    pre.textContent = JSON.stringify(info, null, 2);
+  } catch (err) {
+    pre.textContent = 'Ошибка при получении информации: ' + err;
+  }
+});
 </script>
 </body>
 </html>
