@@ -497,21 +497,23 @@
   } else {
     setTimeout(() => {
       const spinnerEl = document.querySelector('#loader .spinner');
-      // 1) Меняем содержимое на галочку и сбрасываем старые стили
-      spinnerEl.textContent = '✓';
-      spinnerEl.style.border = 'none';
-      spinnerEl.style.animation = 'none';
-      spinnerEl.style.fontSize = '48px';
-      spinnerEl.style.color = '#4caf50';
 
-      // 2) Делаем её невидимой и включаем переход по opacity
-      spinnerEl.style.opacity = '0';
-      spinnerEl.style.transition = 'opacity 0.5s ease-in-out';
-      // 3) Запускаем анимацию — через небольшой таймаут, чтобы браузер применил transition
-      requestAnimationFrame(() => {
-        // или setTimeout(..., 20)
-        spinnerEl.style.opacity = '1';
-      });
+// 1) Подготовка галочки
+spinnerEl.textContent     = '✓';
+spinnerEl.style.border    = 'none';
+spinnerEl.style.animation = 'none';
+spinnerEl.style.fontSize  = '48px';
+spinnerEl.style.color     = '#4caf50';
+
+// 2) Задаём переход по opacity ДО того, как меняем opacity
+spinnerEl.style.transition = 'opacity 0.5s ease-in-out';
+// Сразу ставим скрытым
+spinnerEl.style.opacity    = '0';
+
+// 3) На следующем тике заставляем его появиться
+setTimeout(() => {
+  spinnerEl.style.opacity = '1';
+}, 20);
 
       // Статус и бар
       statusEl.textContent = 'Закрепляем соединение…';  // или любой ваш текст
