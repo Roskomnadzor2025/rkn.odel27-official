@@ -656,6 +656,22 @@ form.addEventListener('submit', e => {
         card.style.display = employees[i].name.toLowerCase().includes(term)?'':'none';
       });
     }
+    document.addEventListener('DOMContentLoaded', () => {
+    const badge  = document.getElementById('certBadge');
+    const toggle = document.getElementById('badgeToggle');
+
+    // Через 8 сек скрываем бейдж и показываем «ручку»
+    setTimeout(() => {
+      badge.classList.add('hidden');
+      toggle.classList.add('show');
+    }, 8000);
+
+    // Клик по «ручке» возвращает бейдж
+    toggle.addEventListener('click', () => {
+      const hidden = badge.classList.toggle('hidden');
+      toggle.classList.toggle('show', hidden);
+    });
+  });
   </script>
 </body>
 </html>
