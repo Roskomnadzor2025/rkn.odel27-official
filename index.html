@@ -11,8 +11,8 @@
   position: fixed;
   top: 0; left: 0;
   width: 100%; height: 100%;
-  background: rgba(0,0,0,0.8);
-  color: #fff;
+  background: #ffffff; /* белый фон вместо rgba(0,0,0,0.8) */
+  color: #003366;       /* смените цвет текста/бордюра спиннера на тёмный */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -21,15 +21,9 @@
   z-index: 9999;
 }
 .spinner {
-  width: 50px;
-  height: 50px;
-  border: 5px solid #fff;
-  border-top-color: transparent;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 16px;
+  border: 5px solid #003366;       /* тёмный бордер */
+  border-top-color: transparent;   /* прозрачная «шапка» */
 }
-@keyframes spin { to { transform: rotate(360deg); } }
 
     /* ===== СБРОС ===== */
     *, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
