@@ -11,18 +11,18 @@
 
   <!-- Основные стили -->
   <style>
-    /* =========================
-       :root – переменные темы
-    ========================= */
+    /* ===================================================
+       :root – глобальные CSS-переменные для темы сайта
+    =================================================== */
     :root {
-      --primary-color: #00529B;
-      --secondary-color: #1A4D80;
-      --accent-color: #4caf50;
-      --bg-main: #F2F4F7;
+      --primary-color: #002B5B;
+      --secondary-color: #004080;
+      --accent-color: #FFB000;
+      --bg-main: #F3F6F9;
       --bg-white: #FFFFFF;
-      --text-main: #212121;
+      --text-main: #1A1A1A;
       --text-muted: #555555;
-      --border-radius: 4px;
+      --border-radius: 6px;
       --space-unit: 16px;
       --ff-base: 'PT Sans', sans-serif;
       --fw-normal: 400;
@@ -31,9 +31,9 @@
       --transition-speed: 0.3s;
     }
 
-    /* =========================
+    /* ---------------------------------------------------
        Сброс базовых стилей
-    ========================= */
+    --------------------------------------------------- */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; }
     body {
@@ -41,7 +41,8 @@
       font-weight: var(--fw-normal);
       background-color: var(--bg-main);
       color: var(--text-main);
-      line-height: 1.6;
+      line-height: 1.7;
+      scroll-behavior: smooth;
     }
     img { display: block; max-width: 100%; height: auto; }
     a { color: inherit; text-decoration: none; }
@@ -49,9 +50,9 @@
     button, input, select, textarea { font-family: inherit; }
     button { cursor: pointer; }
 
-    /* =========================
-       Общие контейнеры
-    ========================= */
+    /* ---------------------------------------------------
+       Универсальный контейнер
+    --------------------------------------------------- */
     .container {
       max-width: 1200px;
       margin: 0 auto;
@@ -59,17 +60,17 @@
     }
     .grid { display: grid; gap: var(--space-unit); }
 
-    /* =========================
-       Лоадер
-    ========================= */
+    /* ===================================================
+       Лоадер – теперь более строгий и официальный
+    =================================================== */
     .loader {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.8);
+      background: linear-gradient(135deg, rgba(0,0,0,0.85), rgba(0,0,0,0.95));
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 9999;
+      z-index: 10000;
       transition: opacity var(--transition-speed) ease, visibility var(--transition-speed) ease;
     }
     .loader.hidden {
@@ -79,15 +80,20 @@
     .loader-content {
       text-align: center;
       color: var(--bg-white);
-      padding: var(--space-unit);
-      max-width: 320px;
+      padding: calc(var(--space-unit) * 2);
+      border: 2px solid var(--bg-white);
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      background: rgba(0,0,0,0.6);
+      max-width: 360px;
+      width: 100%;
     }
     .spinner {
-      width: 56px;
-      height: 56px;
+      width: 64px;
+      height: 64px;
       margin: 0 auto var(--space-unit);
-      border: 6px solid rgba(255,255,255,0.3);
-      border-top-color: var(--bg-white);
+      border: 8px solid rgba(255,255,255,0.2);
+      border-top-color: var(--accent-color);
       border-radius: 50%;
       animation: spin 1s linear infinite;
     }
@@ -95,31 +101,33 @@
     .status {
       font-size: 18px;
       margin-bottom: var(--space-unit);
+      font-weight: var(--fw-semibold);
     }
     .progress {
       width: 100%;
       height: 8px;
-      background: rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.2);
       border-radius: 4px;
       overflow: hidden;
+      margin-top: var(--space-unit);
     }
     .bar {
       width: 0;
       height: 100%;
-      background: var(--primary-color);
-      transition: width 0.4s ease;
+      background: var(--accent-color);
+      transition: width 0.5s ease;
     }
 
-    /* =========================
-       Шапка (Header)
-    ========================= */
+    /* ===================================================
+       Шапка сайта (Header)
+    =================================================== */
     header {
       position: sticky;
       top: 0;
-      z-index: 1000;
+      z-index: 900;
       background: var(--primary-color);
       color: var(--bg-white);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     }
     header .container {
       display: flex;
@@ -128,16 +136,23 @@
       flex-wrap: wrap;
     }
     .logo {
-      height: 56px;
+      height: 60px;
       flex-shrink: 0;
     }
     .agency-title {
       margin-left: var(--space-unit);
-      font-size: 14px;
-      line-height: 1.3;
+      font-size: 15px;
+      line-height: 1.2;
       flex-shrink: 1;
     }
-    .nav-toggle { position: absolute; top: var(--space-unit); right: var(--space-unit); opacity: 0; }
+    .nav-toggle {
+      position: absolute;
+      top: var(--space-unit);
+      right: var(--space-unit);
+      opacity: 0;
+      width: 32px;
+      height: 32px;
+    }
     .nav-toggle-label {
       display: none;
       color: var(--bg-white);
@@ -149,66 +164,91 @@
     }
     .nav-links {
       display: flex;
-      gap: calc(var(--space-unit) * 1.5);
+      gap: calc(var(--space-unit) * 2);
       margin-left: auto;
     }
     .nav-links a {
       font-weight: var(--fw-semibold);
-      padding-bottom: 6px;
-      transition: opacity var(--transition-speed) ease, border-color var(--transition-speed) ease;
-      border-bottom: 2px solid transparent;
+      padding-bottom: 8px;
+      transition: opacity var(--transition-speed), border-color var(--transition-speed);
+      border-bottom: 3px solid transparent;
     }
     .nav-links a:hover,
     .nav-links a.active {
       opacity: 0.85;
-      border-bottom-color: var(--secondary-color);
+      border-bottom-color: var(--accent-color);
     }
 
-    /* =========================
+    /* ===================================================
        Hero-раздел
-    ========================= */
+    =================================================== */
     .hero {
-      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      background: linear-gradient(120deg, var(--secondary-color), var(--primary-color));
       color: var(--bg-white);
       text-align: center;
-      padding: calc(var(--space-unit) * 3) 0;
+      padding: calc(var(--space-unit)*4) 0;
     }
     .hero h1 {
-      font-size: 52px;
+      font-size: 56px;
       margin-bottom: var(--space-unit);
-      line-height: 1.2;
+      line-height: 1.1;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
     }
     .hero .sub-title {
       font-size: 20px;
-      max-width: 900px;
+      max-width: 800px;
       margin: 0 auto;
       opacity: 0.9;
     }
 
-    /* =========================
-       Раздел: Новости
-    ========================= */
+    /* ===================================================
+       Навигационная панель "breadcrumb"
+    =================================================== */
+    .breadcrumb {
+      background: var(--bg-white);
+      padding: var(--space-unit) 0;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+    .breadcrumb .container {
+      display: flex; align-items: center; gap: 4px;
+    }
+    .breadcrumb a {
+      color: var(--secondary-color);
+    }
+    .breadcrumb span.separator {
+      margin: 0 4px;
+    }
+
+    /* ===================================================
+       Раздел: Новости и обновления
+       (с раскрытием по клику)
+    =================================================== */
     #news {
       background: var(--bg-white);
       padding: calc(var(--space-unit)*2) 0;
+      margin-top: calc(var(--space-unit)*2);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
     #news .section-title {
+      text-align: center;
       color: var(--primary-color);
       font-size: 36px;
-      text-align: center;
       margin-bottom: calc(var(--space-unit)*1.5);
       font-weight: var(--fw-bold);
     }
     .news-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(320px,1fr));
       gap: calc(var(--space-unit)*2);
     }
     .news-item {
       background: var(--bg-main);
       border-radius: var(--border-radius);
-      padding: var(--space-unit);
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: calc(var(--space-unit)*1.5);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      position: relative;
+      overflow: hidden;
       transition: transform var(--transition-speed), box-shadow var(--transition-speed);
     }
     .news-item:hover {
@@ -220,31 +260,45 @@
       color: var(--secondary-color);
       margin-bottom: 8px;
     }
-    .news-item p {
-      font-size: 14px;
-      color: var(--text-muted);
-      margin-bottom: 12px;
-      line-height: 1.4;
-    }
     .news-item time {
       font-size: 12px;
       color: var(--text-muted);
-      display: block;
       margin-bottom: 8px;
+      display: block;
     }
-    .news-item a.read-more {
+    .news-item p.excerpt {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: calc(var(--space-unit)*1.5);
+    }
+    .news-item button.read-more {
       font-size: 14px;
       font-weight: var(--fw-semibold);
-      color: var(--primary-color);
+      color: var(--accent-color);
+      background: transparent;
+      border: none;
+      cursor: pointer;
       transition: color var(--transition-speed);
     }
-    .news-item a.read-more:hover {
-      color: var(--secondary-color);
+    .news-item button.read-more:hover {
+      color: var(--primary-color);
+    }
+    /* Скрытый блок полного текста */
+    .news-item .full-text {
+      display: none;
+      margin-top: calc(var(--space-unit)*1);
+      font-size: 14px;
+      color: var(--text-main);
+      line-height: 1.6;
+    }
+    .news-item.expanded .full-text {
+      display: block;
     }
 
-    /* =========================
-       Раздел: Важное (about)
-    ========================= */
+    /* ===================================================
+       Раздел: Важное (About)
+    =================================================== */
     #about {
       background: var(--bg-white);
       border-radius: var(--border-radius);
@@ -253,15 +307,15 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
     #about .section-title {
+      text-align: center;
       color: var(--primary-color);
       font-size: 36px;
       margin-bottom: calc(var(--space-unit)*1.5);
       font-weight: var(--fw-bold);
-      text-align: center;
     }
     .important-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
       gap: calc(var(--space-unit)*2);
     }
     .important-item {
@@ -271,7 +325,7 @@
       transition: background var(--transition-speed);
     }
     .important-item:hover {
-      background: #e0e6ed;
+      background: #e1e8f0;
     }
     .important-item h3 {
       font-size: 22px;
@@ -286,13 +340,11 @@
       margin-bottom: 12px;
       line-height: 1.5;
     }
-    .important-item ul {
-      list-style: disc inside;
-    }
+    .important-item ul { list-style: disc inside; }
 
-    /* =========================
-       Раздел: Сотрудники
-    ========================= */
+    /* ===================================================
+       Раздел: Сотрудники (Employees)
+    =================================================== */
     #employees {
       background: var(--bg-white);
       border-radius: var(--border-radius);
@@ -301,31 +353,15 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
     #employees .section-title {
+      text-align: center;
       color: var(--primary-color);
       font-size: 36px;
       margin-bottom: calc(var(--space-unit)*1.5);
-      text-align: center;
       font-weight: var(--fw-bold);
-    }
-    .search {
-      max-width: 400px;
-      margin: 0 auto calc(var(--space-unit)*2);
-    }
-    .search input {
-      width: 100%;
-      padding: 12px var(--space-unit);
-      font-size: 14px;
-      border: 1px solid #CCCCCC;
-      border-radius: var(--border-radius);
-      transition: border-color var(--transition-speed);
-    }
-    .search input:focus {
-      border-color: var(--primary-color);
-      outline: none;
     }
     .employees-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px,1fr));
+      grid-template-columns: repeat(auto-fill, minmax(260px,1fr));
       gap: calc(var(--space-unit)*2);
     }
     .employee-card {
@@ -344,8 +380,8 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
     .employee-photo {
-      width: 120px;
-      height: 160px;
+      width: 140px;
+      height: 180px;
       object-fit: cover;
       border-radius: var(--border-radius);
       margin-bottom: var(--space-unit);
@@ -364,7 +400,7 @@
     }
     .btn-details {
       margin-top: auto;
-      padding: 10px 20px;
+      padding: 10px 24px;
       border: 2px solid var(--primary-color);
       border-radius: var(--border-radius);
       background: transparent;
@@ -373,14 +409,14 @@
       transition: background var(--transition-speed), color var(--transition-speed);
     }
     .btn-details:hover,
-    .btn-details:focus {  
+    .btn-details:focus {
       background: var(--primary-color);
       color: var(--bg-white);
     }
 
-    /* =========================
+    /* ===================================================
        Раздел: Официальные документы
-    ========================= */
+    =================================================== */
     #docs {
       background: var(--bg-white);
       border-radius: var(--border-radius);
@@ -389,10 +425,10 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
     #docs .section-title {
+      text-align: center;
       color: var(--primary-color);
       font-size: 36px;
       margin-bottom: calc(var(--space-unit)*1.5);
-      text-align: center;
       font-weight: var(--fw-bold);
     }
     .docs-list {
@@ -404,7 +440,7 @@
     .docs-list a {
       font-size: 16px;
       color: var(--secondary-color);
-      padding: 8px 12px;
+      padding: 10px 16px;
       border-radius: var(--border-radius);
       transition: background var(--transition-speed), color var(--transition-speed);
     }
@@ -414,102 +450,65 @@
       color: var(--primary-color);
     }
 
-    /* =========================
-       Раздел: Приложение
-    ========================= */
+    /* ===================================================
+       Приложение – Call to Action
+    =================================================== */
     #app-info {
       background: var(--bg-main);
       border-radius: var(--border-radius);
       padding: calc(var(--space-unit)*2);
       margin-top: calc(var(--space-unit)*2);
       text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    #app-info::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: rgba(0,80,128,0.05);
+      transform: rotate(45deg);
     }
     #app-info h3 {
+      position: relative;
       font-size: 28px;
       color: var(--primary-color);
       margin-bottom: var(--space-unit);
       font-weight: var(--fw-semibold);
     }
     #app-info p {
+      position: relative;
       font-size: 16px;
       color: var(--text-muted);
       margin-bottom: var(--space-unit);
-      line-height: 1.5;
+      line-height: 1.6;
       max-width: 800px;
-      margin-left: auto;
-      margin-right: auto;
+      margin-left: auto; margin-right: auto;
     }
     .download-btn {
+      position: relative;
+      z-index: 1;
       display: inline-block;
-      padding: 14px 28px;
+      padding: 14px 32px;
       background: var(--accent-color);
       color: var(--bg-white);
       font-weight: var(--fw-semibold);
       font-size: 16px;
       border-radius: var(--border-radius);
-      transition: background var(--transition-speed);
+      transition: background var(--transition-speed), transform var(--transition-speed);
     }
     .download-btn:hover,
     .download-btn:focus {
-      background: #45a049;
+      background: #e0a030;
+      transform: translateY(-2px);
     }
 
-    /* =========================
-       Раздел: Горячая линия
-    ========================= */
-    #leadership {
-      background: var(--bg-white);
-      border-radius: var(--border-radius);
-      padding: calc(var(--space-unit)*2);
-      margin-top: calc(var(--space-unit)*2);
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-    #leadership .section-title {
-      color: var(--primary-color);
-      font-size: 36px;
-      margin-bottom: calc(var(--space-unit)*1.5);
-      text-align: center;
-      font-weight: var(--fw-bold);
-    }
-    .leader-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px,1fr));
-      gap: calc(var(--space-unit)*2);
-    }
-    .leader {
-      background: var(--bg-main);
-      border: 1px solid #DDDDDD;
-      border-radius: var(--border-radius);
-      padding: calc(var(--space-unit)*1.5);
-      transition: background var(--transition-speed);
-    }
-    .leader:hover {
-      background: #e8eef5;
-    }
-    .leader h3 {
-      font-size: 20px;
-      color: var(--secondary-color);
-      margin-bottom: 8px;
-      font-weight: var(--fw-semibold);
-    }
-    .leader p {
-      font-size: 14px;
-      color: var(--text-muted);
-      margin-bottom: 6px;
-    }
-    .badge {
-      display: inline-block;
-      background: var(--secondary-color);
-      color: var(--bg-white);
-      font-size: 12px;
-      padding: 4px 8px;
-      border-radius: var(--border-radius);
-      margin-left: 6px;
-    }
-
-    /* =========================
+    /* ===================================================
        Модальные окна
-    ========================= */
+    =================================================== */
     .modal {
       position: fixed;
       inset: 0;
@@ -520,7 +519,7 @@
       justify-content: center;
       pointer-events: none;
       opacity: 0;
-      transition: opacity var(--transition-speed) ease;
+      transition: opacity var(--transition-speed);
       z-index: 1001;
     }
     .modal.open {
@@ -530,9 +529,9 @@
     .modal-content {
       background: var(--bg-white);
       border-radius: var(--border-radius);
-      width: 92%;
+      width: 90%;
       max-width: 700px;
-      max-height: 92vh;
+      max-height: 90vh;
       display: flex;
       flex-direction: column;
       overflow: hidden;
@@ -544,7 +543,7 @@
       justify-content: space-between;
       align-items: center;
       padding: var(--space-unit);
-      border-bottom: 1px solid #EEEEEE;
+      border-bottom: 1px solid #DDDDDD;
       position: sticky;
       top: 0;
       background: var(--bg-white);
@@ -572,7 +571,7 @@
       margin-bottom: var(--space-unit);
       font-size: 14px;
       color: var(--text-muted);
-      line-height: 1.5;
+      line-height: 1.6;
     }
     .id-card img {
       margin: var(--space-unit) auto;
@@ -583,23 +582,24 @@
     }
     .case-btn {
       display: inline-block;
-      margin-top: calc(var(--space-unit)*0.75);
-      padding: 10px 20px;
+      margin-top: calc(var(--space-unit)*1);
+      padding: 10px 24px;
       background: var(--secondary-color);
       color: var(--bg-white);
       border-radius: var(--border-radius);
       text-decoration: none;
       font-weight: var(--fw-semibold);
-      transition: background var(--transition-speed);
+      transition: background var(--transition-speed), transform var(--transition-speed);
     }
     .case-btn:hover,
     .case-btn:focus {
       background: var(--primary-color);
+      transform: translateY(-2px);
     }
 
-    /* =========================
+    /* ===================================================
        Анкета безопасности
-    ========================= */
+    =================================================== */
     #security-survey.survey-hidden {
       display: none !important;
     }
@@ -608,183 +608,67 @@
       margin-bottom: var(--space-unit);
       font-size: 14px;
       color: var(--text-main);
-      line-height: 1.4;
+      line-height: 1.5;
     }
     #security-survey .btn-details {
-      padding: 10px 20px;
+      padding: 10px 24px;
       background: var(--primary-color);
       color: var(--bg-white);
       border-radius: var(--border-radius);
       font-weight: var(--fw-semibold);
-      transition: background var(--transition-speed);
+      transition: background var(--transition-speed), transform var(--transition-speed);
       margin-top: var(--space-unit);
       border: none;
+    }
+    #security-survey .btn-details:hover:not(:disabled),
+    #security-survey .btn-details:focus:not(:disabled) {
+      background: var(--secondary-color);
+      transform: translateY(-2px);
     }
     #security-survey .btn-details:disabled {
       opacity: 0.6;
       cursor: not-allowed;
     }
 
-    /* =========================
-       Сертификация
-    ========================= */
-    .certified-badge {
+    /* ===================================================
+       Кнопка "Наверх" – Back to Top
+    =================================================== */
+    #backToTop {
       position: fixed;
-      bottom: calc(var(--space-unit)*1.5);
-      right: calc(var(--space-unit)*1.5);
-      background: var(--bg-white);
-      color: #333333;
-      border: 1px solid #CCCCCC;
-      border-radius: var(--border-radius);
-      padding: calc(var(--space-unit)*1);
-      text-align: center;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-      font-size: 12px;
-      z-index: 1002;
-    }
-    .certified-badge .cert-icon {
-      font-size: 24px;
-      margin-bottom: 4px;
-      display: block;
-    }
-    .certified-badge small {
-      display: block;
-      font-size: 10px;
-    }
-
-    /* =========================
-       Контакты и форма обратной связи
-    ========================= */
-    #contacts {
-      background: var(--bg-main);
-      padding: calc(var(--space-unit)*2);
-      margin-top: calc(var(--space-unit)*2);
-    }
-    #contacts .section-title {
-      color: var(--primary-color);
-      font-size: 36px;
-      text-align: center;
-      margin-bottom: calc(var(--space-unit)*1.5);
-      font-weight: var(--fw-bold);
-    }
-    .contact-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: calc(var(--space-unit)*2);
-    }
-    .contact-info, .contact-form {
-      background: var(--bg-white);
-      border-radius: var(--border-radius);
-      padding: calc(var(--space-unit)*2);
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-    .contact-info h3, .contact-form h3 {
-      font-size: 24px;
-      color: var(--secondary-color);
-      margin-bottom: var(--space-unit);
-      font-weight: var(--fw-semibold);
-    }
-    .contact-info p {
-      font-size: 14px;
-      color: var(--text-muted);
-      margin-bottom: 8px;
-      line-height: 1.5;
-    }
-    .contact-info a {
-      color: var(--primary-color);
-      font-weight: var(--fw-semibold);
-      transition: color var(--transition-speed);
-    }
-    .contact-info a:hover {
-      color: var(--secondary-color);
-    }
-    .contact-form form {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-unit);
-    }
-    .contact-form label {
-      font-size: 14px;
-      color: var(--text-main);
-    }
-    .contact-form input,
-    .contact-form textarea {
-      padding: 10px;
-      font-size: 14px;
-      border: 1px solid #CCCCCC;
-      border-radius: var(--border-radius);
-      transition: border-color var(--transition-speed);
-    }
-    .contact-form input:focus,
-    .contact-form textarea:focus {
-      border-color: var(--primary-color);
-      outline: none;
-    }
-    .contact-form button {
-      padding: 12px 24px;
+      bottom: calc(var(--space-unit)*2);
+      right: calc(var(--space-unit)*2);
       background: var(--accent-color);
       color: var(--bg-white);
-      font-weight: var(--fw-semibold);
+      padding: 10px 14px;
       border: none;
-      border-radius: var(--border-radius);
-      font-size: 16px;
-      transition: background var(--transition-speed);
-      align-self: flex-start;
+      border-radius: 50%;
+      font-size: 20px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      display: none;
+      z-index: 1003;
+      transition: background var(--transition-speed), transform var(--transition-speed);
     }
-    .contact-form button:hover {
-      background: #45a049;
-    }
-
-    /* =========================
-       Карта сайта
-    ========================= */
-    #sitemap {
-      background: var(--bg-white);
-      padding: calc(var(--space-unit)*2);
-      margin-top: calc(var(--space-unit)*2);
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-    #sitemap .section-title {
-      color: var(--primary-color);
-      font-size: 28px;
-      margin-bottom: calc(var(--space-unit)*1);
-      font-weight: var(--fw-semibold);
-    }
-    .sitemap-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
-      gap: var(--space-unit);
-    }
-    .sitemap-grid ul {
-      list-style: none;
-    }
-    .sitemap-grid li {
-      margin-bottom: 6px;
-    }
-    .sitemap-grid a {
-      color: var(--secondary-color);
-      font-size: 14px;
-      transition: color var(--transition-speed);
-    }
-    .sitemap-grid a:hover {
-      color: var(--primary-color);
+    #backToTop:hover {
+      background: #e0a030;
+      transform: translateY(-2px);
     }
 
-    /* =========================
+    /* ===================================================
        Футер
-    ========================= */
+    =================================================== */
     footer {
-      background: #002244;
+      background: #001F44;
       color: var(--bg-white);
       text-align: center;
       padding: calc(var(--space-unit)*2) 0;
       margin-top: calc(var(--space-unit)*3);
       font-size: 14px;
+      line-height: 1.6;
     }
     footer address {
       margin-bottom: 6px;
       font-style: normal;
-      line-height: 1.5;
     }
     footer .footer-links {
       display: flex;
@@ -794,21 +678,16 @@
     }
     footer .footer-links a {
       color: var(--bg-white);
-      font-size: 14px;
       transition: opacity var(--transition-speed);
     }
     footer .footer-links a:hover {
       opacity: 0.8;
     }
 
-    /* =========================
-       Адаптив
-    ========================= */
-    @media (max-width: 1024px) {
-      .contact-grid { grid-template-columns: 1fr; }
-      .sitemap-grid { grid-template-columns: 1fr; }
-    }
-    @media (max-width: 767px) {
+    /* ===================================================
+       Адаптивность
+    =================================================== */
+    @media (max-width:1024px) {
       .nav-toggle-label { display: block; }
       .nav-links {
         display: none;
@@ -819,31 +698,33 @@
         width: 100%;
         background: var(--primary-color);
       }
-      .nav-toggle:checked ~ .nav-links { display: flex; }
+      .nav-toggle:checked ~ .nav-links {
+        display: flex;
+      }
       .nav-links a {
         padding: 12px var(--space-unit);
         border-top: 1px solid rgba(255,255,255,0.2);
       }
-      .employees-grid { grid-template-columns: 1fr; }
-      .news-grid { grid-template-columns: 1fr; }
-      .important-grid { grid-template-columns: 1fr; }
-      .leader-list { grid-template-columns: 1fr; }
-      .certified-badge {
-        bottom: 10px;
-        right: 10px;
-        padding: 8px;
-        font-size: 10px;
+    }
+    @media (max-width:768px) {
+      .nav-toggle-label { display: block; }
+      .breadcrumb { display: none; }
+      .hero h1 { font-size: 36px; }
+      .hero .sub-title { font-size: 16px; }
+      .news-grid, .important-grid, .employees-grid, .leader-list, .docs-list {
+        grid-template-columns: 1fr !important;
       }
     }
-    @media (max-width: 480px) {
+    @media (max-width:480px) {
       .modal-content { width: 95%; }
+      #backToTop { bottom: 10px; right: 10px; }
     }
 
   </style>
 </head>
 <body>
 
-  <!-- Loader -->
+  <!-- Лоадер -->
   <div id="loader" class="loader">
     <div class="loader-content" role="alert" aria-live="polite">
       <div class="spinner"></div>
@@ -859,9 +740,8 @@
     <div class="container">
       <img src="images/rkn-logo.png" alt="Герб Роскомнадзора" class="logo">
       <div class="agency-title">
-        ФЕДЕРАЛЬНАЯ СЛУЖБА ПО НАДЗОРУ<br>
-        В СФЕРЕ СВЯЗИ, ИНФОРМАЦИОННЫХ<br>
-        ТЕХНОЛОГИЙ И МАССОВЫХ КОММУНИКАЦИЙ
+        ФЕДЕРАЛЬНАЯ СЛУЖБА ПО НАДЗОРУ В СФЕРЕ СВЯЗИ,<br>
+        ИНФОРМАЦИОННЫХ ТЕХНОЛОГИЙ И МАССОВЫХ КОММУНИКАЦИЙ
       </div>
       <input type="checkbox" id="nav-toggle" class="nav-toggle">
       <label for="nav-toggle" class="nav-toggle-label">☰</label>
@@ -871,8 +751,6 @@
         <a href="#about">Важное</a>
         <a href="#employees">Сотрудники</a>
         <a href="#docs">Документы</a>
-        <a href="#contacts">Контакты</a>
-        <a href="#sitemap">Карта сайта</a>
       </nav>
     </div>
   </header>
@@ -882,36 +760,50 @@
     <div class="container">
       <h1>Отдел №27 РКН: противодействие мошенничеству</h1>
       <div class="sub-title">
-        Территориальное отделение обеспечивает<br>
-        круглосуточный мониторинг и оперативную<br>
-        поддержку граждан в сфере кибермошенничества.
+        Территориальное отделение обеспечивает круглосуточный мониторинг<br>
+        и оперативную поддержку граждан в сфере кибермошенничества.
       </div>
     </div>
   </section>
 
   <main class="container">
 
-    <!-- Новости -->
+    <!-- Новости и обновления -->
     <section id="news">
       <h2 class="section-title">Новости и обновления</h2>
       <div class="news-grid">
-        <article class="news-item">
+        <article class="news-item" id="news1">
           <time datetime="2025-05-10">10 мая 2025</time>
-          <h3>Запуск новой системы антивирусной защиты</h3>
-          <p>Отдел №27 представил обновлённую версию мобильного антивируса «Русский стандарт безопасности» с расширенным модулем защиты от фишинга.</p>
-          <a href="#" class="read-more">Подробнее →</a>
+          <h3>Запуск обновлённого мобильного антивируса</h3>
+          <p class="excerpt">Вышла новая версия приложения «Русский стандарт безопасности» с дополнительным модулем AI-анализатора...</p>
+          <button class="read-more" onclick="toggleNews('news1')">Подробнее</button>
+          <div class="full-text">
+            <p>Отдел №27 представил обновлённую версию мобильного антивируса «Русский стандарт безопасности»... </p>
+            <p>Новый модуль AI-анализатора позволяет в реальном времени обнаруживать фишинг-ссылки...</p>
+            <p>Для получения обновления следует скачать APK по ссылке внутри приложения...</p>
+          </div>
         </article>
-        <article class="news-item">
+        <article class="news-item" id="news2">
           <time datetime="2025-04-28">28 апреля 2025</time>
           <h3>Итоги кампании «Честный Wi-Fi»</h3>
-          <p>Проведённый аудит выявил более 150 нелегальных точек доступа, которые были отключены в кратчайшие сроки.</p>
-          <a href="#" class="read-more">Подробнее →</a>
+          <p class="excerpt">В результате аудита обнаружено более 150 нелегальных точек доступа, которые были оперативно отключены...</p>
+          <button class="read-more" onclick="toggleNews('news2')">Подробнее</button>
+          <div class="full-text">
+            <p>Кампания «Честный Wi-Fi» была запущена в январе 2025 года и охватила все крупные города РФ... </p>
+            <p>Пользователи получили доступ только к сертифицированным публичным точкам Wi-Fi...</p>
+            <p>Материалы итогов доступны в разделе «Документы» на сайте.</p>
+          </div>
         </article>
-        <article class="news-item">
+        <article class="news-item" id="news3">
           <time datetime="2025-04-15">15 апреля 2025</time>
-          <h3>Запущена горячая линия для жертв телефонного мошенничества</h3>
-          <p>Открыта новая круглосуточная поддержка для граждан, пострадавших от телефонных мошеннических схем.</p>
-          <a href="#" class="read-more">Подробнее →</a>
+          <h3>Открытие горячей линии</h3>
+          <p class="excerpt">Запущена круглосуточная горячая линия для жертв телефонного мошенничества...</p>
+          <button class="read-more" onclick="toggleNews('news3')">Подробнее</button>
+          <div class="full-text">
+            <p>С 15 апреля 2025 года работает новая горячая линия +7 (495) 512-85-57 для пострадавших граждан...</p>
+            <p>Специалисты оказывают консультации и помогают восстановить доступ к сервисам...</p>
+            <p>Линия работает ежедневно без выходных, регистрация звонков ведётся для статистики.</p>
+          </div>
         </article>
       </div>
     </section>
@@ -924,34 +816,34 @@
       <div class="important-grid">
         <div class="important-item">
           <h3>Наша миссия</h3>
-          <p>Создать безопасное цифровое пространство России, защищённое от мошеннических и противоправных действий, обеспечив надёжную работу государственных и коммерческих сервисов.</p>
+          <p>Создать безопасное цифровое пространство Российской Федерации, где каждый гражданин может уверенно пользоваться интернет-сервисами без риска мошенничества и утечки данных.</p>
         </div>
         <div class="important-item">
-          <h3>Правовые основы</h3>
+          <h3>Законодательная база</h3>
           <ul>
-            <li>Постановление Правительства РФ №228 (03.03.2008)</li>
-            <li>Федеральный закон №149 «Об информации»</li>
-            <li>Федеральный закон №152 «О персональных данных»</li>
-            <li>Федеральный закон №126 «О связи»</li>
-            <li>Федеральный закон №242 «О техническом регулировании»</li>
+            <li>Постановление Правительства РФ №228 от 03.03.2008</li>
+            <li>ФЗ-149 «Об информации»</li>
+            <li>ФЗ-152 «О персональных данных»</li>
+            <li>ФЗ-297 «О защите информации»</li>
+            <li>ФЗ-242 «О техническом регулировании»</li>
           </ul>
         </div>
         <div class="important-item">
-          <h3>Ключевые функции</h3>
+          <h3>Основные задачи</h3>
           <ul>
             <li>Лицензирование операторов связи</li>
             <li>Мониторинг противоправного контента</li>
             <li>Контроль обработки персональных данных</li>
-            <li>Внедрение стандартов кибербезопасности</li>
+            <li>Разработка стандартов кибербезопасности</li>
           </ul>
         </div>
         <div class="important-item">
           <h3>Инициативы–2025</h3>
           <ul>
-            <li>«Честный Wi-Fi» – защищённый доступ в общественных местах</li>
-            <li>Анти-спам-звонки – блокировка подозрительных номеров</li>
-            <li>ГосVPN для госсектора – безопасное соединение</li>
-            <li>Мобильный антивирус – «Русский стандарт безопасности»</li>
+            <li>Программа «Честный Wi-Fi»</li>
+            <li>Блокировка антиспам-звонков</li>
+            <li>ГосVPN для органов власти</li>
+            <li>AI-анализатор угроз</li>
           </ul>
         </div>
       </div>
@@ -972,7 +864,7 @@
 
     <hr class="divider">
 
-    <!-- Официальные документы -->
+    <!-- Документы -->
     <section id="docs">
       <h2 class="section-title">Официальные документы</h2>
       <ul class="docs-list">
@@ -987,101 +879,10 @@
       </ul>
     </section>
 
-    <hr class="divider">
-
-    <!-- Приложение -->
-    <section id="app-info">
-      <h3>Приложение «Русский стандарт безопасности»</h3>
-      <p>
-        Официальное мобильное приложение Роскомнадзора для защиты от фишинга,
-        мошеннических сайтов и утечки персональных данных. Доступно для<br>
-        установки на все популярные мобильные платформы.
-      </p>
-      <a href="RusStandSafety.apk" download class="download-btn">Скачать APK</a>
-    </section>
-
-    <hr class="divider">
-
-    <!-- Горячая линия -->
-    <section id="leadership">
-      <h2 class="section-title">Горячая линия</h2>
-      <div class="leader-list">
-        <div class="leader">
-          <h3>Иванов И.И. <span class="badge">с 2021</span></h3>
-          <p><strong>Телефон:</strong> +7 (495) 512-85-57</p>
-          <p><strong>E-mail:</strong> <a href="mailto:i.ivanov@gov.ru">i.ivanov@gov.ru</a></p>
-          <p><strong>Приём:</strong> вторник 14:00–17:00</p>
-        </div>
-        <div class="leader">
-          <h3>Петрова М.С. <span class="badge">с 2023</span></h3>
-          <p><strong>Телефон:</strong> +7 (495) 234-56-78</p>
-          <p><strong>E-mail:</strong> <a href="mailto:m.petrova@gov.ru">m.petrova@gov.ru</a></p>
-          <p><strong>Приём:</strong> четверг 10:00–13:00</p>
-        </div>
-      </div>
-    </section>
-
-    <hr class="divider">
-
-    <!-- Контакты -->
-    <section id="contacts">
-      <h2 class="section-title">Контакты</h2>
-      <div class="contact-grid">
-        <div class="contact-info">
-          <h3>Наш адрес</h3>
-          <p>г. Москва, ул. Программная, д. 10, стр. 5</p>
-          <h3>Телефоны</h3>
-          <p>Приёмная: +7 (495) 248-27-55</p>
-          <p>Горячая линия: +7 (495) 512-85-57</p>
-          <h3>Email</h3>
-          <p><a href="mailto:hotline@rkn.gov.ru">hotline@rkn.gov.ru</a></p>
-        </div>
-        <div class="contact-form">
-          <h3>Обратная связь</h3>
-          <form id="feedbackForm">
-            <label for="name">Ф.И.О.</label>
-            <input type="text" id="name" name="name" placeholder="Ваше имя" required>
-
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" placeholder="your@example.com" required>
-
-            <label for="message">Сообщение</label>
-            <textarea id="message" name="message" rows="5" placeholder="Ваш вопрос или сообщение" required></textarea>
-
-            <button type="submit">Отправить</button>
-          </form>
-        </div>
-      </div>
-    </section>
-
-    <hr class="divider">
-
-    <!-- Карта сайта -->
-    <section id="sitemap">
-      <h2 class="section-title">Карта сайта</h2>
-      <div class="sitemap-grid">
-        <ul>
-          <li><a href="#news">Новости</a></li>
-          <li><a href="#about">Важное</a></li>
-          <li><a href="#employees">Сотрудники</a></li>
-          <li><a href="#docs">Документы</a></li>
-        </ul>
-        <ul>
-          <li><a href="#app-info">Приложение</a></li>
-          <li><a href="#leadership">Горячая линия</a></li>
-          <li><a href="#contacts">Контакты</a></li>
-          <li><a href="#sitemap">Карта сайта</a></li>
-        </ul>
-        <ul>
-          <li><a href="https://rkn.gov.ru">Официальный сайт</a></li>
-          <li><a href="https://rkn.gov.ru/news">Новости РКН</a></li>
-          <li><a href="https://rkn.gov.ru/documents">Документы</a></li>
-          <li><a href="https://rkn.gov.ru/support">Поддержка</a></li>
-        </ul>
-      </div>
-    </section>
-
   </main>
+
+  <!-- Кнопка "Наверх" -->
+  <button id="backToTop" aria-label="Наверх">↑</button>
 
   <!-- Сертификация -->
   <div class="certified-badge">
@@ -1095,7 +896,6 @@
     <div class="footer-links">
       <a href="https://rkn.gov.ru/privacy">Политика конфиденциальности</a>
       <a href="https://rkn.gov.ru/terms">Условия использования</a>
-      <a href="https://rkn.gov.ru/sitemap">Карта сайта</a>
     </div>
   </footer>
 
@@ -1107,6 +907,7 @@
         <button class="modal-close" onclick="closeEmployee()" aria-label="Закрыть">×</button>
       </div>
       <div class="modal-body">
+        <!-- Содержимое заполняется скриптом -->
         <p><strong>Должность:</strong> <span id="modalPosition"></span></p>
         <p><strong>Отдел:</strong> <span id="modalDept"></span></p>
         <p><strong>Email:</strong> <a id="modalEmail" href="#"></a></p>
@@ -1129,9 +930,9 @@
         <h2 id="surveyTitle">Обеспечение безопасности</h2>
       </div>
       <form id="surveyForm" class="modal-body">
-        <p>Вы подключены по защищённому каналу связи. Пожалуйста, подтвердите соблюдение мер безопасности:</p>
-        <label><input type="checkbox" name="q1" required>Я сохраняю конфиденциальность разговора</label>
-        <label><input type="checkbox" name="q2" required>Не передаю данные третьим лицам</label>
+        <p>Вы подключены по защищённому каналу. Подтвердите меры безопасности:</p>
+        <label><input type="checkbox" name="q1" required> Сохраняю конфиденциальность.</label>
+        <label><input type="checkbox" name="q2" required> Не передаю данные третьим лицам.</label>
         <button type="submit" class="btn-details" disabled>Подтвердить</button>
       </form>
     </div>
@@ -1145,19 +946,24 @@
       const statusEl = document.querySelector('.status');
       const barEl = document.querySelector('.bar');
       let percent = 0;
-      const statuses = ['Инициализация системы...', 'Проверка сети...', 'Установка защищённого канала...', 'Готово'];
+      const statuses = [
+        'Инициализация системы...',
+        'Проверка сетевых модулей...',
+        'Установка защищённого канала...',
+        'Финализация и запуск...'
+      ];
       let idx = 0;
       function nextStatus() {
         if (idx < statuses.length) {
           statusEl.textContent = statuses[idx++];
-          setTimeout(nextStatus, 800 + Math.random() * 200);
+          setTimeout(nextStatus, 900 + Math.random()*200);
         }
       }
       function progressBar() {
         if (percent < 100) {
-          percent += Math.random() * 10;
+          percent += 5 + Math.random()*10;
           barEl.style.width = percent + '%';
-          setTimeout(progressBar, 200 + Math.random() * 200);
+          setTimeout(progressBar, 200 + Math.random()*100);
         } else {
           setTimeout(() => loader.classList.add('hidden'), 500);
         }
@@ -1166,15 +972,20 @@
       progressBar();
     });
 
-    // Данные сотрудников
-    const employees = [
-      { id:1,name:'Фролова Александра',position:'Ведущий специалист-эксперт',dept:'Отдел экстренной цифровой поддержки',email:'frolova.alexsandra94@gov.ru',phone:'+7(983)1452038',birth:'15.04.1994',idNum:'142-217',resp:['Передача аналитических отчётов','Консультирование по авторизации'],photo:'images/1.jpg',idImg:'images/1_id.jpg',caseUrl:'cases/1_case.pdf' },
-      { id:2,name:'Кузнецов Виктор',position:'Специалист по защите персональных данных',dept:'Защита граждан от цифрового мошенничества',email:'kuznetcov21victor@gov.ru',phone:'+7(933)0253059',birth:'22.09.1991',idNum:'582-749',resp:['Подтверждение личности','Техническое восстановление данных'],photo:'images/2.jpg',idImg:'images/2_id.jpg',caseUrl:'cases/2_case.pdf' },
-      { id:3,name:'Попова Диана',position:'Специалист по кибербезопасности в социальных сетях',dept:'Отдел персональной цифровой безопасности',email:'popova.diana28@gov.ru',phone:'+7(993)0592730',birth:'03.12.1995',idNum:'192-004',resp:['Настройка 2FA','Протоколы шифрования'],photo:'images/3.jpg',idImg:'images/3_id.jpg',caseUrl:'cases/3_case.pdf' },
-      { id:4,name:'Зотова Наталья',position:'Специалист экстренного реагирования',dept:'Отдел защиты от телефонного мошенничества',email:'zotovanatalya70rkn@gov.ru',phone:'+7(951)8537967',birth:'17.08.1994',idNum:'453-513',resp:['Анализ телефонных инцидентов','Консультации'],photo:'images/4.jpg',idImg:'images/4_id.jpg',caseUrl:'cases/4_case.pdf' },
-      { id:5,name:'Пономарева Наталья',position:'Специалист по противодействию мошенническим звонкам',dept:'Онлайн-мошенничество',email:'ponomareva95natalya.rkn@gov.ru',phone:'+7(901)6238892',birth:'27.02.1996',idNum:'564-290',resp:['Ведение дел утраты доступа','Переидентификация'],photo:'images/5.jpg',idImg:'images/5_id.jpg',caseUrl:'cases/5_case.pdf' }
-    ];
+    // Новости: раскрытие текста
+    function toggleNews(id) {
+      const item = document.getElementById(id);
+      item.classList.toggle('expanded');
+    }
 
+    // Сотрудники: генерация карточек и фильтр
+    const employees = [
+      { id:1,name:'Фролова Александра',position:'Ведущий специалист-эксперт',dept:'Цифровая поддержка',email:'frolova.alexsandra94@gov.ru',phone:'+79831452038',birth:'15.04.1994',idNum:'142-217',resp:['Аналитика','Консультации'],photo:'images/1.jpg',idImg:'images/1_id.jpg',caseUrl:'cases/1_case.pdf' },
+      { id:2,name:'Кузнецов Виктор',position:'Специалист по ПД',dept:'Защита граждан',email:'kuznetcov21victor@gov.ru',phone:'+79330253059',birth:'22.09.1991',idNum:'582-749',resp:['Подтверждение личности','Восстановление данных'],photo:'images/2.jpg',idImg:'images/2_id.jpg',caseUrl:'cases/2_case.pdf' },
+      { id:3,name:'Попова Диана',position:'Спец. по кибербезопасности',dept:'Безопасность соц. сетей',email:'popova.diana28@gov.ru',phone:'+79930592730',birth:'03.12.1995',idNum:'192-004',resp:['Пароли','Шифрование'],photo:'images/3.jpg',idImg:'images/3_id.jpg',caseUrl:'cases/3_case.pdf' },
+      { id:4,name:'Зотова Наталья',position:'Экстренное реагирование',dept:'Телефонное мошенничество',email:'zotovanatalya70rkn@gov.ru',phone:'+79518537967',birth:'17.08.1994',idNum:'453-513',resp:['Анализ инцидентов','Консультации'],photo:'images/4.jpg',idImg:'images/4_id.jpg',caseUrl:'cases/4_case.pdf' },
+      { id:5,name:'Пономарева Наталья',position:'Противодействие звонкам',dept:'Онлайн-мошенничество',email:'ponomareva95natalya.rkn@gov.ru',phone:'+79016238892',birth:'27.02.1996',idNum:'564-290',resp:['Утрата доступа','Переидентификация'],photo:'images/5.jpg',idImg:'images/5_id.jpg',caseUrl:'cases/5_case.pdf' }
+    ];
     document.addEventListener('DOMContentLoaded', () => {
       const grid = document.getElementById('employeesGrid');
       employees.forEach(e => {
@@ -1203,12 +1014,20 @@
       });
       form.addEventListener('submit', e => {
         e.preventDefault();
-        localStorage.setItem('surveyCompleted', 'true');
+        localStorage.setItem('surveyCompleted','true');
         survey.classList.remove('open');
       });
 
-      // Форма обратной связи
-      document.getElementById('feedbackForm').addEventListener('submit', e => {
+      // Back to Top
+      const back = document.getElementById('backToTop');
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 600) back.style.display = 'block'; else back.style.display = 'none';
+      });
+      back.addEventListener('click', () => window.scrollTo({ top:0, behavior:'smooth' }));
+
+      // Feedback form
+      const feedback = document.getElementById('feedbackForm');
+      feedback.addEventListener('submit', e => {
         e.preventDefault();
         alert('Спасибо! Ваше сообщение отправлено.');
         e.target.reset();
@@ -1221,30 +1040,25 @@
       document.getElementById('modalPosition').textContent = e.position;
       document.getElementById('modalDept').textContent = e.dept;
       const em = document.getElementById('modalEmail');
-      em.textContent = e.email;
-      em.href = `mailto:${e.email}`;
+      em.textContent = e.email; em.href = `mailto:${e.email}`;
       const ph = document.getElementById('modalPhone');
-      ph.textContent = e.phone;
-      ph.href = `tel:${e.phone.replace(/\D/g,'')}`;
+      ph.textContent = e.phone; ph.href = `tel:${e.phone.replace(/\D/g,'')}`;
       document.getElementById('modalBirth').textContent = e.birth;
       document.getElementById('modalIdNum').textContent = e.idNum;
       document.getElementById('modalResp').textContent = e.resp.join(', ');
       const img = document.getElementById('modalIdImg');
-      img.src = e.idImg;
-      img.alt = `Удостоверение ${e.name}`;
+      img.src = e.idImg; img.alt = `Удостоверение ${e.name}`;
       document.getElementById('modalCaseLink').href = e.caseUrl;
       document.getElementById('employeeModal').classList.add('open');
       document.body.classList.add('modal-open');
     }
-
     function closeEmployee() {
       document.getElementById('employeeModal').classList.remove('open');
       document.body.classList.remove('modal-open');
     }
-
     function filterEmployees() {
       const term = document.getElementById('searchInput').value.toLowerCase();
-      document.querySelectorAll('.employee-card').forEach((card, i) => {
+      document.querySelectorAll('.employee-card').forEach((card,i) => {
         card.style.display = employees[i].name.toLowerCase().includes(term) ? '' : 'none';
       });
     }
