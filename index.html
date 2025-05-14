@@ -553,19 +553,17 @@ barEl.style.width = '100%';
     ];
 
     document.addEventListener('DOMContentLoaded', () => {
-  const grid = document.getElementById('employeesGrid');
-  employees.forEach(e => {
-    const card = document.createElement('article');
-    card.className = 'employee-card';
-    card.innerHTML = 
-      <img src="${e.photo}" alt="${e.name}" class="employee-photo">
-      <div class="employee-name">${e.name}</div>
-      <div class="employee-position">${e.position}</div>
-      <div class="employee-dept">${e.dept}</div>
-      <button class="btn-details" onclick="openEmployee(${e.id})">Подробнее</button>
-    ;
-    grid.appendChild(card);
-  });
+  // Запускаем «инициализацию» сразу после разбора DOM
+  setTimeout(() => {
+    document.getElementById('loader-text').textContent = 'Проверка сертификата…';
+  }, 1500);
+  setTimeout(() => {
+    document.getElementById('loader-text').textContent = 'Соединение защищено';
+  }, 3000);
+  setTimeout(() => {
+    document.getElementById('loader').style.display = 'none';
+  }, 4000);
+});
 
   // Анкета безопасности...
   // (оставляем один обработчик submit)
