@@ -53,7 +53,10 @@
     .bar {
       width: 0%; height: 100%;
       background: var(--loader-spinner);
-      transition: width var(--loader-speed) linear;
+    }
+      @keyframes loadBar {
+     from { width: 0; }
+      to   { width: 100%; }
     }
     .percent {
       position: absolute; top: -20px; right: 8px;
@@ -438,65 +441,66 @@
     ];
 
     // 1) Loader
-window.addEventListener('load', () => {
-    const statuses = [
+  window.addEventListener('load', () => {
+    const statuses    = [
       'Подключение к ведомственной сети…',
       'Аутентификация ключей…',
       'Загрузка данных…',
       'Завершаем настройку…'
     ];
-    const statusEl   = document.querySelector('#loader .status');
-    const barEl      = document.querySelector('#loader .bar');
-    const percentEl  = document.querySelector('#loader .percent');
-    const loader     = document.getElementById('loader');
+    const statusEl    = document.querySelector('#loader .status');
+    const barEl       = document.querySelector('#loader .bar');
+    const percentEl   = document.querySelector('#loader .percent');
+    const loader      = document.getElementById('loader');
 
-    const totalSteps = statuses.length;
-    const interval   = 1200; // мс на каждый этап
+    const stepInterval = 1200;                    // мс между статусами
+    const totalSteps    = statuses.length;
+    const totalDuration = stepInterval * totalSteps; // общая длительность
+
+    // 1) Запускаем анимацию полосы
+    barEl.style.animation = `loadBar ${totalDuration}ms linear forwards`;
+
+    // 2) Обновляем цифру процентов плавно
+    const startTime = performance.now();
+    function updatePercent(now) {
+      const elapsed = now - startTime;
+      const pct = Math.min((elapsed / totalDuration) * 100, 100);
+      percentEl.textContent = Math.round(pct) + '%';
+      if (pct < 100) requestAnimationFrame(updatePercent);
+    }
+    requestAnimationFrame(updatePercent);
+
+    // 3) Меняем статусы через равные интервалы
     let step = 0;
-
-    function nextStep() {
+    function nextStatus() {
       if (step < totalSteps) {
-        // Выводим статус
-        statusEl.textContent = statuses[step];
-        // Считаем целевой % для этой итерации
-        const target = ((step + 1) / totalSteps) * 100;
-        // Анимируем полосу за время interval
-        barEl.style.transition = `width ${interval}ms linear`;
-        barEl.style.width      = target + '%';
-        percentEl.textContent  = Math.round(target) + '%';
-        step++;
-        // Переходим к следующему шагу через interval
-        setTimeout(nextStep, interval);
-      } else {
-        finishLoader();
+        statusEl.textContent = statuses[step++];
+        setTimeout(nextStatus, stepInterval);
       }
     }
+    nextStatus();
 
-    function finishLoader() {
-      // Превращаем спиннер в галочку
+    // 4) По завершении общего времени — финальные правки и скрытие
+    setTimeout(() => {
       const spinner = document.querySelector('.spinner');
       spinner.style.animation = 'none';
       spinner.style.border    = 'none';
       spinner.textContent     = '✓';
       spinner.style.fontSize  = '48px';
       spinner.style.color     = 'var(--loader-success)';
-      // Финальный статус
-      statusEl.textContent   = 'Готово';
-      statusEl.style.color   = 'var(--loader-success)';
-      // Полоса 100 %
-      barEl.style.transition = 'width 400ms ease';
-      barEl.style.width      = '100%';
-      percentEl.textContent  = '100%';
-      // Скрываем лоадер
+
+      statusEl.textContent      = 'Готово';
+      statusEl.style.color      = 'var(--loader-success)';
+      barEl.style.background    = 'var(--loader-success)';
+      percentEl.textContent     = '100%';
+
       setTimeout(() => {
         loader.classList.add('hidden');
         loader.setAttribute('aria-busy', 'false');
       }, 600);
-    }
-
-    // Старт
-    nextStep();
+    }, totalDuration);
   });
+
 
     // 2) Рендер карточек и анкета: когда DOM готов
     document.addEventListener('DOMContentLoaded', () => {
