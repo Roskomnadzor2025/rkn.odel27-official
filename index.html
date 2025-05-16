@@ -249,11 +249,15 @@
     @media(max-width:480px) { .modal-content { width:95%; } }
 
     /* === OFF-CANVAS MENU === */
-  .nav-toggle-btn,
-  #mobile-nav,
-  #mobile-overlay {
-    display: none;
-  }
+  .nav-toggle-btn {
+  display: none;
+}
+
+/* сам сайдбар и оверлей видимы всегда (их начальное положение делает их невидимыми) */
+#mobile-nav,
+#mobile-overlay {
+  display: block;
+}
 
   #mobile-nav {
     position: fixed;
