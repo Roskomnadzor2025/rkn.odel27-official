@@ -289,20 +289,27 @@
     opacity: 1; pointer-events: auto;
   }
 
-  @media (max-width: 767px) {
+@media (max-width: 767px) {
+  /* относительный контейнер для абсолютного позиционирования */
+  header {
+    position: sticky; /* уже стоит */
+    top: 0;
+  }
+
   .nav-toggle-btn {
     display: block;
-    position: relative;      /* чтобы z-index работал */
-    padding: 8px 16px;       /* увеличиваем зону клика */
-    margin-left: auto;
-    margin-right: 12px;      /* отступ от правого края */
+    position: absolute;  /* абсолютное внутри header */
+    top: 16px;           /* соответствует вашему паддингу */
+    right: 16px;         /* на 16px от правого края окна */
+    padding: 8px;        /* зона клика */
     background: transparent;
     border: none;
     color: #fff;
     font-size: 24px;
     cursor: pointer;
-    z-index: 1002;           /* выше оверлея */
+    z-index: 1002;
   }
+
   .nav-links {
     display: none;
   }
