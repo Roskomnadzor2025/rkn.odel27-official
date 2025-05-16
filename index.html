@@ -290,18 +290,18 @@
   }
 
 @media (max-width: 767px) {
-  /* относительный контейнер для абсолютного позиционирования */
   header {
-    position: sticky; /* уже стоит */
+    position: sticky;
     top: 0;
+    width: 100%;
   }
 
   .nav-toggle-btn {
     display: block;
-    position: absolute;  /* абсолютное внутри header */
-    top: 16px;           /* соответствует вашему паддингу */
-    right: 16px;         /* на 16px от правого края окна */
-    padding: 8px;        /* зона клика */
+    position: absolute;
+    top: 16px;       /* ваш отступ сверху */
+    right: 8px;      /* уже почти в угол */
+    padding: 8px;    /* зона клика */
     background: transparent;
     border: none;
     color: #fff;
