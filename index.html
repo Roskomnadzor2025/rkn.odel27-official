@@ -247,7 +247,59 @@
       .trust-seal { bottom:4px; right:8px; font-size:12px; }
     }
     @media(max-width:480px) { .modal-content { width:95%; } }
-  </style>
+
+    /* === OFF-CANVAS MENU === */
+  .nav-toggle-btn,
+  #mobile-nav,
+  #mobile-overlay {
+    display: none;
+  }
+
+  #mobile-nav {
+    position: fixed;
+    top: 0; left: -260px;
+    width: 260px; height: 100vh;
+    background: #003366;
+    padding: 80px 16px;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.3);
+    transition: left 0.3s ease;
+    z-index: 1001;
+  }
+  #mobile-nav.open { left: 0; }
+  #mobile-nav nav a {
+    display: block;
+    margin-bottom: 16px;
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  #mobile-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5);
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 1000;
+  }
+  #mobile-overlay.open {
+    opacity: 1; pointer-events: auto;
+  }
+
+  @media (max-width: 767px) {
+    .nav-toggle-btn {
+      display: block;
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 24px;
+      cursor: pointer;
+      margin-left: auto;
+    }
+    .nav-links {
+      display: none;
+    }
+  }
+</style>
 </head>
 <body>
 
@@ -266,24 +318,36 @@
 
   <!-- Шапка -->
   <header>
-    <div class="container">
-      <img src="images/rkn-logo.png" alt="Герб Роскомнадзора" class="logo" />
-      <div class="agency-title">
-        ФЕДЕРАЛЬНАЯ СЛУЖБА ПО НАДЗОРУ В СФЕРЕ СВЯЗИ,<br>
-        ИНФОРМАЦИОННЫХ ТЕХНОЛОГИЙ И МАССОВЫХ КОММУНИКАЦИЙ
-      </div>
-      <input type="checkbox" id="nav-toggle" class="nav-toggle" />
-      <label for="nav-toggle" class="nav-toggle-label">☰</label>
-      <nav class="nav-links">
-        <a href="https://rkn.gov.ru" target="_blank">Главная</a>
-        <a href="#about">Важное</a>
-        <a href="#employees">Сотрудники</a>
-        <a href="#leadership">Горячая линия</a>
-        <a href="#docs">Официальные документы</a>
-      </nav>
-    </div>
-  </header>
+  <div class="container">
+    <img src="images/rkn-logo.png" alt="Герб Роскомнадзора" class="logo" />
+    <div class="agency-title">ФЕДЕРАЛЬНАЯ СЛУЖБА ПО НАДЗОРУ В СФЕРЕ СВЯЗИ,<br> 
+      ИНФОРМАЦИОННЫХ ТЕХНОЛОГИЙ И МАССОВЫХ КОММУНИКАЦИЙ</div>
 
+    <!-- Кнопка открытия мобильного меню -->
+    <button class="nav-toggle-btn" aria-label="Открыть меню">☰</button>
+
+    <!-- Обычное меню для десктопа -->
+    <nav class="nav-links">
+      <a href="#">Главная</a>
+      <a href="#about">Важное</a>
+      <a href="#employees">Сотрудники</a>
+      <a href="#leadership">Горячая линия</a>
+      <a href="#docs">Официальные документы</a>
+    </nav>
+  </div>
+</header>
+
+<!-- OFF-CANVAS SIDEBAR для мобильных -->
+<div id="mobile-overlay"></div>
+<aside id="mobile-nav">
+  <nav>
+    <a href="#">Главная</a>
+    <a href="#about">Важное</a>
+    <a href="#employees">Сотрудники</a>
+    <a href="#leadership">Горячая линия</a>
+    <a href="#docs">Официальные документы</a>
+  </nav>
+</aside>
   <!-- Hero -->
   <section class="hero">
     <div class="container">
@@ -598,6 +662,21 @@
         card.style.display = employees[i].name.toLowerCase().includes(term) ? '' : 'none';
       });
     }
+
+    // === off-canvas mobile menu ===
+  document.addEventListener('DOMContentLoaded', () => {
+    const btn     = document.querySelector('.nav-toggle-btn');
+    const sidebar = document.getElementById('mobile-nav');
+    const overlay = document.getElementById('mobile-overlay');
+
+    function toggleMenu() {
+      sidebar.classList.toggle('open');
+      overlay.classList.toggle('open');
+    }
+
+    btn.addEventListener('click', toggleMenu);
+    overlay.addEventListener('click', toggleMenu);
+  });
   </script>
 </body>
 </html>
