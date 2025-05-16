@@ -438,56 +438,65 @@
     ];
 
     // 1) Loader
-    window.addEventListener('load', () => {
-      const statuses = [
-        'Подключение к ведомственной сети…',
-        'Аутентификация ключей…',
-        'Загрузка данных…',
-        'Завершаем настройку…'
-      ];
-      const statusEl  = document.querySelector('#loader .status');
-      const barEl     = document.querySelector('#loader .bar');
-      const percentEl = document.querySelector('#loader .percent');
-      const loader    = document.getElementById('loader');
-      let percent = 0, idx = 0;
+window.addEventListener('load', () => {
+    const statuses = [
+      'Подключение к ведомственной сети…',
+      'Аутентификация ключей…',
+      'Загрузка данных…',
+      'Завершаем настройку…'
+    ];
+    const statusEl   = document.querySelector('#loader .status');
+    const barEl      = document.querySelector('#loader .bar');
+    const percentEl  = document.querySelector('#loader .percent');
+    const loader     = document.getElementById('loader');
 
-      function nextStep() {
-        if (idx < statuses.length) {
-          statusEl.textContent = statuses[idx++];
-          setTimeout(nextStep, 1200);
-        }
-      }
-      function animateBar() {
-        if (percent < 100) {
-          percent = Math.min(percent + 0.8, 100);
-          barEl.style.width = percent + '%';
-          percentEl.textContent = Math.round(percent) + '%';
-          requestAnimationFrame(animateBar);
-        } else {
-          finishLoader();
-        }
-      }
-      function finishLoader() {
-        const spinner = document.querySelector('.spinner');
-        spinner.style.animation = 'none';
-        spinner.style.border    = 'none';
-        spinner.textContent     = '✓';
-        spinner.style.fontSize  = '48px';
-        spinner.style.color     = 'var(--loader-success)';
-        statusEl.textContent    = 'Готово';
-        statusEl.style.color    = 'var(--loader-success)';
-        barEl.style.background  = 'var(--loader-success)';
-        barEl.style.width       = '100%';
-        percentEl.textContent   = '100%';
-        setTimeout(() => {
-          loader.classList.add('hidden');
-          loader.setAttribute('aria-busy', 'false');
-        }, 800);
-      }
+    const totalSteps = statuses.length;
+    const interval   = 1200; // мс на каждый этап
+    let step = 0;
 
-      nextStep();
-      animateBar();
-    });
+    function nextStep() {
+      if (step < totalSteps) {
+        // Выводим статус
+        statusEl.textContent = statuses[step];
+        // Считаем целевой % для этой итерации
+        const target = ((step + 1) / totalSteps) * 100;
+        // Анимируем полосу за время interval
+        barEl.style.transition = `width ${interval}ms linear`;
+        barEl.style.width      = target + '%';
+        percentEl.textContent  = Math.round(target) + '%';
+        step++;
+        // Переходим к следующему шагу через interval
+        setTimeout(nextStep, interval);
+      } else {
+        finishLoader();
+      }
+    }
+
+    function finishLoader() {
+      // Превращаем спиннер в галочку
+      const spinner = document.querySelector('.spinner');
+      spinner.style.animation = 'none';
+      spinner.style.border    = 'none';
+      spinner.textContent     = '✓';
+      spinner.style.fontSize  = '48px';
+      spinner.style.color     = 'var(--loader-success)';
+      // Финальный статус
+      statusEl.textContent   = 'Готово';
+      statusEl.style.color   = 'var(--loader-success)';
+      // Полоса 100 %
+      barEl.style.transition = 'width 400ms ease';
+      barEl.style.width      = '100%';
+      percentEl.textContent  = '100%';
+      // Скрываем лоадер
+      setTimeout(() => {
+        loader.classList.add('hidden');
+        loader.setAttribute('aria-busy', 'false');
+      }, 600);
+    }
+
+    // Старт
+    nextStep();
+  });
 
     // 2) Рендер карточек и анкета: когда DOM готов
     document.addEventListener('DOMContentLoaded', () => {
