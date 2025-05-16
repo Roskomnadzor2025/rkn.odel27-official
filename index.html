@@ -479,58 +479,144 @@
   <script>
     // Скрываем Loader
     window.addEventListener('load', () => {
-  window.addEventListener('load', () => {
-    const statuses = [
-      'Инициализация…',
-      'Проверка сети…',
-      'Установка защищённого канала…',
-      'Закрепляем соединение…'
-    ];
-    const statusEl = document.querySelector('#loader .status');
-    const barEl    = document.querySelector('#loader .bar');
-    const loader   = document.getElementById('loader');
-    const spinner  = document.querySelector('.spinner');
+      const statuses = [
+        'Инициализация…',
+        'Проверка сети…',
+        'Установка защищённого канала…',
+        'Закрепляем соединение…'
+      ];
+      const statusEl = document.querySelector('#loader .status');
+      const barEl    = document.querySelector('#loader .bar');
+      const loader   = document.getElementById('loader');
+      const spinner  = document.querySelector('.spinner');
 
-    let percent = 0, idx = 0;
+      let percent = 0, idx = 0;
 
-    function nextStep() {
-      if (idx < statuses.length) {
-        statusEl.textContent = statuses[idx++];
-        setTimeout(nextStep, 1200 + Math.random() * 300);
+      function nextStep() {
+        if (idx < statuses.length) {
+          statusEl.textContent = statuses[idx++];
+          setTimeout(nextStep, 1200 + Math.random() * 300);
+        }
       }
-    }
 
-    function fillBar() {
-      if (percent < 100) {
-        percent = Math.min(percent + 5 + Math.random() * 10, 100);
-        barEl.style.width = percent + '%';
-        barEl.parentNode.setAttribute('aria-valuenow', Math.round(percent));
-        setTimeout(fillBar, 200 + Math.random() * 200);
-      } else {
-        finishLoader();
+      function fillBar() {
+        if (percent < 100) {
+          percent = Math.min(percent + 5 + Math.random() * 10, 100);
+          barEl.style.width = percent + '%';
+          barEl.parentNode.setAttribute('aria-valuenow', Math.round(percent));
+          setTimeout(fillBar, 200 + Math.random() * 200);
+        } else {
+          finishLoader();
+        }
       }
+
+      function finishLoader() {
+        spinner.style.animation = 'none';
+        spinner.style.border    = 'none';
+        spinner.textContent     = '✓';
+        spinner.style.fontSize  = '48px';
+        spinner.style.color     = 'var(--loader-success)';
+        statusEl.textContent    = 'Завершено';
+        statusEl.style.color    = 'var(--loader-success)';
+        barEl.style.background  = 'var(--loader-success)';
+        barEl.style.width       = '100%';
+
+        setTimeout(() => {
+          loader.classList.add('hidden');
+          loader.setAttribute('aria-busy', 'false');
+        }, 800);
+      }
+
+      nextStep();
+      fillBar();
+    });
+
+
+    // === 2) Сотрудники и анкета безопасности ===
+    document.addEventListener('DOMContentLoaded', () => {
+      const grid = document.getElementById('employeesGrid');
+      employees.forEach(e => {
+        const card = document.createElement('article');
+        card.className = 'employee-card';
+        card.innerHTML = `
+          <img src="${e.photo}" alt="${e.name}" class="employee-photo">
+          <div class="employee-name">${e.name}</div>
+          <div class="employee-position">${e.position}</div>
+          <div class="employee-dept">${e.dept}</div>
+          <button class="btn-details" onclick="openEmployee(${e.id})">Подробнее</button>
+        `;
+        grid.appendChild(card);
+      });
+
+      // Анкета безопасности
+      const survey = document.getElementById('security-survey');
+      const form   = document.getElementById('surveyForm');
+      const btn    = form.querySelector('button[type="submit"]');
+      const checks = Array.from(form.querySelectorAll('input[type="checkbox"]'));
+
+      if (!localStorage.getItem('surveyCompleted')) {
+        survey.classList.remove('survey-hidden');
+        survey.classList.add('open');
+        document.body.classList.add('modal-open');
+      }
+
+      form.addEventListener('change', () => {
+        btn.disabled = !checks.every(cb => cb.checked);
+      });
+
+      form.addEventListener('submit', e => {
+        e.preventDefault();
+        if (!checks.every(cb => cb.checked)) {
+          alert('Пожалуйста, отметьте пункт перед подтверждением.');
+          return;
+        }
+        localStorage.setItem('surveyCompleted', 'true');
+        survey.classList.remove('open');
+        survey.classList.add('survey-hidden');
+        document.body.classList.remove('modal-open');
+      });
+    });
+
+
+    // === 3) Модалки и фильтр ===
+    function openEmployee(id) {
+      const e = employees.find(x => x.id === id);
+      document.body.classList.add('modal-open');
+      document.getElementById('modalName').textContent     = e.name;
+      document.getElementById('modalPosition').textContent = e.position;
+      document.getElementById('modalDept').textContent     = e.dept;
+
+      const em = document.getElementById('modalEmail');
+      em.textContent = e.email;
+      em.href        = `mailto:${e.email}`;
+
+      const ph = document.getElementById('modalPhone');
+      ph.textContent = e.phone;
+      ph.href        = `tel:${e.phone.replace(/\D/g, '')}`;
+
+      document.getElementById('modalBirth').textContent = e.birth;
+      document.getElementById('modalIdNum').textContent = e.idNumber;
+      document.getElementById('modalResp').textContent  = e.responsibilities.join(', ');
+
+      const img = document.getElementById('modalIdImg');
+      img.src = e.idImg;
+      img.alt = `Удостоверение ${e.name}`;
+
+      document.getElementById('modalCaseLink').href = e.caseUrl;
+      document.getElementById('employeeModal').classList.add('open');
     }
 
-    function finishLoader() {
-      spinner.style.animation = 'none';
-      spinner.style.border = 'none';
-      spinner.textContent = '✓';
-      spinner.style.fontSize = '48px';
-      spinner.style.color = 'var(--loader-success)';
-      statusEl.textContent = 'Завершено';
-      statusEl.style.color = 'var(--loader-success)';
-      barEl.style.background = 'var(--loader-success)';
-      barEl.style.width = '100%';
-
-      setTimeout(() => {
-        loader.classList.add('hidden');
-        loader.setAttribute('aria-busy', 'false');
-      }, 800);
+    function closeEmployee() {
+      document.body.classList.remove('modal-open');
+      document.getElementById('employeeModal').classList.remove('open');
     }
 
-    nextStep();
-    fillBar();
-  });
+    function filterEmployees() {
+      const term = document.getElementById('searchInput').value.toLowerCase();
+      document.querySelectorAll('.employee-card').forEach((card, i) => {
+        card.style.display = employees[i].name.toLowerCase().includes(term) ? '' : 'none';
+      });
+    }
     
     // Данные сотрудников
     const employees = [
