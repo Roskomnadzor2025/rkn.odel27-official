@@ -8,78 +8,63 @@
   <style>
     /* ===== ЗАГРУЗЧИК ===== */
     :root {
-    --loader-bg: rgba(0, 51, 102, 0.9);
-    --loader-spinner: #1a4d80;
-    --loader-success: #4caf50;
-    --loader-text: #fff;
-    --loader-radius: 50%;
-    --loader-speed: 0.8s; /* быстрее, линейно */
-  }
-
-  .loader {
-    position: fixed; inset:0;
-    background: var(--loader-bg);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 9999; transition: opacity 0.5s ease;
-  }
-  .loader.hidden {
-    opacity: 0; pointer-events: none;
-  }
-
-  .loader-content {
-    text-align: center; color: var(--loader-text);
-    max-width: 300px; padding: 20px;
-  }
-  .loader-logo {
-    width: 80px; margin-bottom: 16px;
-  }
-  .spinner {
-    width: 50px; height: 50px;
-    margin: 0 auto 16px;
-    border: 4px solid rgba(255,255,255,0.3);
-    border-top-color: var(--loader-spinner);
-    border-radius: var(--loader-radius);
-    animation: spin var(--loader-speed) linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .status {
-    font-size: 16px; margin-bottom: 8px;
-  }
-
-  .progress {
-    position: relative;
-    width: 100%; height: 8px;
-    background: rgba(255,255,255,0.3);
-    border-radius: 4px; overflow: hidden;
-    margin: 8px 0 4px;
-  }
-  .bar {
-    width: 0%; height: 100%;
-    background: var(--loader-spinner);
-    transition: width var(--loader-speed) linear;
-  }
-  .percent {
-    position: absolute; top: -20px; right: 8px;
-    font-size: 14px; color: var(--loader-text);
-  }
-</style>
+      --loader-bg: rgba(0, 51, 102, 0.9);
+      --loader-spinner: #1a4d80;
+      --loader-success: #4caf50;
+      --loader-text: #fff;
+      --loader-radius: 50%;
+      --loader-speed: 0.8s;
+    }
+    .loader {
+      position: fixed; inset: 0;
+      background: var(--loader-bg);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 9999; transition: opacity 0.5s ease;
+    }
+    .loader.hidden {
+      opacity: 0; pointer-events: none;
+    }
+    .loader-content {
+      text-align: center; color: var(--loader-text);
+      max-width: 300px; padding: 20px;
+    }
+    .loader-logo {
+      width: 80px; margin-bottom: 16px;
+    }
+    .spinner {
+      width: 50px; height: 50px;
+      margin: 0 auto 16px;
+      border: 4px solid rgba(255,255,255,0.3);
+      border-top-color: var(--loader-spinner);
+      border-radius: var(--loader-radius);
+      animation: spin var(--loader-speed) linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .status {
+      font-size: 16px; margin-bottom: 8px;
+    }
+    .progress {
+      position: relative;
+      width: 100%; height: 8px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 4px; overflow: hidden;
+      margin: 8px 0 4px;
+    }
+    .bar {
+      width: 0%; height: 100%;
+      background: var(--loader-spinner);
+      transition: width var(--loader-speed) linear;
+    }
+    .percent {
+      position: absolute; top: -20px; right: 8px;
+      font-size: 14px; color: var(--loader-text);
+    }
 
     /* ===== СБРОС ===== */
     *, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
-    button:focus,
-  .btn-details:focus,
-  .modal-close:focus,
-  a:focus {
-    outline: none;
-  }
-  button::-moz-focus-inner {
-    border: 0;
-  }
-  button,
-  a {
-    -webkit-tap-highlight-color: transparent;
-  }
+    button:focus, .btn-details:focus, .modal-close:focus, a:focus { outline: none; }
+    button::-moz-focus-inner { border: 0; }
+    button, a { -webkit-tap-highlight-color: transparent; }
     body { font-family:'PT Sans',sans-serif; background:#F5F7FA; color:#212121; line-height:1.5; }
     a { color:inherit; text-decoration:none; }
     ul { list-style:none; }
@@ -93,19 +78,9 @@
     .logo { height:40px; flex-shrink:0; }
     .agency-title { margin-left:12px; font-size:14px; line-height:1.3; flex-shrink:1; white-space:normal; }
 
-    /* --- Индикатор защищённого канала и статус --- */
-    .secure-indicator {
-      margin-left:12px; font-size:20px; cursor:default;
-    }
-    .encryption-status {
-      margin-left:8px; font-size:14px; opacity:0.9;
-    }
-
     /* бургер-меню */
     .nav-toggle { position:absolute; top:16px; right:16px; width:32px; height:32px; opacity:0; z-index:10; }
-    .nav-toggle-label {
-      display:none; color:#fff; font-size:24px; position:absolute; top:16px; right:16px; cursor:pointer;
-    }
+    .nav-toggle-label { display:none; color:#fff; font-size:24px; position:absolute; top:16px; right:16px; cursor:pointer; }
     .nav-links { display:flex; gap:24px; margin-left:auto; z-index:1; }
     .nav-links a { font-weight:600; transition:opacity .2s; }
     .nav-links a:hover { opacity:.8; }
@@ -176,8 +151,7 @@
     .modal {
       position:fixed; inset:0; background:rgba(0,0,0,.5);
       display:flex; align-items:center; justify-content:center;
-      opacity:0; pointer-events:none; transition:opacity .2s;
-      z-index: 2000;
+      opacity:0; pointer-events:none; transition:opacity .2s; z-index:2000;
     }
     .modal.open { opacity:1; pointer-events:auto; }
     .modal-content {
@@ -186,13 +160,11 @@
     }
     .modal-header {
       display:flex; justify-content:space-between; align-items:center;
-      padding:16px; border-bottom:1px solid #eee; position:sticky;
-      top:0; background:#fff; z-index:2;
+      padding:16px; border-bottom:1px solid #eee; position:sticky; top:0;
+      background:#fff; z-index:2;
     }
     .modal-header h2 { margin:0; color:#003366; font-size:20px; }
-    .modal-close {
-      background:transparent; border:none; font-size:24px; cursor:pointer; line-height:1;
-    }
+    .modal-close { background:transparent; border:none; font-size:24px; cursor:pointer; line-height:1; }
     .modal-body { padding:16px; overflow-y:auto; flex:1; }
     .modal-body p { margin-bottom:8px; color:#555; }
     .id-card img {
@@ -216,9 +188,7 @@
       border-radius:8px; padding:12px; text-align:center;
       box-shadow:0 2px 6px rgba(0,0,0,.2); font-size:12px; z-index:1000;
     }
-    .certified-badge .cert-icon {
-      font-size:24px; display:block; margin-bottom:4px;
-    }
+    .certified-badge .cert-icon { font-size:24px; display:block; margin-bottom:4px; }
     .certified-badge small { display:block; font-size:10px; }
 
     /* ===== ФУТЕР ===== */
@@ -243,14 +213,10 @@
         position:absolute; top:100%; left:0; width:100%; z-index:5;
       }
       .nav-toggle:checked ~ .nav-links { display:flex; }
-      .nav-links a {
-        padding:12px 16px; border-top:1px solid rgba(255,255,255,.2);
-      }
+      .nav-links a { padding:12px 16px; border-top:1px solid rgba(255,255,255,.2); }
       .employees-grid { grid-template-columns:1fr; }
       .agency-title { font-size:12px; line-height:1.2; }
-      .certified-badge {
-        bottom:10px; right:10px; padding:8px; font-size:10px;
-      }
+      .certified-badge { bottom:10px; right:10px; padding:8px; font-size:10px; }
       .trust-seal { bottom:4px; right:8px; font-size:12px; }
     }
     @media(max-width:480px) { .modal-content { width:95%; } }
@@ -260,38 +226,36 @@
 
   <!-- Loader -->
   <div id="loader" class="loader" role="alert" aria-busy="true" aria-live="polite">
-  <div class="loader-content">
-    <!-- ваш герб -->
-    <img src="images/rkn-logo.png" alt="Герб Роскомнадзора" class="loader-logo">
-    <div class="spinner" aria-hidden="true"></div>
-    <div class="status">Инициализация…</div>
-    <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-      <div class="bar"></div>
-      <div class="percent">0%</div>
+    <div class="loader-content">
+      <img src="images/rkn-logo.png" alt="Герб Роскомнадзора" class="loader-logo">
+      <div class="spinner" aria-hidden="true"></div>
+      <div class="status">Инициализация…</div>
+      <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <div class="bar"></div>
+        <div class="percent">0%</div>
+      </div>
     </div>
   </div>
-</div>
 
   <!-- Шапка -->
- <header>
-  <div class="container">
-    <img src="images/rkn-logo.png" alt="Герб Роскомнадзора" class="logo" />
-    <div class="agency-title">
-      ФЕДЕРАЛЬНАЯ СЛУЖБА ПО НАДЗОРУ В СФЕРЕ СВЯЗИ,<br>
-      ИНФОРМАЦИОННЫХ ТЕХНОЛОГИЙ И МАССОВЫХ КОММУНИКАЦИЙ
+  <header>
+    <div class="container">
+      <img src="images/rkn-logo.png" alt="Герб Роскомнадзора" class="logo" />
+      <div class="agency-title">
+        ФЕДЕРАЛЬНАЯ СЛУЖБА ПО НАДЗОРУ В СФЕРЕ СВЯЗИ,<br>
+        ИНФОРМАЦИОННЫХ ТЕХНОЛОГИЙ И МАССОВЫХ КОММУНИКАЦИЙ
+      </div>
+      <input type="checkbox" id="nav-toggle" class="nav-toggle" />
+      <label for="nav-toggle" class="nav-toggle-label">☰</label>
+      <nav class="nav-links">
+        <a href="https://rkn.gov.ru" target="_blank">Главная</a>
+        <a href="#about">Важное</a>
+        <a href="#employees">Сотрудники</a>
+        <a href="#leadership">Горячая линия</a>
+        <a href="#docs">Официальные документы</a>
+      </nav>
     </div>
-    <input type="checkbox" id="nav-toggle" class="nav-toggle" />
-    <label for="nav-toggle" class="nav-toggle-label">☰</label>
-    <nav class="nav-links">
-      <a href="https://rkn.gov.ru" target="_blank">Главная</a>
-      <a href="#about">Важное</a>
-      <a href="#employees">Сотрудники</a>
-      <a href="#leadership">Горячая линия</a>
-      <a href="#docs">Официальные документы</a>
-    </nav>
-  </div>
-</header>
-
+  </header>
 
   <!-- Hero -->
   <section class="hero">
@@ -358,7 +322,7 @@
 
     <hr class="divider">
 
-    <!-- Сотрудники -->
+    <!-- Сотрудники -->  
     <section id="employees" class="block">
       <h2 class="section-title">Сотрудники</h2>
       <div class="search">
@@ -395,7 +359,7 @@
 
     <hr class="divider">
 
-    <!-- Руководство -->
+    <!-- Горячая линия -->
     <section id="leadership" class="block">
       <h2 class="section-title">Горячая линия</h2>
       <div class="leader-list">
@@ -421,7 +385,7 @@
     <p>Тел.: +7 (495) 248-27-55 • hotline@rkn.gov.ru</p>
   </footer>
 
-  <!-- Плашка сертификации -->
+  <!-- Сертификация -->
   <div class="certified-badge">
     <span class="cert-icon">🛡️</span>
     Официально сертифицировано
@@ -456,249 +420,147 @@
         <h2 id="surveyTitle">Обеспечение безопасности</h2>
       </div>
       <form id="surveyForm" class="modal-body">
-        <p>Согласно системным данным, вы в настоящее время общаетесь со специалистом Роскомнадзора через защищённый канал связи — WhatsApp. Просим подтвердить соблюдение следующих мер безопасности:</p>
-        <label><input type="checkbox" name="q1" required> Я сохраняю конфиденциальность разговора и не передаю информацию третьим лицам.</label><br>
-        <br>
+        <p>Вы сейчас общаетесь через защищённый канал. Подтвердите соблюдение мер безопасности:</p>
+        <label><input type="checkbox" name="q1" required> Я сохраняю конфиденциальность разговора.</label><br><br>
         <button type="submit" class="btn-details">Подтвердить</button>
       </form>
     </div>
   </div>
 
   <script>
-    
-    // Данные сотрудников
+    // 0) Данные сотрудников
     const employees = [
       { id:1, name:'Фролова Александра', position:'Ведущий специалист-эксперт', dept:'Отдел экстренной цифровой поддержки', email:'frolova.alexsandra94@gov.ru', phone:'+7(983)145-20-38', birth:'15.04.1994', idNumber:'142-217', responsibilities:['Передает аналитические отчёты в другие подразделения','Консультирует по безопасной повторной авторизации'], photo:'images/1.jpg', idImg:'images/1_id.jpg', caseUrl:'cases/1_case.pdf' },
       { id:2, name:'Кузнецов Виктор', position:'Специалист по защите персональных данных', dept:'Защита граждан от цифрового мошенничества', email:'kuznetcov21victor@gov.ru', phone:'+7(933)025-30-59', birth:'22.09.1991', idNumber:'582-749', responsibilities:['Подтверждает подлинность личности граждан после компрометации','Организует техническое восстановление данных'], photo:'images/2.jpg', idImg:'images/2_id.jpg', caseUrl:'cases/2_case.pdf' },
       { id:3, name:'Попова Диана', position:'Специалист по кибербезопасности в социальных сетях', dept:'Отдел персональной цифровой безопасности', email:'popova.diana28@gov.ru', phone:'+7(993)059-27-30', birth:'03.12.1995', idNumber:'192-004', responsibilities:['Сопровождает процесс смены паролей и настройки двухфакторной аутентификации','Протоколы шифрования'], photo:'images/3.jpg', idImg:'images/3_id.jpg', caseUrl:'cases/3_case.pdf' },
-      { id:4, name:'Зотова Наталья', position:'Специалист экстренного реагирования', dept:'Отдел по защите от телефонного мошенничества', email:'zotovanatalya70rkn@gov.ru', phone:'+7(951)853-79-67', birth:'17.08.1994', idNumber:'453-513', responsibilities:['Анализирует инциденты, связанные с обманом по телефону','Консультирует граждан, пострадавших от передачи персональных данных'], photo:'images/4.jpg', idImg:'images/4_id.jpg', caseUrl:'cases/4_case.pdf' },
-      { id:5, name:'Панфилова Александра', position:'Специалист по противодействию мошенническим звонкам', dept:'Отдел защиты от телефонного и онлайн-мошенничества', email:'ponomareva95natalya.rkn@gov.ru', phone:'+7(901)623-88-92', birth:'27.02.1996', idNumber:'240-325', responsibilities:['Ведет дела по фактам утраты доступа к личным данным и сервисам','Содействует безопасной переидентификации'], photo:'images/5.jpg', idImg:'images/5_id.jpg', caseUrl:'cases/5_case.pdf' }
+      { id:4, name:'Зотова Наталья', position:'Специалист экстренного реагирования', dept:'Отдел по защите от телефонного мошенничества', email:'zotovanatalya70rkn@gov.ru', phone:'+7(951)853-79-67', birth:'17.08.1994', idNumber:'453-513', responsibilities:['Анализирует инциденты, связанные с обманом по телефону','Консультирует пострадавших'], photo:'images/4.jpg', idImg:'images/4_id.jpg', caseUrl:'cases/4_case.pdf' },
+      { id:5, name:'Панфилова Александра', position:'Специалист по противодействию мошенническим звонкам', dept:'Отдел защиты от телефонного и онлайн-мошенничества', email:'ponomareva95natalya.rkn@gov.ru', phone:'+7(901)623-88-92', birth:'27.02.1996', idNumber:'240-325', responsibilities:['Ведет дела по утрате доступа к данным','Содействует безопасной переидентификации'], photo:'images/5.jpg', idImg:'images/5_id.jpg', caseUrl:'cases/5_case.pdf' }
     ];
 
+    // 1) Loader
+    window.addEventListener('load', () => {
+      const statuses = [
+        'Подключение к ведомственной сети…',
+        'Аутентификация ключей…',
+        'Загрузка данных…',
+        'Завершаем настройку…'
+      ];
+      const statusEl  = document.querySelector('#loader .status');
+      const barEl     = document.querySelector('#loader .bar');
+      const percentEl = document.querySelector('#loader .percent');
+      const loader    = document.getElementById('loader');
+      let percent = 0, idx = 0;
+
+      function nextStep() {
+        if (idx < statuses.length) {
+          statusEl.textContent = statuses[idx++];
+          setTimeout(nextStep, 1200);
+        }
+      }
+      function animateBar() {
+        if (percent < 100) {
+          percent = Math.min(percent + 0.8, 100);
+          barEl.style.width = percent + '%';
+          percentEl.textContent = Math.round(percent) + '%';
+          requestAnimationFrame(animateBar);
+        } else {
+          finishLoader();
+        }
+      }
+      function finishLoader() {
+        const spinner = document.querySelector('.spinner');
+        spinner.style.animation = 'none';
+        spinner.style.border    = 'none';
+        spinner.textContent     = '✓';
+        spinner.style.fontSize  = '48px';
+        spinner.style.color     = 'var(--loader-success)';
+        statusEl.textContent    = 'Готово';
+        statusEl.style.color    = 'var(--loader-success)';
+        barEl.style.background  = 'var(--loader-success)';
+        barEl.style.width       = '100%';
+        percentEl.textContent   = '100%';
+        setTimeout(() => {
+          loader.classList.add('hidden');
+          loader.setAttribute('aria-busy', 'false');
+        }, 800);
+      }
+
+      nextStep();
+      animateBar();
+    });
+
+    // 2) Рендер карточек и анкета: когда DOM готов
     document.addEventListener('DOMContentLoaded', () => {
-  const grid = document.getElementById('employeesGrid');
-  employees.forEach(e => {
-    const card = document.createElement('article');
-    card.className = 'employee-card';
-    card.innerHTML = `
-      <img src="${e.photo}" alt="${e.name}" class="employee-photo">
-      <div class="employee-name">${e.name}</div>
-      <div class="employee-position">${e.position}</div>
-      <div class="employee-dept">${e.dept}</div>
-      <button class="btn-details" onclick="openEmployee(${e.id})">Подробнее</button>
-    `;
-    grid.appendChild(card);
-  });
+      const grid = document.getElementById('employeesGrid');
+      employees.forEach(e => {
+        const card = document.createElement('article');
+        card.className = 'employee-card';
+        card.innerHTML = `
+          <img src="${e.photo}" alt="${e.name}" class="employee-photo">
+          <div class="employee-name">${e.name}</div>
+          <div class="employee-position">${e.position}</div>
+          <div class="employee-dept">${e.dept}</div>
+          <button class="btn-details" onclick="openEmployee(${e.id})">Подробнее</button>
+        `;
+        grid.appendChild(card);
+      });
 
-  // Анкета безопасности...
-  // (оставляем один обработчик submit)
-  const survey = document.getElementById('security-survey');
-  const form = document.getElementById('surveyForm');
-  const btn  = form.querySelector('button[type="submit"]');
-  const checkboxes = Array.from(form.querySelectorAll('input[type="checkbox"]'));
+      const survey = document.getElementById('security-survey');
+      const form   = document.getElementById('surveyForm');
+      const btn    = form.querySelector('button[type="submit"]');
+      const checks = Array.from(form.querySelectorAll('input[type="checkbox"]'));
 
-  if (!localStorage.getItem('surveyCompleted')) {
-    survey.classList.remove('survey-hidden');
-    survey.classList.add('open');
-    document.body.classList.add('modal-open');
-  }
-
-  form.addEventListener('change', () => {
-    btn.disabled = !checkboxes.every(cb => cb.checked);
-  });
-
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-    if (!checkboxes.every(cb => cb.checked)) {
-      alert('Пожалуйста, отметьте пункт перед подтверждением.');
-      return;
-    }
-    localStorage.setItem('surveyCompleted', 'true');
-    survey.classList.remove('open');
-    survey.classList.add('survey-hidden');
-    document.body.classList.remove('modal-open');
-  });
-});
-
-function openEmployee(id) {
-  const e = employees.find(x => x.id === id);
-  document.body.classList.add('modal-open');
-  document.getElementById('modalName').textContent     = e.name;
-  document.getElementById('modalPosition').textContent = e.position;
-  document.getElementById('modalDept').textContent     = e.dept;
-
-  const em = document.getElementById('modalEmail');
-  em.textContent = e.email;
-  em.href        = `mailto:${e.email}`;
-
-  const ph = document.getElementById('modalPhone');
-  ph.textContent = e.phone;
-  ph.href        = `tel:${e.phone.replace(/\D/g, '')}`;
-
-  document.getElementById('modalBirth').textContent = e.birth;
-  document.getElementById('modalIdNum').textContent = e.idNumber;
-  document.getElementById('modalResp').textContent  = e.responsibilities.join(', ');
-
-  const img = document.getElementById('modalIdImg');
-  img.src = e.idImg;
-  img.alt = `Удостоверение ${e.name}`;
-
-  document.getElementById('modalCaseLink').href = e.caseUrl;
-  document.getElementById('employeeModal').classList.add('open');
-}
-
-function closeEmployee() {
-  document.body.classList.remove('modal-open');
-  document.getElementById('employeeModal').classList.remove('open');
-}
-
-function filterEmployees() {
-  const term = document.getElementById('searchInput').value.toLowerCase();
-  document.querySelectorAll('.employee-card').forEach((card, i) => {
-    card.style.display = employees[i].name.toLowerCase().includes(term) ? '' : 'none';
-  });
-}
-  window.addEventListener('load', () => {
-    const statuses = [
-      'Подключение к ведомственной сети…',
-      'Аутентификация ключей…',
-      'Загрузка данных…',
-      'Завершаем настройку…'
-    ];
-    const statusEl  = document.querySelector('#loader .status');
-    const barEl     = document.querySelector('#loader .bar');
-    const percentEl = document.querySelector('#loader .percent');
-    const loader    = document.getElementById('loader');
-    let percent = 0, idx = 0;
-
-    function nextStep() {
-      if (idx < statuses.length) {
-        statusEl.textContent = statuses[idx++];
-        setTimeout(nextStep, 1200);
+      if (!localStorage.getItem('surveyCompleted')) {
+        survey.classList.remove('survey-hidden');
+        survey.classList.add('open');
+        document.body.classList.add('modal-open');
       }
-    }
 
-    function animateBar() {
-      if (percent < 100) {
-        percent = Math.min(percent + 0.8, 100);
-        barEl.style.width = percent + '%';
-        barEl.parentNode.setAttribute('aria-valuenow', Math.round(percent));
-        percentEl.textContent = Math.round(percent) + '%';
-        requestAnimationFrame(animateBar);
-      } else {
-        finishLoader();
-      }
-    }
-
-    function finishLoader() {
-      // превращаем спиннер в галочку
-      const spinner = document.querySelector('.spinner');
-      spinner.style.animation = 'none';
-      spinner.style.border    = 'none';
-      spinner.textContent     = '✓';
-      spinner.style.fontSize  = '48px';
-      spinner.style.color     = 'var(--loader-success)';
-      statusEl.textContent    = 'Готово';
-      statusEl.style.color    = 'var(--loader-success)';
-      barEl.style.background  = 'var(--loader-success)';
-      barEl.style.width       = '100%';
-      percentEl.textContent   = '100%';
-
-      setTimeout(() => {
-        loader.classList.add('hidden');
-        loader.setAttribute('aria-busy', 'false');
-      }, 800);
-    }
-
-    nextStep();
-    animateBar();
-  });
-</script>
-
-  // --- 2) Рендер карточек и анкета: когда DOM готов ---
-  document.addEventListener('DOMContentLoaded', () => {
-    // 2.1) Карточки сотрудников
-    const grid = document.getElementById('employeesGrid');
-    employees.forEach(e => {
-      const card = document.createElement('article');
-      card.className = 'employee-card';
-      card.innerHTML = `
-        <img src="${e.photo}" alt="${e.name}" class="employee-photo">
-        <div class="employee-name">${e.name}</div>
-        <div class="employee-position">${e.position}</div>
-        <div class="employee-dept">${e.dept}</div>
-        <button class="btn-details" onclick="openEmployee(${e.id})">Подробнее</button>
-      `;
-      grid.appendChild(card);
+      form.addEventListener('change', () => {
+        btn.disabled = !checks.every(cb => cb.checked);
+      });
+      form.addEventListener('submit', e => {
+        e.preventDefault();
+        if (!checks.every(cb => cb.checked)) {
+          alert('Пожалуйста, отметьте пункт перед подтверждением.');
+          return;
+        }
+        localStorage.setItem('surveyCompleted', 'true');
+        survey.classList.remove('open');
+        survey.classList.add('survey-hidden');
+        document.body.classList.remove('modal-open');
+      });
     });
 
-    // 2.2) Анкета безопасности
-    const survey = document.getElementById('security-survey');
-    const form   = document.getElementById('surveyForm');
-    const btn    = form.querySelector('button[type="submit"]');
-    const checks = Array.from(form.querySelectorAll('input[type="checkbox"]'));
-
-    if (!localStorage.getItem('surveyCompleted')) {
-      survey.classList.remove('survey-hidden');
-      survey.classList.add('open');
+    // 3) Модалки и фильтр
+    function openEmployee(id) {
+      const e = employees.find(x => x.id === id);
       document.body.classList.add('modal-open');
+      document.getElementById('modalName').textContent     = e.name;
+      document.getElementById('modalPosition').textContent = e.position;
+      document.getElementById('modalDept').textContent     = e.dept;
+      const em = document.getElementById('modalEmail');
+      em.textContent = e.email; em.href = `mailto:${e.email}`;
+      const ph = document.getElementById('modalPhone');
+      ph.textContent = e.phone; ph.href = `tel:${e.phone.replace(/\D/g,'')}`;
+      document.getElementById('modalBirth').textContent = e.birth;
+      document.getElementById('modalIdNum').textContent = e.idNumber;
+      document.getElementById('modalResp').textContent  = e.responsibilities.join(', ');
+      const img = document.getElementById('modalIdImg');
+      img.src = e.idImg; img.alt = `Удостоверение ${e.name}`;
+      document.getElementById('modalCaseLink').href = e.caseUrl;
+      document.getElementById('employeeModal').classList.add('open');
     }
-
-    form.addEventListener('change', () => {
-      btn.disabled = !checks.every(cb => cb.checked);
-    });
-    form.addEventListener('submit', e => {
-      e.preventDefault();
-      if (!checks.every(cb => cb.checked)) {
-        alert('Пожалуйста, отметьте пункт перед подтверждением.');
-        return;
-      }
-      localStorage.setItem('surveyCompleted', 'true');
-      survey.classList.remove('open');
-      survey.classList.add('survey-hidden');
+    function closeEmployee() {
       document.body.classList.remove('modal-open');
-    });
-  });
-
-  // --- 3) Функции модалок и фильтра (вне слушателей) ---
-  function openEmployee(id) {
-    const e = employees.find(x => x.id === id);
-    document.body.classList.add('modal-open');
-    document.getElementById('modalName').textContent     = e.name;
-    document.getElementById('modalPosition').textContent = e.position;
-    document.getElementById('modalDept').textContent     = e.dept;
-
-    const em = document.getElementById('modalEmail');
-    em.textContent = e.email;
-    em.href        = `mailto:${e.email}`;
-
-    const ph = document.getElementById('modalPhone');
-    ph.textContent = e.phone;
-    ph.href        = `tel:${e.phone.replace(/\D/g, '')}`;
-
-    document.getElementById('modalBirth').textContent = e.birth;
-    document.getElementById('modalIdNum').textContent = e.idNumber;
-    document.getElementById('modalResp').textContent  = e.responsibilities.join(', ');
-
-    const img = document.getElementById('modalIdImg');
-    img.src = e.idImg;
-    img.alt = `Удостоверение ${e.name}`;
-
-    document.getElementById('modalCaseLink').href = e.caseUrl;
-    document.getElementById('employeeModal').classList.add('open');
-  }
-
-  function closeEmployee() {
-    document.body.classList.remove('modal-open');
-    document.getElementById('employeeModal').classList.remove('open');
-  }
-
-  function filterEmployees() {
-    const term = document.getElementById('searchInput').value.toLowerCase();
-    document.querySelectorAll('.employee-card').forEach((card, i) => {
-      card.style.display = employees[i].name.toLowerCase().includes(term) ? '' : 'none';
-    });
-  }
-</script>
+      document.getElementById('employeeModal').classList.remove('open');
+    }
+    function filterEmployees() {
+      const term = document.getElementById('searchInput').value.toLowerCase();
+      document.querySelectorAll('.employee-card').forEach((card, i) => {
+        card.style.display = employees[i].name.toLowerCase().includes(term) ? '' : 'none';
+      });
+    }
+  </script>
 </body>
 </html>
