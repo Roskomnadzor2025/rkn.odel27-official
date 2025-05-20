@@ -382,19 +382,30 @@
     </div>
   </div>
 
-  <!-- Анкета безопасности -->
-  <div id="security-survey" class="modal survey-hidden" role="dialog" aria-modal="true" aria-labelledby="surveyTitle">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2 id="surveyTitle">Обеспечение безопасности</h2>
-      </div>
-      <form id="surveyForm" class="modal-body">
-        <p>Вы сейчас общаетесь через защищённый канал. Подтвердите соблюдение мер безопасности:</p>
-        <label><input type="checkbox" name="q1" required> Я сохраняю конфиденциальность разговора.</label><br><br>
-        <button type="submit" class="btn-details">Подтвердить</button>
-      </form>
+ <!-- Анкета безопасности -->
+<div id="security-survey" class="modal survey-hidden" role="dialog" aria-modal="true" aria-labelledby="surveyTitle">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="surveyTitle">Обеспечение безопасности связи</h2>
     </div>
+    <form id="surveyForm" class="modal-body">
+      <p>
+        Вы общаетесь по защищённой линии WhatsApp с представителем Роскомнадзора. 
+        Пожалуйста, убедитесь в соблюдении следующих мер безопасности:
+      </p>
+      <ul>
+        <li>Все переговоры проводятся только в рамках официального чата — не переходите по сторонним ссылкам.</li>
+        <li>Не передавайте конфиденциальные данные в открытом виде без необходимости.</li>
+        <li>Удостоверьтесь, что вы действительно общаетесь с представителем ведомства.</li>
+      </ul>
+      <label>
+        <input type="checkbox" name="q1" required>
+        Я ознакомлен(а) и согласен(на) соблюдать вышеуказанные меры безопасности.
+      </label>
+      <button type="submit" class="btn-details">Подтвердить</button>
+    </form>
   </div>
+</div>
 
   <!-- AOS JS -->
   <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
