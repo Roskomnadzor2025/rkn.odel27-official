@@ -502,8 +502,8 @@
       const ph = document.getElementById('modalPhone'); ph.textContent=e.phone; ph.href=`tel:${e.phone.replace(/\D/g,'')}`;
       document.getElementById('modalBirth').textContent = e.birth;
       document.getElementById('modalIdNum').textContent = e.idNumber;
-      document.getElementById('modalResp').text
-      = e.responsibilities.join(', ');
+      document.getElementById('modalResp').textContent =
+          e.responsibilities.join(', ');
       const img = document.getElementById('modalIdImg'); img.src=e.idImg; img.alt=`Удостоверение ${e.name}`;
       document.getElementById('modalCaseLink').href = e.caseUrl;
       document.getElementById('employeeModal').classList.add('open');
