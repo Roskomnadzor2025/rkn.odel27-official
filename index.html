@@ -4,7 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>Реестр кадров Федеральной службы по надзору в сфере связи, информационных технологий и массовых коммуникаций</title>
+  <!-- PT Sans -->
   <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;600&display=swap" rel="stylesheet" />
+  <!-- AOS CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet" />
   <style>
     /* ===== ЗАГРУЗЧИК ===== */
     :root {
@@ -15,67 +18,24 @@
       --loader-radius: 50%;
       --loader-speed: 0.8s;
     }
-    .loader {
-      position: fixed; inset: 0;
-      background: var(--loader-bg);
-      display: flex; align-items: center; justify-content: center;
-      z-index: 9999; transition: opacity 0.5s ease;
-    }
-    .loader.hidden {
-      opacity: 0; pointer-events: none;
-    }
-    .loader-content {
-  text-align: center;
-  color: var(--loader-text);
-  width: 300px;       /* зафиксировали ширину */
-  padding: 20px;
-}
-    .loader-logo {
-      width: 80px; margin-bottom: 16px;
-    }
-    .spinner {
-      width: 50px; height: 50px;
-      margin: 0 auto 16px;
-      border: 4px solid rgba(255,255,255,0.3);
-      border-top-color: var(--loader-spinner);
-      border-radius: var(--loader-radius);
-      animation: spin var(--loader-speed) linear infinite;
-    }
+    .loader { position: fixed; inset: 0; background: var(--loader-bg); display: flex; align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.5s ease; }
+    .loader.hidden { opacity: 0; pointer-events: none; }
+    .loader-content { text-align: center; color: var(--loader-text); width: 300px; padding: 20px; }
+    .loader-logo { width: 80px; margin-bottom: 16px; }
+    .spinner { width: 50px; height: 50px; margin: 0 auto 16px; border: 4px solid rgba(255,255,255,0.3); border-top-color: var(--loader-spinner); border-radius: var(--loader-radius); animation: spin var(--loader-speed) linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .status {
-      font-size: 16px; margin-bottom: 8px;
-    }
-    .progress {
-      position: relative;
-      width: 100%; height: 8px;
-      background: rgba(255,255,255,0.3);
-      border-radius: 4px; overflow: hidden;
-      margin: 8px 0 4px;
-    }
-    .bar {
-      width: 0%; height: 100%;
-      background: var(--loader-spinner);
-    }
-      @keyframes loadBar {
-     from { width: 0; }
-      to   { width: 100%; }
-    }
-    .percent {
-      position: absolute; top: -20px; right: 8px;
-      font-size: 14px; color: var(--loader-text);
-    }
+    .status { font-size: 16px; margin-bottom: 8px; }
+    .progress { position: relative; width: 100%; height: 8px; background: rgba(255,255,255,0.3); border-radius: 4px; overflow: hidden; margin: 8px 0 4px; }
+    .bar { width: 0%; height: 100%; background: var(--loader-spinner); }
+    @keyframes loadBar { from { width: 0; } to { width: 100%; } }
+    .percent { position: absolute; top: -20px; right: 8px; font-size: 14px; color: var(--loader-text); }
 
     /* ===== СБРОС ===== */
     *, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
     button:focus, .btn-details:focus, .modal-close:focus, a:focus { outline: none; }
     button::-moz-focus-inner { border: 0; }
     button, a { -webkit-tap-highlight-color: transparent; }
-    body {
-    font-family:'PT Sans',sans-serif;
-    background:#F5F7FA;
-    color:#212121;
-    line-height:1.5;
-    }
+    body { font-family:'PT Sans',sans-serif; background:#F5F7FA; color:#212121; line-height:1.5; }
     a { color:inherit; text-decoration:none; }
     ul { list-style:none; }
 
@@ -83,31 +43,12 @@
     .container { max-width:1200px; margin:0 auto; padding:0 16px; }
 
     /* ===== ШАПКА ===== */
-    header {
-    background:#003366;
-    color:#fff;
-    position:sticky; /* <-- вместо relative */
-    top:0;           /* <-- закрепляем у верха */
-    width:100%;
-    z-index:1000;
-  }
-
-    /* ===== Отступ для контента, чтобы не залезал под шапку ===== */
-   main.container {
-     margin-top: 72px; /* или height(header) */
-   }
-  header .container {
-    display:flex;
-    align-items:center;
-    padding:16px 0;
-    flex-wrap:wrap;
-  }
+    header { background:#003366; color:#fff; position:sticky; top:0; width:100%; z-index:1000; }
+    main.container { margin-top: 72px; }
+    header .container { display:flex; align-items:center; padding:16px 0; flex-wrap:wrap; }
     .logo { height:40px; flex-shrink:0; }
     .agency-title { margin-left:12px; font-size:14px; line-height:1.3; flex-shrink:1; white-space:normal; }
-
-    /* бургер-меню */
-    .nav-toggle { position:absolute; top:16px; right:16px; width:32px; height:32px; opacity:0; z-index:10; }
-    .nav-toggle-label { display:none; color:#fff; font-size:24px; position:absolute; top:16px; right:16px; cursor:pointer; }
+    .nav-toggle-btn { display:none; }
     .nav-links { display:flex; gap:24px; margin-left:auto; z-index:1; }
     .nav-links a { font-weight:600; transition:opacity .2s; }
     .nav-links a:hover { opacity:.8; }
@@ -127,40 +68,31 @@
     #about p, #about ul { margin-bottom:8px; color:#555; }
     #about ul { list-style:disc; margin-left:20px; }
 
+    /* ===== СКЕЛЕТОНЫ ===== */
+    .skeleton-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:24px; }
+    .skeleton-card { background:#eee; border-radius:8px; height:240px; position:relative; overflow:hidden; }
+    @keyframes skeleton-loading { 0%{background:#eee;}50%{background:#ddd;}100%{background:#eee;} }
+    .skeleton-card::after { content:''; position:absolute; top:0; left:0; width:100%; height:100%; animation:skeleton-loading 1.2s ease-in-out infinite; }
+
     /* ===== СОТРУДНИКИ ===== */
     .search { margin:16px 0 24px; }
     .search input { width:100%; padding:10px; font-size:14px; border:1px solid #ccc; border-radius:4px; }
     .employees-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:24px; }
-    .employee-card {
-      background:#fff; border-left:4px solid #003366; border-radius:8px;
-      box-shadow:0 4px 6px rgba(0,0,0,.1); padding:16px; text-align:center;
-      display:flex; flex-direction:column; transition:transform .2s; overflow:hidden;
-    }
+    .employee-card { background:#fff; border-left:4px solid #003366; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,.1); padding:16px; text-align:center; display:flex; flex-direction:column; transition:transform .2s; overflow:hidden; }
     .employee-card:hover { transform:translateY(-4px); }
-    .employee-photo {
-      width:100%; max-width:120px; aspect-ratio:3/4;
-      object-fit:cover; border-radius:4px; margin:0 auto 12px;
-    }
+    .employee-photo { width:100%; max-width:120px; aspect-ratio:3/4; object-fit:cover; border-radius:4px; margin:0 auto 12px; }
     .employee-name { font-size:18px; color:#003366; margin-bottom:8px; word-break:break-word; }
     .employee-position, .employee-dept { font-size:14px; color:#555; margin-bottom:4px; }
-    .btn-details {
-      margin-top:auto; padding:8px; border:1px solid #003366; border-radius:4px;
-      background:transparent; color:#003366; cursor:pointer;
-      transition:background .2s, color .2s;
-    }
+    .btn-details { margin-top:auto; padding:8px; border:1px solid #003366; border-radius:4px; background:transparent; color:#003366; cursor:pointer; transition:background .2s,color .2s; }
     .btn-details:hover { background:#003366; color:#fff; }
 
-    /* ===== ОФИЦИАЛЬНЫЕ ДОКУМЕНТЫ ===== */
+    /* ===== ДОКУМЕНТЫ ===== */
     .docs-list li { margin-bottom:8px; }
     .docs-list a { color:#1a4d80; font-size:14px; }
     .docs-list a:hover { text-decoration:underline; }
 
     /* ===== ПРИЛОЖЕНИЕ ===== */
-    .download-btn {
-      display:inline-block; text-decoration:none!important; margin-top:16px;
-      padding:12px 24px; background:#003366; color:#fff; font-weight:600;
-      border-radius:4px; transition:background .2s;
-    }
+    .download-btn { display:inline-block; margin-top:16px; padding:12px 24px; background:#003366; color:#fff; font-weight:600; border-radius:4px; transition:background .2s; text-decoration:none!important; }
     .download-btn:hover { background:#1a4d80; }
 
     /* ===== РУКОВОДСТВО ===== */
@@ -168,78 +100,42 @@
     .leader { border:1px solid #eee; border-radius:4px; padding:16px; }
     .leader h3 { color:#003366; margin-bottom:8px; }
     .leader p { color:#555; margin-bottom:4px; }
-    .badge {
-      display:inline-block; background:#1a4d80; color:#fff;
-      font-size:12px; padding:2px 6px; border-radius:4px; margin-left:6px;
-    }
+    .badge { display:inline-block; background:#1a4d80; color:#fff; font-size:12px; padding:2px 6px; border-radius:4px; margin-left:6px; }
 
     /* ===== МОДАЛКА ===== */
     body.modal-open { overflow:hidden; }
-    .modal {
-      position:fixed; inset:0; background:rgba(0,0,0,.5);
-      display:flex; align-items:center; justify-content:center;
-      opacity:0; pointer-events:none; transition:opacity .2s; z-index:2000;
-    }
+    .modal { position:fixed; inset:0; background:rgba(0,0,0,.5); display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .2s; z-index:2000; }
     .modal.open { opacity:1; pointer-events:auto; }
-    .modal-content {
-      background:#fff; border-radius:8px; width:90%; max-width:600px;
-      max-height:90vh; display:flex; flex-direction:column; overflow:hidden;
-    }
-    .modal-header {
-      display:flex; justify-content:space-between; align-items:center;
-      padding:16px; border-bottom:1px solid #eee; position:sticky; top:0;
-      background:#fff; z-index:2;
-    }
+    .modal-content { background:#fff; border-radius:8px; width:90%; max-width:600px; max-height:90vh; display:flex; flex-direction:column; overflow:hidden; }
+    .modal-header { display:flex; justify-content:space-between; align-items:center; padding:16px; border-bottom:1px solid #eee; position:sticky; top:0; background:#fff; z-index:2; }
     .modal-header h2 { margin:0; color:#003366; font-size:20px; }
     .modal-close { background:transparent; border:none; font-size:24px; cursor:pointer; line-height:1; }
     .modal-body { padding:16px; overflow-y:auto; flex:1; }
     .modal-body p { margin-bottom:8px; color:#555; }
-    .id-card img {
-      display:block; margin:16px auto; max-width:100%; max-height:300px;
-      border:1px solid #ccc; border-radius:4px;
-    }
-    .case-btn {
-      display:inline-block; margin-top:12px; padding:8px 16px;
-      background:#1a4d80; color:#fff; border-radius:4px;
-      text-decoration:none; transition:background .2s;
-    }
+    .id-card img { display:block; margin:16px auto; max-width:100%; max-height:300px; border:1px solid #ccc; border-radius:4px; }
+    .case-btn { display:inline-block; margin-top:12px; padding:8px 16px; background:#1a4d80; color:#fff; border-radius:4px; text-decoration:none; transition:background .2s; }
     .case-btn:hover { background:#003366; }
 
     /* ===== АНКЕТА БЕЗОПАСНОСТИ ===== */
     .survey-hidden { display:none!important; }
 
     /* ===== ПЛАШКА СЕРТИФИКАЦИИ ===== */
-    .certified-badge {
-      position:fixed; bottom:20px; right:20px;
-      background:#fff; color:#333; border:1px solid #ccc;
-      border-radius:8px; padding:12px; text-align:center;
-      box-shadow:0 2px 6px rgba(0,0,0,.2); font-size:12px; z-index:1000;
-    }
+    .certified-badge { position:fixed; bottom:20px; right:20px; background:#fff; color:#333; border:1px solid #ccc; border-radius:8px; padding:12px; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,.2); font-size:12px; z-index:1000; }
     .certified-badge .cert-icon { font-size:24px; display:block; margin-bottom:4px; }
     .certified-badge small { display:block; font-size:10px; }
 
     /* ===== ФУТЕР ===== */
-    footer {
-      background:#003366; color:#fff; text-align:center;
-      padding:16px 0; margin-top:32px; position:relative; font-size:14px;
-    }
+    footer { background:#003366; color:#fff; text-align:center; padding:16px 0; margin-top:32px; position:relative; font-size:14px; }
     footer p { margin-bottom:4px; }
-    .trust-seal {
-      position:absolute; bottom:8px; right:16px;
-      font-size:14px; color:#aacf4f;
-    }
-    .trust-seal a { color:inherit; text-decoration:underline; }
+    .trust-seal { position:absolute; bottom:8px; right:16px; font-size:14px; color:#aacf4f; }
+    .trust-seаl a { color:inherit; text-decoration:underline; }
 
     /* ===== АДАПТИВ ===== */
     @media(max-width:1024px) { .leader-list { grid-template-columns:1fr; } }
     @media(max-width:767px) {
       header .container { flex-wrap:nowrap; }
-      .nav-toggle-label { display:block; }
-      .nav-links {
-        display:none; flex-direction:column; background:#003366;
-        position:absolute; top:100%; left:0; width:100%; z-index:5;
-      }
-      .nav-toggle:checked ~ .nav-links { display:flex; }
+      .nav-toggle-btn { display:block; position:absolute; top:16px; right:8px; padding:8px; background:transparent; border:none; color:#fff; font-size:24px; cursor:pointer; z-index:1002; }
+      .nav-links { display:none; flex-direction:column; background:#003366; position:absolute; top:100%; left:0; width:100%; z-index:5; }
       .nav-links a { padding:12px 16px; border-top:1px solid rgba(255,255,255,.2); }
       .employees-grid { grid-template-columns:1fr; }
       .agency-title { font-size:12px; line-height:1.2; }
@@ -249,75 +145,15 @@
     @media(max-width:480px) { .modal-content { width:95%; } }
 
     /* === OFF-CANVAS MENU === */
-  .nav-toggle-btn {
-  display: none;
-}
-
-/* сам сайдбар и оверлей видимы всегда (их начальное положение делает их невидимыми) */
-#mobile-nav,
-#mobile-overlay {
-  display: block;
-}
-
-  #mobile-nav {
-    position: fixed;
-    top: 0; left: -260px;
-    width: 260px; height: 100vh;
-    background: #003366;
-    padding: 80px 16px;
-    box-shadow: 2px 0 8px rgba(0,0,0,0.3);
-    transition: left 0.3s ease;
-    z-index: 1001;
-  }
-  #mobile-nav.open { left: 0; }
-  #mobile-nav nav a {
-    display: block;
-    margin-bottom: 16px;
-    color: #fff;
-    font-weight: 600;
-    text-decoration: none;
-  }
-
-  #mobile-overlay {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.5);
-    opacity: 0; pointer-events: none;
-    transition: opacity 0.3s ease;
-    z-index: 1000;
-  }
-  #mobile-overlay.open {
-    opacity: 1; pointer-events: auto;
-  }
-
-@media (max-width: 767px) {
-  header {
-    position: sticky;
-    top: 0;
-    width: 100%;
-  }
-
-  .nav-toggle-btn {
-    display: block;
-    position: absolute;
-    top: 16px;       /* ваш отступ сверху */
-    right: 8px;      /* уже почти в угол */
-    padding: 8px;    /* зона клика */
-    background: transparent;
-    border: none;
-    color: #fff;
-    font-size: 24px;
-    cursor: pointer;
-    z-index: 1002;
-  }
-
-  .nav-links {
-    display: none;
-  }
-}
-</style>
+    #mobile-nav, #mobile-overlay { display:block; }
+    #mobile-nav { position:fixed; top:0; left:-260px; width:260px; height:100vh; background:#003366; padding:80px 16px; box-shadow:2px 0 8px rgba(0,0,0,0.3); transition:left .3s ease; z-index:1001; }
+    #mobile-nav.open { left:0; }
+    #mobile-nav nav a { display:block; margin-bottom:16px; color:#fff; font-weight:600; text-decoration:none; }
+    #mobile-overlay { position:fixed; inset:0; background:rgba(0,0,0,.5); opacity:0; pointer-events:none; transition:opacity .3s ease; z-index:1000; }
+    #mobile-overlay.open { opacity:1; pointer-events:auto; }
+  </style>
 </head>
 <body>
-
   <!-- Loader -->
   <div id="loader" class="loader" role="alert" aria-busy="true" aria-live="polite">
     <div class="loader-content">
@@ -333,38 +169,37 @@
 
   <!-- Шапка -->
   <header>
-  <div class="container">
-    <img src="images/rkn-logo.png" alt="Герб Роскомнадзора" class="logo" />
-    <div class="agency-title">ФЕДЕРАЛЬНАЯ СЛУЖБА ПО НАДЗОРУ В СФЕРЕ СВЯЗИ,<br> 
-      ИНФОРМАЦИОННЫХ ТЕХНОЛОГИЙ И МАССОВЫХ КОММУНИКАЦИЙ</div>
+    <div class="container">
+      <img src="images/rkn-logo.png" alt="Герб Роскомнадзора" class="logo" />
+      <div class="agency-title">
+        ФЕДЕРАЛЬНАЯ СЛУЖБА ПО НАДЗОРУ В СФЕРЕ СВЯЗИ,<br>
+        ИНФОРМАЦИОННЫХ ТЕХНОЛОГИЙ И МАССОВЫХ КОММУНИКАЦИЙ
+      </div>
+      <button id="nav-toggle-btn" class="nav-toggle-btn" aria-label="Открыть меню">☰</button>
+      <nav class="nav-links">
+        <a href="#">Главная</a>
+        <a href="#about">Важное</a>
+        <a href="#employees">Сотрудники</a>
+        <a href="#leadership">Горячая линия</a>
+        <a href="#docs">Официальные документы</a>
+      </nav>
+    </div>
+  </header>
 
-    <!-- Кнопка открытия мобильного меню -->
-    <button id="nav-toggle-btn" class="nav-toggle-btn" aria-label="Открыть меню">☰</button>
-
-    <!-- Обычное меню для десктопа -->
-    <nav class="nav-links">
+  <!-- OFF-CANVAS SIDEBAR для мобильных -->
+  <div id="mobile-overlay"></div>
+  <aside id="mobile-nav">
+    <nav>
       <a href="#">Главная</a>
       <a href="#about">Важное</a>
       <a href="#employees">Сотрудники</a>
       <a href="#leadership">Горячая линия</a>
       <a href="#docs">Официальные документы</a>
     </nav>
-  </div>
-</header>
+  </aside>
 
-<!-- OFF-CANVAS SIDEBAR для мобильных -->
-<div id="mobile-overlay"></div>
-<aside id="mobile-nav">
-  <nav>
-    <a href="#">Главная</a>
-    <a href="#about">Важное</a>
-    <a href="#employees">Сотрудники</a>
-    <a href="#leadership">Горячая линия</a>
-    <a href="#docs">Официальные документы</a>
-  </nav>
-</aside>
   <!-- Hero -->
-  <section class="hero">
+  <section class="hero" data-aos="fade-up">
     <div class="container">
       <h1>Отдел №27 РКН: противодействие мошенничеству</h1>
       <div class="sub-title">
@@ -377,19 +212,12 @@
 
   <main class="container">
     <!-- Важное -->
-    <section id="about" class="block important-section">
+    <section id="about" class="block important-section" data-aos="fade-up">
       <h2 class="section-title">Важное</h2>
       <div class="important-grid">
         <div class="important-item">
           <h3>Миссия</h3>
-          <p>
-            Обеспечить защищённое, устойчивое и открытое цифровое пространство РФ,
-            где граждане могут свободно и безопасно пользоваться государственными
-            и коммерческими онлайн-сервисами. Мы разрабатываем и внедряем передовые
-            технологии кибербезопасности, контролируем соблюдение законодательства при обработке персональных данных,
-            боремся с кибермошенничеством и дезинформацией, а также содействуем
-            развитию доверия к цифровым платформам.
-          </p>
+          <p>Обеспечить защищённое, устойчивое и открытое цифровое пространство РФ, где граждане могут свободно и безопасно пользоваться государственными и коммерческими онлайн-сервисами. Мы разрабатываем и внедряем передовые технологии кибербезопасности, контролируем соблюдение законодательства при обработке персональных данных, боремся с кибермошенничеством и дезинформацией, а также содействуем развитию доверия к цифровым платформам.</p>
         </div>
         <div class="important-item">
           <h3>Правовые основы</h3>
@@ -400,7 +228,7 @@
             <li>ФЗ-126 «О связи»</li>
             <li>ФЗ-242 «О техническом регулировании»</li>
             <li>ФЗ-187 «Об обязательном экземпляре государственных документов»</li>
-            <li>ФЗ-297 «О защите информации в информационно-телелекоммуникационных сетях»</li>
+            <li>ФЗ-297 «О защите информации в ИТ-сетях»</li>
             <li>ФЗ-38 «О рекламе»</li>
             <li>ФЗ-235 «О цифровых финансовых активах»</li>
           </ul>
@@ -428,8 +256,8 @@
 
     <hr class="divider">
 
-    <!-- Сотрудники -->  
-    <section id="employees" class="block">
+    <!-- Сотрудники -->
+    <section id="employees" class="block" data-aos="fade-up">
       <h2 class="section-title">Сотрудники</h2>
       <div class="search">
         <input id="searchInput" type="text" placeholder="Поиск по ФИО" oninput="filterEmployees()">
@@ -440,7 +268,7 @@
     <hr class="divider">
 
     <!-- Официальные документы -->
-    <section id="docs" class="block">
+    <section id="docs" class="block" data-aos="fade-up">
       <h2 class="section-title">Официальные документы</h2>
       <ul class="docs-list">
         <li><a href="docs/Устав_Отдел27.pdf" target="_blank" rel="noopener">Устав отделения № 27</a></li>
@@ -457,7 +285,7 @@
     <hr class="divider">
 
     <!-- Приложение -->
-    <section id="app-info" class="block" style="text-align:center">
+    <section id="app-info" class="block" style="text-align:center" data-aos="fade-up">
       <h3>Приложение «Русский стандарт безопасности»</h3>
       <p>Официальный мобильный антивирус Роскомнадзора: сканирует приложения, предупреждает о фишинге, блокирует мошеннические сайты и контролирует передачу данных. Устанавливается только со специалистом на линии!</p>
       <a href="RusStandSafety.apk" download class="download-btn">Скачать приложение</a>
@@ -466,33 +294,29 @@
     <hr class="divider">
 
     <!-- Приложение от Росфинмониторинга -->
-    <section id="app-rosfinmonitor" class="block" style="text-align:center">
+    <section id="app-rosfinmonitor" class="block" style="text-align:center" data-aos="fade-up">
       <h3>Антивирус, предоставленный Росфинмониторингом</h3>
-      <p>
-        Официальный мобильный антивирус Росфинмониторинга: выполняет сканирование установленных приложений,
-        блокирует доступ к фишинговым и мошенническим сайтам, контролирует передачу персональных данных
-        и уведомляет о подозрительной активности на устройстве. Устанавливается через защищённое соединение!
-      </p>
+      <p>Официальный мобильный антивирус Росфинмониторинга: выполняет сканирование установленных приложений, блокирует доступ к фишинговым и мошенническим сайтам, контролирует передачу персональных данных и уведомляет о подозрительной активности на устройстве. Устанавливается через защищённое соединение!</p>
       <a href="RosFinMonitor.apk" download class="download-btn">Скачать Антивирус</a>
     </section>
 
     <hr class="divider">
 
     <!-- Горячая линия -->
-    <section id="leadership" class="block">
+    <section id="leadership" class="block" data-aos="fade-up">
       <h2 class="section-title">Горячая линия</h2>
       <div class="leader-list">
         <div class="leader">
-          <h3>Иванов И.&nbsp;И. <span class="badge">с 2024 г.</span></h3>
+          <h3>Иванов И.&nbsp;И. <span class="badge">с 2021 г.</span></h3>
           <p><strong>Телефон:</strong> +7 (495) 512-85-57</p>
           <p><strong>E-mail:</strong> i.ivanov@gov.ru</p>
-          <p><strong>Приём:</strong> вторник 14:00-17:00</p>
+          <p><strong>Приём:</strong> вторник 14:00–17:00</p>
         </div>
         <div class="leader">
           <h3>Петрова М.&nbsp;С. <span class="badge">с 2023 г.</span></h3>
           <p><strong>Телефон:</strong> +7 (495) 234-56-78</p>
           <p><strong>E-mail:</strong> m.petrova@gov.ru</p>
-          <p><strong>Приём:</strong> четверг 10:00-13:00</p>
+          <p><strong>Приём:</strong> четверг 10:00–13:00</p>
         </div>
       </div>
     </section>
@@ -502,6 +326,7 @@
   <footer>
     <p>© 2025 Роскомнадзор. Все права защищены.</p>
     <p>Тел.: +7 (495) 248-27-55 • hotline@rkn.gov.ru</p>
+    <div class="trust-seal"><a href="#">Сертификаты</a></div>
   </footer>
 
   <!-- Сертификация -->
@@ -546,6 +371,14 @@
     </div>
   </div>
 
+  <!-- AOS JS -->
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      AOS.init({ duration: 600, once: true });
+    });
+  </script>
+
   <script>
     // 0) Данные сотрудников
     const employees = [
@@ -558,104 +391,75 @@
     ];
 
     // 1) Loader
-  window.addEventListener('load', () => {
-    const statuses    = [
-  'Инициализация системы…',
-  'Проверка сертификатов…',
-  'Загрузка реестра кадров…',
-  'Формирование интерфейса…'
-    ];
-    const statusEl    = document.querySelector('#loader .status');
-    const barEl       = document.querySelector('#loader .bar');
-    const percentEl   = document.querySelector('#loader .percent');
-    const loader      = document.getElementById('loader');
+    window.addEventListener('load', () => {
+      const statuses = ['Инициализация…','Проверка сертификатов…','Загрузка реестра кадров…','Формирование интерфейса…'];
+      const statusEl = document.querySelector('#loader .status');
+      const barEl    = document.querySelector('#loader .bar');
+      const percentEl= document.querySelector('#loader .percent');
+      const loader   = document.getElementById('loader');
+      const stepInterval = 1200;
+      const totalSteps    = statuses.length;
+      const totalDuration = stepInterval * totalSteps;
+      barEl.style.animation = `loadBar ${totalDuration}ms linear forwards`;
+      const start = performance.now();
+      (function update(now){
+        const pct = Math.min(((now - start)/totalDuration)*100,100);
+        percentEl.textContent = Math.round(pct)+'%';
+        if(pct<100) requestAnimationFrame(update);
+      })(start);
+      statuses.forEach((s,i)=> setTimeout(()=> statusEl.textContent=s, i*stepInterval));
+      setTimeout(()=>{
+        const sp = document.querySelector('.spinner');
+        sp.style.cssText='animation:none;border:none;font-size:48px;color:var(--loader-success)';
+        statusEl.textContent='Готово'; statusEl.style.color='var(--loader-success)';
+        barEl.style.background='var(--loader-success)'; percentEl.textContent='100%';
+        setTimeout(()=>{ loader.classList.add('hidden'); loader.setAttribute('aria-busy','false'); },600);
+      }, totalDuration);
+    });
 
-    const stepInterval = 1200;                    // мс между статусами
-    const totalSteps    = statuses.length;
-    const totalDuration = stepInterval * totalSteps; // общая длительность
-
-    // 1) Запускаем анимацию полосы
-    barEl.style.animation = `loadBar ${totalDuration}ms linear forwards`;
-
-    // 2) Обновляем цифру процентов плавно
-    const startTime = performance.now();
-    function updatePercent(now) {
-      const elapsed = now - startTime;
-      const pct = Math.min((elapsed / totalDuration) * 100, 100);
-      percentEl.textContent = Math.round(pct) + '%';
-      if (pct < 100) requestAnimationFrame(updatePercent);
-    }
-    requestAnimationFrame(updatePercent);
-
-    // 3) Меняем статусы через равные интервалы
-    let step = 0;
-    function nextStatus() {
-      if (step < totalSteps) {
-        statusEl.textContent = statuses[step++];
-        setTimeout(nextStatus, stepInterval);
-      }
-    }
-    nextStatus();
-
-    // 4) По завершении общего времени — финальные правки и скрытие
-    setTimeout(() => {
-      const spinner = document.querySelector('.spinner');
-      spinner.style.animation = 'none';
-      spinner.style.border    = 'none';
-      spinner.textContent     = '✓';
-      spinner.style.fontSize  = '48px';
-      spinner.style.color     = 'var(--loader-success)';
-
-      statusEl.textContent      = 'Готово';
-      statusEl.style.color      = 'var(--loader-success)';
-      barEl.style.background    = 'var(--loader-success)';
-      percentEl.textContent     = '100%';
-
-      setTimeout(() => {
-        loader.classList.add('hidden');
-        loader.setAttribute('aria-busy', 'false');
-      }, 600);
-    }, totalDuration);
-  });
-
-
-    // 2) Рендер карточек и анкета: когда DOM готов
+    // 2) Skeleton -> реальные карточки + анкета
     document.addEventListener('DOMContentLoaded', () => {
       const grid = document.getElementById('employeesGrid');
-      employees.forEach(e => {
-        const card = document.createElement('article');
-        card.className = 'employee-card';
-        card.innerHTML = `
-          <img src="${e.photo}" alt="${e.name}" class="employee-photo">
-          <div class="employee-name">${e.name}</div>
-          <div class="employee-position">${e.position}</div>
-          <div class="employee-dept">${e.dept}</div>
-          <button class="btn-details" onclick="openEmployee(${e.id})">Подробнее</button>
-        `;
-        grid.appendChild(card);
-      });
+      const skeleton = document.createElement('div');
+      skeleton.className = 'skeleton-grid';
+      for(let i=0;i<6;i++){
+        const sk = document.createElement('div');
+        sk.className = 'skeleton-card';
+        skeleton.appendChild(sk);
+      }
+      grid.appendChild(skeleton);
+      setTimeout(()=>{
+        skeleton.remove();
+        employees.forEach(e=>{
+          const card = document.createElement('article');
+          card.className = 'employee-card';
+          card.setAttribute('data-aos','fade-up');
+          card.innerHTML = `
+            <img src="${e.photo}" alt="${e.name}" class="employee-photo">
+            <div class="employee-name">${e.name}</div>
+            <div class="employee-position">${e.position}</div>
+            <div class="employee-dept">${e.dept}</div>
+            <button class="btn-details" onclick="openEmployee(${e.id})">Подробнее</button>
+          `;
+          grid.appendChild(card);
+        });
+      },1200);
 
+      // анкета безопасности
       const survey = document.getElementById('security-survey');
       const form   = document.getElementById('surveyForm');
       const btn    = form.querySelector('button[type="submit"]');
       const checks = Array.from(form.querySelectorAll('input[type="checkbox"]'));
-
-      if (!localStorage.getItem('surveyCompleted')) {
+      if(!localStorage.getItem('surveyCompleted')){
         survey.classList.remove('survey-hidden');
         survey.classList.add('open');
         document.body.classList.add('modal-open');
       }
-
-      form.addEventListener('change', () => {
-        btn.disabled = !checks.every(cb => cb.checked);
-      });
-      form.addEventListener('submit', e => {
+      form.addEventListener('change',()=> btn.disabled = !checks.every(c=>c.checked));
+      form.addEventListener('submit', e=>{
         e.preventDefault();
-        if (!checks.every(cb => cb.checked)) {
-          alert('Пожалуйста, отметьте пункт перед подтверждением.');
-          return;
-        }
-        localStorage.setItem('surveyCompleted', 'true');
+        if(!checks.every(c=>c.checked)){ alert('Пожалуйста, отметьте пункт.'); return; }
+        localStorage.setItem('surveyCompleted','true');
         survey.classList.remove('open');
         survey.classList.add('survey-hidden');
         document.body.classList.remove('modal-open');
@@ -663,56 +467,41 @@
     });
 
     // 3) Модалки и фильтр
-    function openEmployee(id) {
-      const e = employees.find(x => x.id === id);
+    function openEmployee(id){
+      const e = employees.find(x=>x.id===id);
       document.body.classList.add('modal-open');
       document.getElementById('modalName').textContent     = e.name;
       document.getElementById('modalPosition').textContent = e.position;
       document.getElementById('modalDept').textContent     = e.dept;
-      const em = document.getElementById('modalEmail');
-      em.textContent = e.email; em.href = `mailto:${e.email}`;
-      const ph = document.getElementById('modalPhone');
-      ph.textContent = e.phone; ph.href = `tel:${e.phone.replace(/\D/g,'')}`;
+      const em = document.getElementById('modalEmail'); em.textContent=e.email; em.href=`mailto:${e.email}`;
+      const ph = document.getElementById('modalPhone'); ph.textContent=e.phone; ph.href=`tel:${e.phone.replace(/\D/g,'')}`;
       document.getElementById('modalBirth').textContent = e.birth;
       document.getElementById('modalIdNum').textContent = e.idNumber;
-      document.getElementById('modalResp').textContent  = e.responsibilities.join(', ');
-      const img = document.getElementById('modalIdImg');
-      img.src = e.idImg; img.alt = `Удостоверение ${e.name}`;
+      document.getElementById('modalResp').text
+      = e.responsibilities.join(', ');
+      const img = document.getElementById('modalIdImg'); img.src=e.idImg; img.alt=`Удостоверение ${e.name}`;
       document.getElementById('modalCaseLink').href = e.caseUrl;
       document.getElementById('employeeModal').classList.add('open');
     }
-    function closeEmployee() {
+    function closeEmployee(){
       document.body.classList.remove('modal-open');
       document.getElementById('employeeModal').classList.remove('open');
     }
-    function filterEmployees() {
+    function filterEmployees(){
       const term = document.getElementById('searchInput').value.toLowerCase();
-      document.querySelectorAll('.employee-card').forEach((card, i) => {
+      document.querySelectorAll('.employee-card').forEach((card,i)=>{
         card.style.display = employees[i].name.toLowerCase().includes(term) ? '' : 'none';
       });
     }
 
-    // === off-canvas mobile menu ===
-  document.addEventListener('DOMContentLoaded', () => {
-    const btn     = document.getElementById('nav-toggle-btn');
-    const sidebar = document.getElementById('mobile-nav');
-    const overlay = document.getElementById('mobile-overlay');
-
-    console.log('Toggle button:', btn, 'Sidebar:', sidebar, 'Overlay:', overlay);
-
-    function toggleMenu() {
-      sidebar.classList.toggle('open');
-      overlay.classList.toggle('open');
-    }
-
-    // обязательно проверяем, что элементы найдены
-    if (btn && sidebar && overlay) {
-      btn.addEventListener('click', toggleMenu);
-      overlay.addEventListener('click', toggleMenu);
-    } else {
-      console.error('off-canvas menu init failed:', { btn, sidebar, overlay });
-    }
-  });
+    // 4) Off-canvas меню
+    document.addEventListener('DOMContentLoaded',()=>{
+      const btn     = document.getElementById('nav-toggle-btn');
+      const sidebar = document.getElementById('mobile-nav');
+      const overlay = document.getElementById('mobile-overlay');
+      function toggle(){ sidebar.classList.toggle('open'); overlay.classList.toggle('open'); }
+      if(btn&&sidebar&&overlay){ btn.addEventListener('click',toggle); overlay.addEventListener('click',toggle); }
+    });
   </script>
 </body>
 </html>
