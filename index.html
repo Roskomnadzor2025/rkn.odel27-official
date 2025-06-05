@@ -2,1095 +2,559 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ФНС – Самодекларация</title>
-  <!-- PT Sans и PT Serif -->
-  <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Serif:wght@400;700&display=swap" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Реестр кадров Федеральной службы по надзору в сфере связи, информационных технологий и массовых коммуникаций</title>
+  <!-- PT Sans -->
+  <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;600&display=swap" rel="stylesheet" />
+  <!-- AOS CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet" />
   <style>
-    /* ==============================
-       ОБЩИЕ СБРОСЫ И НАСТРОЙКИ
-       ============================== */
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+    /* ===== ЗАГРУЗЧИК ===== */
+    :root {
+      --loader-bg: rgba(0, 51, 102, 0.9);
+      --loader-spinner: #1a4d80;
+      --loader-success: #4caf50;
+      --loader-text: #fff;
+      --loader-radius: 50%;
+      --loader-speed: 0.8s;
     }
-    html, body {
-      font-family: 'PT Sans', sans-serif;
-      background: #f2f4f6;
-      color: #333;
-      line-height: 1.5;
-      overflow-x: hidden; /* Запрет горизонтальной прокрутки */
-    }
-    a {
-      color: inherit;
-      text-decoration: none;
-      transition: opacity 0.2s;
-    }
-    a:hover {
-      opacity: 0.8;
-    }
-    img {
-      display: block;
-      max-width: 100%;
-      height: auto;
-    }
-    button {
-      font-family: inherit;
-      cursor: pointer;
-    }
+    .loader { position: fixed; inset: 0; background: var(--loader-bg); display: flex; align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.5s ease; }
+    .loader.hidden { opacity: 0; pointer-events: none; }
+    .loader-content { text-align: center; color: var(--loader-text); width: 300px; padding: 20px; }
+    .loader-logo { width: 80px; margin-bottom: 16px; }
+    .spinner { width: 50px; height: 50px; margin: 0 auto 16px; border: 4px solid rgba(255,255,255,0.3); border-top-color: var(--loader-spinner); border-radius: var(--loader-radius); animation: spin var(--loader-speed) linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .status { font-size: 16px; margin-bottom: 8px; }
+    .progress { position: relative; width: 100%; height: 8px; background: rgba(255,255,255,0.3); border-radius: 4px; overflow: hidden; margin: 8px 0 4px; }
+    .bar { width: 0%; height: 100%; background: var(--loader-spinner); }
+    @keyframes loadBar { from { width: 0; } to { width: 100%; } }
+    .percent { position: absolute; top: -20px; right: 8px; font-size: 14px; color: var(--loader-text); }
 
-    /* ==============================
-       ШАПКА (HEADER)
-       ============================== */
-    header {
-      background: #ffffff;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      padding: 12px 16px;
-    }
-    header .header-inner {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .logo-left img,
-    .logo-right img {
-      height: 50px;
-    }
-    .header-title {
-      flex: 1 1 auto;        /* Позволяет ужиматься */
-      min-width: 0;          /* Ключевой момент для сжатия flex-элемента */
-      text-align: center;
-      font-family: 'PT Serif', serif;
-      font-size: 22px;
-      font-weight: 700;
-      color: #002b5c;
-      margin: 0 16px;
-      /* Убрали white-space: nowrap, чтобы текст мог переноситься */
-      word-break: break-word; /* Позволяет разбивать длинные слова при необходимости */
-    }
-    @media (max-width: 600px) {
-      .logo-left img,
-      .logo-right img {
-        height: 40px;
-      }
-      .header-title {
-        font-size: 18px;
-        margin: 0 8px;
-      }
-      header {
-        padding: 8px 12px;
-      }
-    }
+    /* ===== СБРОС ===== */
+    *, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
+    button:focus, .btn-details:focus, .modal-close:focus, a:focus { outline: none; }
+    button::-moz-focus-inner { border: 0; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    body { font-family:'PT Sans',sans-serif; background:#F5F7FA; color:#212121; line-height:1.5; }
+    a { color:inherit; text-decoration:none; }
+    ul { list-style:none; }
 
-    /* ==============================
-       НАВИГАЦИЯ (NAV-BAR) ПОД ШАПКОЙ
-       ============================== */
-    nav {
-      background: #004d99;
-      padding: 12px 16px;
-    }
-    nav .nav-inner {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap; /* Пункты меню будут переноситься при малой ширине */
-    }
-    nav a {
-      color: #ffffff;
-      margin: 6px 12px;
-      font-weight: 600;
-      font-size: 15px;
-    }
-    nav a:hover {
-      color: #ffcc00;
-    }
-    @media (max-width: 600px) {
-      nav a {
-        margin: 6px 8px;
-        font-size: 14px;
-      }
-    }
+    /* ===== КОНТЕЙНЕР ===== */
+    .container { max-width:1200px; margin:0 auto; padding:0 16px; }
 
-    /* ==============================
-       МОДАЛЬНОЕ ОКНО (FSB MODAL)
-       ============================== */
-    .modal-overlay {
-      display: none; /* по умолчанию скрыто */
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      justify-content: center;
-      align-items: center;
-      padding: 16px;
-      z-index: 9999;
-      overflow-y: auto; /* если контент большой */
-    }
-    .modal-overlay.open {
-      display: flex;
-    }
-    .modal {
-      background: #ffffff;
-      border-radius: 6px;
-      width: 100%;
-      max-width: 360px;
-      padding: 24px 16px 16px;
-      position: relative;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-      font-family: 'PT Sans', sans-serif;
-    }
+    /* ===== ШАПКА ===== */
+    header { background:#003366; color:#fff; position:sticky; top:0; width:100%; z-index:1000; }
+    main.container { margin-top: 72px; }
+    header .container { display:flex; align-items:center; padding:16px 0; flex-wrap:wrap; }
+    .logo { height:40px; flex-shrink:0; }
+    .agency-title { margin-left:12px; font-size:14px; line-height:1.3; flex-shrink:1; white-space:normal; }
+    .nav-toggle-btn { display:none; }
+    .nav-links { display:flex; gap:24px; margin-left:auto; z-index:1; }
+    .nav-links a { font-weight:600; transition:opacity .2s; }
+    .nav-links a:hover { opacity:.8; }
+
+    /* ===== HERO ===== */
+    .hero { background:linear-gradient(90deg,#003366,#1a4d80); color:#fff; text-align:center; padding:40px 0; }
+    .hero h1 { font-size:32px; }
+    .hero .sub-title { margin-top:8px; font-size:16px; }
+
+    /* ===== СЕКЦИИ ===== */
+    section.block { background:#fff; border-radius:8px; box-shadow:0 2px 4px rgba(0,0,0,.1); padding:24px; margin-bottom:32px; }
+    h2.section-title { color:#003366; font-size:24px; margin-bottom:12px; }
+    .divider { height:2px; background:#003366; border:none; margin:32px 0; }
+
+    /* ===== «Важное» ===== */
+    #about h3 { margin-top:16px; color:#1a4d80; font-size:18px; }
+    #about p, #about ul { margin-bottom:8px; color:#555; }
+    #about ul { list-style:disc; margin-left:20px; }
+
+    /* ===== СКЕЛЕТОНЫ ===== */
+    .skeleton-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:24px; }
+    .skeleton-card { background:#eee; border-radius:8px; height:240px; position:relative; overflow:hidden; }
+    @keyframes skeleton-loading { 0%{background:#eee;}50%{background:#ddd;}100%{background:#eee;} }
+    .skeleton-card::after { content:''; position:absolute; top:0; left:0; width:100%; height:100%; animation:skeleton-loading 1.2s ease-in-out infinite; }
+
+    /* ===== СОТРУДНИКИ ===== */
+    .search { margin:16px 0 24px; }
+    .search input { width:100%; padding:10px; font-size:14px; border:1px solid #ccc; border-radius:4px; }
+    .employees-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:24px; }
+    .employee-card { background:#fff; border-left:4px solid #003366; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,.1); padding:16px; text-align:center; display:flex; flex-direction:column; transition:transform .2s; overflow:hidden; }
+    .employee-card:hover { transform:translateY(-4px); }
+    .employee-photo { width:100%; max-width:120px; aspect-ratio:3/4; object-fit:cover; border-radius:4px; margin:0 auto 12px; }
+    .employee-name { font-size:18px; color:#003366; margin-bottom:8px; word-break:break-word; }
+    .employee-position, .employee-dept { font-size:14px; color:#555; margin-bottom:4px; }
+    .btn-details { margin-top:auto; padding:8px; border:1px solid #003366; border-radius:4px; background:transparent; color:#003366; cursor:pointer; transition:background .2s,color .2s; }
+    .btn-details:hover { background:#003366; color:#fff; }
+
+    /* ===== ДОКУМЕНТЫ ===== */
+    .docs-list li { margin-bottom:8px; }
+    .docs-list a { color:#1a4d80; font-size:14px; }
+    .docs-list a:hover { text-decoration:underline; }
+
+    /* ===== ПРИЛОЖЕНИЕ ===== */
+    .download-btn { display:inline-block; margin-top:16px; padding:12px 24px; background:#003366; color:#fff; font-weight:600; border-radius:4px; transition:background .2s; text-decoration:none!important; }
+    .download-btn:hover { background:#1a4d80; }
+
+    /* ===== РУКОВОДСТВО ===== */
+    .leader-list { display:grid; grid-template-columns:repeat(2,1fr); gap:24px; }
+    .leader { border:1px solid #eee; border-radius:4px; padding:16px; }
+    .leader h3 { color:#003366; margin-bottom:8px; }
+    .leader p { color:#555; margin-bottom:4px; }
+    .badge { display:inline-block; background:#1a4d80; color:#fff; font-size:12px; padding:2px 6px; border-radius:4px; margin-left:6px; }
+
+    /* ===== МОДАЛКА ===== */
+    body.modal-open { overflow:hidden; }
+    .modal { position:fixed; inset:0; background:rgba(0,0,0,.5); display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .2s; z-index:2000; }
+    .modal.open { opacity:1; pointer-events:auto; }
     .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-bottom: 8px;
-      border-bottom: 1px solid #eee;
-      margin-bottom: 12px;
-    }
-    .modal-header h2 {
-      margin: 0;
-      font-family: 'PT Serif', serif;
-      font-size: 20px;
-      color: #002b5c;
-      line-height: 1.2;
-    }
-    .close-btn {
-      background: transparent;
-      border: none;
-      font-size: 20px;
-      line-height: 1;
-      cursor: pointer;
-      color: #333;
-      padding: 4px;
-    }
-    .close-btn:hover {
-      color: #004d99;
-    }
-    .modal-body p {
-      margin-bottom: 8px;
-      font-size: 15px;
-      color: #555;
-      line-height: 1.5;
-      text-align: left;
-    }
-    @media (max-width: 480px) {
-      .modal {
-        padding-top: 32px;
-        padding-left: 12px;
-        padding-right: 12px;
-      }
-      .modal-header h2 {
-        font-size: 18px;
-      }
-      .close-btn {
-        font-size: 18px;
-        top: 6px;
-        right: 6px;
-      }
-      .modal-body p {
-        font-size: 14px;
-      }
-    }
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid #eee;
+  position: sticky;
+  top: 0;
+  background: #fff;    /* <— он и даёт белый фон шапке */
+  z-index: 2;
+}
+    .modal-content {
+  background: #fff;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
 
-    /* ==============================
-       КОНТЕЙНЕР СОДЕРЖИМОГО
-       ============================== */
-    .container {
-      width: 100%;
-      max-width: 960px;
-      margin: 40px auto 40px;
-      background: #ffffff;
-      padding: 24px 20px;
-      border-radius: 6px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      position: relative;
-      z-index: 1;
-    }
-    .container::before {
-      content: "";
-      background: url('emblem-watermark.png') no-repeat center center;
-      background-size: 300px;
-      opacity: 0.04;
-      position: absolute;
-      top: 150px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 300px;
-      height: 300px;
-      z-index: 0;
-      pointer-events: none;
-    }
-    @media (max-width: 600px) {
-      .container {
-        padding: 20px 16px;
-        margin: 20px auto 20px;
-      }
-      /* По желанию скрываем водяной знак на узких экранах */
-      .container::before {
-        display: none;
-      }
-    }
+.modal-body {
+  padding: 16px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch; /* для плавной прокрутки iOS */
+  flex: 1 1 auto;
+  min-height: 0; /* чтобы прокрутка работала в мобильных браузерах */
+}
+    .modal-header h2 { margin:0; color:#003366; font-size:20px; }
+    .modal-close { background:transparent; border:none; font-size:24px; cursor:pointer; line-height:1; }
+    .modal-body p { margin-bottom:8px; color:#555; }
+    .id-card img { display:block; margin:16px auto; max-width:100%; max-height:300px; border:1px solid #ccc; border-radius:4px; }
+    .case-btn { display:inline-block; margin-top:12px; padding:8px 16px; background:#1a4d80; color:#fff; border-radius:4px; text-decoration:none; transition:background .2s; }
+    .case-btn:hover { background:#003366; }
 
-    /* ==============================
-       УВЕДОМЛЕНИЕ НА СТРАНИЦЕ
-       ============================== */
-    #notification {
-      background: #fffde8;
-      border-left: 5px solid #f17b35;
-      padding: 18px 20px;
-      margin-bottom: 30px;
-      border-radius: 4px;
-      position: relative;
-      z-index: 1;
-    }
-    #notification h2 {
-      margin-bottom: 8px;
-      color: #002b5c;
-      font-family: 'PT Serif', serif;
-      font-size: 20px;
-      font-weight: 700;
-    }
-    #notification p {
-      margin-bottom: 6px;
-      font-size: 15px;
-      line-height: 1.6;
-      color: #333;
-    }
-    @media (max-width: 480px) {
-      #notification p {
-        font-size: 14px;
-      }
-    }
+    /* ===== АНКЕТА БЕЗОПАСНОСТИ ===== */
+    .survey-hidden { display:none!important; }
 
-    /* ==============================
-       ФОРМА И ПОЛЯ (form-row)
-       ============================== */
-    fieldset.group {
-      border: 1px solid #004d99;
-      border-radius: 5px;
-      padding: 18px 22px;
-      margin-bottom: 30px;
-      background: #f9fafb;
-      position: relative;
-      z-index: 1;
-    }
-    fieldset.group legend {
-      color: #004d99;
-      font-family: 'PT Serif', serif;
-      font-weight: 700;
-      font-size: 17px;
-      padding: 0 10px;
-      background: #f9fafb;
-      width: auto;
-    }
-    .form-row {
-      display: flex;
-      flex-wrap: wrap;
-      margin-bottom: 16px;
-      align-items: center;
-    }
-    .form-row label {
-      width: 30%;
-      min-width: 140px;
-      font-weight: 600;
-      font-size: 15px;
-      color: #002b5c;
-      line-height: 1.4;
-      font-family: 'PT Sans', sans-serif;
-    }
-    .form-row .field {
-      width: 70%;
-    }
-    .form-row input[type="text"],
-    .form-row input[type="number"],
-    .form-row textarea,
-    .form-row select {
-      width: 100%;
-      padding: 10px 12px;
-      font-size: 15px;
-      border: 1px solid #c4c4c4;
-      border-radius: 4px;
-      background: #fff;
-      transition: border-color 0.2s, box-shadow 0.2s;
-      font-family: 'PT Sans', sans-serif;
-    }
-    .form-row input:focus,
-    .form-row textarea:focus,
-    .form-row select:focus {
-      border-color: #004d99;
-      box-shadow: 0 0 4px rgba(0, 77, 153, 0.3);
-      outline: none;
-    }
-    .form-row textarea {
-      resize: vertical;
-      line-height: 1.5;
-    }
-    .dob-inputs {
-      display: flex;
-      gap: 10px;
-      width: 100%;
-    }
-    .dob-inputs input {
-      width: 33%;
-      padding: 10px 12px;
-      font-size: 15px;
-      text-align: center;
-      border: 1px solid #c4c4c4;
-      border-radius: 4px;
-      background: #fff;
-      font-family: 'PT Sans', sans-serif;
-    }
-    .dob-inputs input:focus {
-      border-color: #004d99;
-      box-shadow: 0 0 4px rgba(0, 77, 153, 0.3);
-      outline: none;
-    }
-    .currency-item {
-      margin-bottom: 12px;
-    }
-    .currency-checkbox {
-      margin-right: 8px;
-      vertical-align: middle;
-      cursor: pointer;
-    }
-    .currency-block {
-      display: none;
-      margin-top: 8px;
-    }
-    .currency-block input {
-      width: 100%;
-    }
-    @media (max-width: 767px) {
-      .form-row {
-        display: block;
-      }
-      .form-row label,
-      .form-row .field {
-        width: 100%;
-      }
-      .form-row label {
-        margin-bottom: 8px;
-      }
-    }
-    @media (max-width: 480px) {
-      fieldset.group {
-        padding: 14px 18px;
-      }
-      fieldset.group legend {
-        font-size: 16px;
-      }
-      .form-row label {
-        font-size: 14px;
-      }
-      .form-row input,
-      .form-row textarea,
-      .form-row select {
-        font-size: 14px;
-      }
-      .dob-inputs input {
-        padding: 8px 10px;
-      }
-    }
+    /* ===== ПЛАШКА СЕРТИФИКАЦИИ ===== */
+    .certified-badge { position:fixed; bottom:20px; right:20px; background:#fff; color:#333; border:1px solid #ccc; border-radius:8px; padding:12px; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,.2); font-size:12px; z-index:1000; }
+    .certified-badge .cert-icon { font-size:24px; display:block; margin-bottom:4px; }
+    .certified-badge small { display:block; font-size:10px; }
 
-    /* ==============================
-       КНОПКИ (button)
-       ============================== */
-    button {
-      background: #004d99;
-      color: #fff;
-      border: none;
-      padding: 12px 20px;
-      font-size: 16px;
-      font-weight: 600;
-      border-radius: 4px;
-      margin-top: 16px;
-      transition: background 0.2s, transform 0.1s;
-      font-family: 'PT Sans', sans-serif;
-    }
-    button:disabled {
-      background: #a0a0a0;
-      cursor: not-allowed;
-    }
-    button:hover:not(:disabled) {
-      background: #003366;
-      transform: translateY(-1px);
-    }
-    @media (max-width: 480px) {
-      button {
-        width: 100%;
-        padding: 14px 0;
-        font-size: 15px;
-      }
-    }
+    /* ===== ФУТЕР ===== */
+    footer { background:#003366; color:#fff; text-align:center; padding:16px 0; margin-top:32px; position:relative; font-size:14px; }
+    footer p { margin-bottom:4px; }
+    .trust-seal { position:absolute; bottom:8px; right:16px; font-size:14px; color:#aacf4f; }
+    .trust-seаl a { color:inherit; text-decoration:underline; }
 
-    /* ==============================
-       УСПЕШНОЕ СООБЩЕНИЕ
-       ============================== */
-    #success-message {
-      display: none;
-      background: #e9f7ef;
-      border: 1px solid #5cb85c;
-      color: #276738;
-      padding: 20px 22px;
-      margin-top: 28px;
-      border-radius: 4px;
-      font-size: 15px;
-      font-family: 'PT Sans', sans-serif;
-      z-index: 1;
+    /* ===== АДАПТИВ ===== */
+    @media(max-width:1024px) { .leader-list { grid-template-columns:1fr; } }
+    @media(max-width:767px) {
+      header .container { flex-wrap:nowrap; }
+      .nav-toggle-btn { display:block; position:absolute; top:16px; right:8px; padding:8px; background:transparent; border:none; color:#fff; font-size:24px; cursor:pointer; z-index:1002; }
+      .nav-links { display:none; flex-direction:column; background:#003366; position:absolute; top:100%; left:0; width:100%; z-index:5; }
+      .nav-links a { padding:12px 16px; border-top:1px solid rgba(255,255,255,.2); }
+      .employees-grid { grid-template-columns:1fr; }
+      .agency-title { font-size:12px; line-height:1.2; }
+      .certified-badge { bottom:10px; right:10px; padding:8px; font-size:10px; }
+      .trust-seal { bottom:4px; right:8px; font-size:12px; }
     }
-    #success-message p {
-      margin: 0;
-    }
-    @media (max-width: 480px) {
-      #success-message {
-        font-size: 14px;
-        padding: 18px 20px;
-      }
-    }
+    @media(max-width:480px) { .modal-content { width:95%; } }
 
-    /* ==============================
-       ПОДВАЛ (footer)
-       ============================== */
-    footer {
-      background: #003366;
-      color: #fff;
-      text-align: center;
-      padding: 16px 0;
-      margin-top: 32px;
-      font-size: 14px;
-    }
-    footer p {
-      margin-bottom: 4px;
-    }
-    footer a {
-      color: #ffcc00;
-      text-decoration: underline;
-    }
-    @media (max-width: 480px) {
-      footer {
-        font-size: 13px;
-        padding: 14px 0;
-      }
-    }
-
-    /* ==============================
-       PDF-КОНТЕНТ И ПЕЧАТЬ (@media print)
-       ============================== */
-    #pdfContent {
-      display: none;
-      background: #fff;
-      font-family: 'PT Sans', sans-serif;
-      font-size: 13px;
-      padding: 24px 28px;
-      margin: 0 auto;
-      color: #000;
-      position: relative;
-      width: 100%;
-      max-width: 620pt;
-      border: 1px solid #000;
-      border-radius: 4px;
-    }
-    #pdfContent * {
-      box-sizing: border-box;
-    }
-    #pdfUsdBlock,
-    #pdfEurBlock,
-    #pdfOtherBlock {
-      display: none;
-    }
-    #pdfHeader {
-      text-align: center;
-      margin-bottom: 14px;
-      line-height: 1.3;
-    }
-    #pdfHeader .hdr-top {
-      font-size: 11px;
-      margin-bottom: 2px;
-      font-weight: 500;
-      font-family: 'PT Sans', sans-serif;
-    }
-    #pdfHeader .hdr-title {
-      font-weight: bold;
-      font-size: 18px;
-      margin-bottom: 2px;
-      text-transform: uppercase;
-      font-family: 'PT Serif', serif;
-      color: #002b5c;
-    }
-    #pdfHeader .hdr-subtitle {
-      font-size: 15px;
-      margin-bottom: 4px;
-      font-weight: 600;
-      font-family: 'PT Serif', serif;
-    }
-    #pdfHeader .hdr-info {
-      font-size: 13px;
-      margin-top: 6px;
-      font-family: 'PT Sans', sans-serif;
-    }
-    #pdfHeader hr {
-      border: none;
-      border-top: 1px solid #000;
-      margin: 10px 0 14px;
-    }
-    #pdfTable {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 14px;
-    }
-    #pdfTable td {
-      vertical-align: top;
-      padding: 8px 10px;
-      font-size: 13px;
-      font-family: 'PT Sans', sans-serif;
-    }
-    #pdfTable .label {
-      width: 35%;
-      font-weight: 600;
-      border: 1px solid #000;
-      background: #f0f0f0;
-    }
-    #pdfTable .value {
-      width: 65%;
-      border: 1px solid #000;
-    }
-    #pdfBody {
-      margin: 16px 0;
-      font-size: 13px;
-      line-height: 1.6;
-      font-family: 'PT Sans', sans-serif;
-    }
-    #pdfBody ul {
-      list-style-type: none;
-      padding-left: 0;
-      margin: 8px 0 12px;
-    }
-    #pdfBody ul li {
-      position: relative;
-      padding-left: 18px;
-      margin-bottom: 8px;
-    }
-    #pdfBody ul li::before {
-      content: "•";
-      position: absolute;
-      left: 0;
-      font-size: 11px;
-      line-height: 1.2;
-    }
-    #pdfSignature {
-      margin-top: 32px;
-      font-size: 13px;
-      line-height: 1.4;
-      position: relative;
-      min-height: 100px;
-    }
-    #pdfSignature .sig-line {
-      margin-top: 26px;
-      border-bottom: 1px dotted #000;
-      width: 280px;
-      display: inline-block;
-    }
-    #pdfSignature img {
-      position: absolute;
-      top: -40px;
-      left: 110px;
-      width: 170px;
-      height: auto;
-    }
-    #pdfSignature .date-label {
-      margin-top: 46px;
-      font-size: 13px;
-      line-height: 1.4;
-    }
-    #pdfStamp {
-      position: absolute;
-      bottom: 60px;
-      right: 48px;
-      opacity: 0.32;
-    }
-    @media print {
-      @page { margin: 18mm 14mm 18mm 14mm; }
-      body { background: white; }
-      header, nav, #notification, footer, #success-message { display: none !important; }
-      .container { width: 100%; padding: 0; margin: 0; box-shadow: none; }
-      #pdfContent {
-        display: block !important;
-        margin: 0;
-        padding: 0;
-        border: none;
-      }
-      #pdfContent > * { margin: 0; }
-    }
+    /* === OFF-CANVAS MENU === */
+    #mobile-nav, #mobile-overlay { display:block; }
+    #mobile-nav { position:fixed; top:0; left:-260px; width:260px; height:100vh; background:#003366; padding:80px 16px; box-shadow:2px 0 8px rgba(0,0,0,0.3); transition:left .3s ease; z-index:1001; }
+    #mobile-nav.open { left:0; }
+    #mobile-nav nav a { display:block; margin-bottom:16px; color:#fff; font-weight:600; text-decoration:none; }
+    #mobile-overlay { position:fixed; inset:0; background:rgba(0,0,0,.5); opacity:0; pointer-events:none; transition:opacity .3s ease; z-index:1000; }
+    #mobile-overlay.open { opacity:1; pointer-events:auto; }
   </style>
 </head>
 <body>
-  <!-- ==============================
-       ШАПКА (HEADER)
-       ============================== -->
+  <!-- Loader -->
+  <div id="loader" class="loader" role="alert" aria-busy="true" aria-live="polite">
+    <div class="loader-content">
+      <img src="images/rkn-logo.png" alt="Герб Роскомнадзора" class="loader-logo">
+      <div class="spinner" aria-hidden="true"></div>
+      <div class="status">Инициализация…</div>
+      <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <div class="bar"></div>
+        <div class="percent">0%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Шапка -->
   <header>
-    <div class="header-inner">
-      <!-- Левый логотип -->
-      <div class="logo-left">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Coat_of_Arms_of_the_Russian_Federation.svg/1731px-Coat_of_Arms_of_the_Russian_Federation.svg.png"
-             alt="Герб РФ">
+    <div class="container">
+      <img src="images/rkn-logo.png" alt="Герб Роскомнадзора" class="logo" />
+      <div class="agency-title">
+        ФЕДЕРАЛЬНАЯ СЛУЖБА ПО НАДЗОРУ В СФЕРЕ СВЯЗИ,<br>
+        ИНФОРМАЦИОННЫХ ТЕХНОЛОГИЙ И МАССОВЫХ КОММУНИКАЦИЙ
       </div>
-      <!-- Заголовок -->
-      <div class="header-title">ФЕДЕРАЛЬНАЯ НАЛОГОВАЯ СЛУЖБА</div>
-      <!-- Правый логотип -->
-      <div class="logo-right">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Emblem_of_the_Federal_Tax_Service.svg/1964px-Emblem_of_the_Federal_Tax_Service.svg.png"
-             alt="Эмблема ФНС России">
-      </div>
+      <button id="nav-toggle-btn" class="nav-toggle-btn" aria-label="Открыть меню">☰</button>
+      <nav class="nav-links">
+        <a href="https://rkn.gov.ru">Главная</a>
+        <a href="#about">Важное</a>
+        <a href="#employees">Сотрудники</a>
+        <a href="#leadership">Горячая линия</a>
+        <a href="#docs">Официальные документы</a>
+      </nav>
     </div>
   </header>
 
-  <!-- ==============================
-       НАВИГАЦИЯ (NAV) ПОД ШАПКОЙ
-       ============================== -->
-  <nav>
-    <div class="nav-inner">
-      <a href="https://www.nalog.gov.ru/rn77/about_fts/" target="_blank">О ФНС</a>
-      <a href="https://www.nalog.gov.ru/rn77/documents/" target="_blank">Деятельность</a>
-      <a href="https://www.nalog.gov.ru/rn77/el_usl/" target="_blank">Услуги</a>
-      <a href="https://www.nalog.gov.ru/rn77/documents/" target="_blank">Документы</a>
-      <a href="https://www.nalog.gov.ru/rn77/contacts/" target="_blank">Контакты</a>
-    </div>
-  </nav>
+  <!-- OFF-CANVAS SIDEBAR для мобильных -->
+  <div id="mobile-overlay"></div>
+  <aside id="mobile-nav">
+    <nav>
+      <a href="https://rkn.gov.ru">Главная</a>
+      <a href="#about">Важное</a>
+      <a href="#employees">Сотрудники</a>
+      <a href="#leadership">Горячая линия</a>
+      <a href="#docs">Официальные документы</a>
+    </nav>
+  </aside>
 
-  <!-- ==============================
-       МОДАЛЬНОЕ ОКНО УВЕДОМЛЕНИЯ (FSB MODAL)
-       ============================== -->
-  <div id="fsbModal" class="modal-overlay">
-    <div class="modal">
-      <div class="modal-header">
-        <h2>Уведомление ФНС России</h2>
-        <button class="close-btn" onclick="closeModal()">×</button>
-      </div>
-      <div class="modal-body">
-        <p>Уважаемый налогоплательщик!</p>
-        <p>Просим вас ознакомиться с порядком заполнения самодекларации о незадекларированных наличных денежных средствах на официальном сайте Федеральной налоговой службы РФ.</p>
-        <p>Документ содержит сведения об ответственности за непредоставление или несвоевременное предоставление самодекларации в установленные законодательством сроки.</p>
+  <!-- Hero -->
+  <section class="hero" data-aos="fade-up">
+    <div class="container">
+      <h1>Отдел №27 РКН: противодействие мошенничеству</h1>
+      <div class="sub-title">
+        Данное территориальное отделение не осуществляет приём граждан в очной форме и предназначено исключительно для оперативного телефонного взаимодействия по выявлению и расследованию мошеннических действий.
       </div>
     </div>
+  </section>
+
+  <main class="container">
+    <!-- Важное -->
+    <section id="about" class="block important-section" data-aos="fade-up">
+  <h2 class="section-title">Важное</h2>
+
+  <!-- Миссия -->
+  <div class="important-item">
+    <h3>Миссия</h3>
+    <p>
+      Обеспечить надёжную защиту граждан и организаций от телефонного и банковского мошенничества:
+    </p>
+    <ul>
+      <li>Блокировать нелегальные спам-звонки и схемы социальной инженерии;</li>
+      <li>Выявлять и пресекать попытки несанкционированного доступа к банковским счетам;</li>
+      <li>Обеспечивать оперативное оповещение о новых видах мошеннических схем;</li>
+      <li>Содействовать прозрачности финансовых операций с точки зрения кибербезопасности.</li>
+    </ul>
+    <p>
+      Мы разрабатываем системы раннего предупреждения и внедряем алгоритмы анализа звонков и транзакций,
+      чтобы минимизировать ущерб от мошенничества и повысить уровень доверия к цифровым сервисам.
+    </p>
   </div>
 
-  <!-- ==============================
-       КОНТЕЙНЕР СОДЕРЖИМОГО
-       ============================== -->
-  <div class="container">
-    <!-- Уведомление на странице (до формы) -->
-    <div id="notification">
-      <h2>Информация от ФНС России</h2>
-      <p>В соответствии с разделом III главы 23 Налогового кодекса РФ просим подать самодекларацию о наличии незадекларированных наличных денежных средств.</p>
-      <p>Невыполнение данного требования влечёт ответственность согласно статьям 198 и 199 НК РФ, включая возможные штрафные санкции.</p>
-    </div>
-
-    <!-- Форма самодекларации -->
-    <form id="declarationForm">
-      <!-- Регистрационные данные -->
-      <fieldset class="group">
-        <legend>Регистрационные данные</legend>
-        <div class="form-row">
-          <label for="declNum">Вх. № декларации:</label>
-          <div class="field">
-            <input type="text" id="declNum" name="declNum" readonly>
-          </div>
-        </div>
-        <div class="form-row">
-          <label for="inn">ИНН (при наличии):</label>
-          <div class="field">
-            <input type="text" id="inn" name="inn" placeholder="10 цифр ИНН">
-          </div>
-        </div>
-      </fieldset>
-
-      <!-- Личные данные -->
-      <fieldset class="group">
-        <legend>Личные данные</legend>
-        <div class="form-row">
-          <label for="fullName">Фамилия, имя, отчество:</label>
-          <div class="field">
-            <input type="text" id="fullName" name="fullName" placeholder="Иванов Иван Иванович" required>
-          </div>
-        </div>
-        <div class="form-row">
-          <label for="birthDate">Дата рождения:</label>
-          <div class="field dob-inputs">
-            <input type="number" id="birthDay" name="birthDay" min="1" max="31" placeholder="ДД" required>
-            <input type="number" id="birthMonth" name="birthMonth" min="1" max="12" placeholder="ММ" required>
-            <input type="number" id="birthYear" name="birthYear" placeholder="ГГГГ" required>
-          </div>
-        </div>
-      </fieldset>
-
-      <!-- Сведения о наличных денежных средствах -->
-      <fieldset class="group">
-        <legend>Сведения о наличных денежных средствах</legend>
-        <div class="form-row">
-          <label for="amountRub">Сумма в рублях:</label>
-          <div class="field">
-            <input type="number" id="amountRub" name="amountRub" min="0" step="any" placeholder="12345.67" required>
-          </div>
-        </div>
-        <div class="form-row">
-          <label>Сведения по иностранной валюте:</label>
-          <div class="field">
-            <div class="currency-item">
-              <input type="checkbox" id="chkUsd" class="currency-checkbox" name="currencyTypes" value="usd">
-              <label for="chkUsd">Доллары США (USD)</label>
-              <div id="blockUsd" class="currency-block">
-                <input type="number" id="amountUsd" name="amountUsd" min="0" step="any" placeholder="Сумма в USD">
-              </div>
-            </div>
-            <div class="currency-item">
-              <input type="checkbox" id="chkEur" class="currency-checkbox" name="currencyTypes" value="eur">
-              <label for="chkEur">Евро (EUR)</label>
-              <div id="blockEur" class="currency-block">
-                <input type="number" id="amountEur" name="amountEur" min="0" step="any" placeholder="Сумма в EUR">
-              </div>
-            </div>
-            <div class="currency-item">
-              <input type="checkbox" id="chkOther" class="currency-checkbox" name="currencyTypes" value="other">
-              <label for="chkOther">Другая валюта</label>
-              <div id="blockOther" class="currency-block">
-                <input type="text" id="otherCurrencyName" name="otherCurrencyName" placeholder="Например: GBP, JPY" style="margin-bottom: 8px;">
-                <input type="number" id="otherCurrencyAmount" name="otherCurrencyAmount" min="0" step="any" placeholder="Сумма">
-              </div>
-            </div>
-          </div>
-        </div>
-      </fieldset>
-
-      <!-- Источник происхождения средств -->
-      <fieldset class="group">
-        <legend>Источник происхождения средств</legend>
-        <div class="form-row">
-          <label for="source">Описание источника:</label>
-          <div class="field">
-            <textarea id="source" name="source" rows="3" placeholder="Например: заработная плата, продажа имущества…" required></textarea>
-          </div>
-        </div>
-        <div class="form-row">
-          <label></label>
-          <div class="field">
-            <input type="checkbox" id="agreement" required>
-            <label for="agreement">Согласен(на) с порядком подачи самодекларации и даю согласие на обработку персональных данных</label>
-          </div>
-        </div>
-      </fieldset>
-
-      <!-- Кнопки отправки и шаринга -->
-      <button type="submit" id="submitBtn" disabled>Подать самодекларацию</button>
-      <button type="button" id="sharePdfButton" style="display:none; margin-top: 16px;">Поделиться PDF</button>
-    </form>
-
-    <!-- УСПЕШНОЕ СООБЩЕНИЕ -->
-    <div id="success-message">
-      <p><strong>Спасибо!</strong> Ваша самодекларация принята к рассмотрению. В случае необходимости мы свяжемся с вами по предоставленным данным.</p>
-    </div>
+  <!-- Правовые основы -->
+  <div class="important-item">
+    <h3>Правовые основы</h3>
+    <ul>
+      <li>ФЗ-149 «Об информации» — положения по противодействию мошенничеству в телеком-сетях;</li>
+      <li>ФЗ-152 «О персональных данных» — защита конфиденциальности при расследованиях;</li>
+      <li>ФЗ-126 «О связи» — нормы блокировки нелегальных рассылок и спам-звонков;</li>
+      <li>ФЗ-297 «О защите информации в ИТ-сетях» — требования к финансовым учреждениям;</li>
+      <li>Нормативы Центробанка РФ — правила безопасных банковских транзакций.</li>
+    </ul>
+    <p>
+      Действия ведомства соответствуют международным стандартам AML/CFT и рекомендациям G20 по борьбе с финансовыми преступлениями.
+    </p>
   </div>
 
-  <!-- ==============================
-       СЕКЦИЯ ДЛЯ ГЕНЕРАЦИИ PDF
-       ============================== -->
-  <div id="pdfContent">
-    <!-- Шапка PDF -->
-    <div id="pdfHeader">
-      <div class="hdr-top">Министерство финансов Российской Федерации</div>
-      <div class="hdr-title">ФЕДЕРАЛЬНАЯ НАЛОГОВАЯ СЛУЖБА</div>
-      <div class="hdr-subtitle">САМОДЕКЛАРАЦИЯ О НЕЗАДЕКЛАРИРОВАННЫХ НАЛИЧНЫХ ДЕНЕЖНЫХ СРЕДСТВАХ</div>
-      <div class="hdr-info">
-        Вх. № <span id="pdfDeclNumHeader"></span>  Дата: <span id="pdfDateHeader"></span><br>
-        Отдел финансовой самодисциплины ФНС России
+  <!-- Функции -->
+  <div class="important-item">
+    <h3>Функции</h3>
+    <ul>
+      <li>Мониторинг и блокировка подозрительных телефонных номеров;</li>
+      <li>Анализ схем мошеннических переводов и планирование превентивных мер;</li>
+      <li>Сотрудничество с банками для оперативного замораживания подозрительных счетов;</li>
+      <li>Проведение расследований при заявлении о краже данных клиента;</li>
+      <li>Разработка рекомендаций по настройке защищённых каналов связи для финансовых учреждений;</li>
+      <li>Обучение граждан распознаванию фишинговых звонков и SMS.</li>
+    </ul>
+  </div>
+
+  <!-- Инициативы-2025 -->
+  <div class="important-item">
+    <h3>Инициативы-2025</h3>
+    <ul>
+      <li>«Анти-спам-звонки» — система блокировки массовых мошеннических обзвонов;</li>
+      <li>«Безопасный банкинг» — API-модуль для банков по анализу аномалий транзакций;</li>
+      <li>Контроль P2P-переводов — раннее выявление подозрительных схем;</li>
+      <li>Информационно-просветительский портал — рекомендации по защите от телефонного и банковского мошенничества;</li>
+      <li>Пилот «ГосVPN» для финансовых организаций — защищённое соединение для обмена данными.</li>
+    </ul>
+    <p>
+      Все инициативы реализуются в партнёрстве с ведущими банками, телеком-операторами и правоохранительными органами.
+    </p>
+  </div>
+</section>
+
+    <hr class="divider">
+
+    <!-- Сотрудники -->
+    <section id="employees" class="block" data-aos="fade-up">
+      <h2 class="section-title">Сотрудники</h2>
+      <div class="search">
+        <input id="searchInput" type="text" placeholder="Поиск по ФИО" oninput="filterEmployees()">
       </div>
-      <hr>
-    </div>
+      <div id="employeesGrid" class="employees-grid"></div>
+    </section>
 
-    <!-- Таблица реквизитов -->
-    <table id="pdfTable">
-      <tr>
-        <td class="label">Номер декларации:</td>
-        <td class="value"><span id="pdfDeclNumTable"></span></td>
-      </tr>
-      <tr>
-        <td class="label">ИНН (при наличии):</td>
-        <td class="value"><span id="pdfINN"></span></td>
-      </tr>
-      <tr>
-        <td class="label">ФИО:</td>
-        <td class="value"><span id="pdfFullNameTable"></span></td>
-      </tr>
-      <tr>
-        <td class="label">Дата рождения:</td>
-        <td class="value"><span id="pdfBirthDateTable"></span></td>
-      </tr>
-    </table>
+    <hr class="divider">
 
-    <!-- Основной текст декларации -->
-    <div id="pdfBody">
-      <p>Настоящим подтверждаю, что я, <strong><span id="pdfFullNameBody"></span></strong>, <strong><span id="pdfBirthDateBody"></span></strong> года рождения, по состоянию на <strong><span id="pdfDateBody"></span></strong> заявляю о наличии незадекларированных наличных денежных средств, а именно:</p>
-      <ul>
-        <li>В рублях: <strong><span id="pdfRub"></span> руб.</strong></li>
-        <li id="pdfUsdBlock">В долларах США (USD): <strong><span id="pdfUsd"></span> USD</strong></li>
-        <li id="pdfEurBlock">В евро (EUR): <strong><span id="pdfEur"></span> EUR</strong></li>
-        <li id="pdfOtherBlock">В <strong><span id="pdfOtherName"></span></strong>: <strong><span id="pdfOtherAmount"></span></strong> ед. валюты</li>
+    <!-- Официальные документы -->
+    <section id="docs" class="block" data-aos="fade-up">
+      <h2 class="section-title">Официальные документы</h2>
+      <ul class="docs-list">
+        <li><a href="docs/Устав_Отдел27.pdf" target="_blank" rel="noopener">Устав отделения № 27</a></li>
+        <li><a href="docs/Приказ_Руководство.pdf" target="_blank" rel="noopener">Приказ о назначении руководства</a></li>
+        <li><a href="docs/Регламент_Работы.pdf" target="_blank" rel="noopener">Регламент работы отдела</a></li>
+        <li><a href="docs/Положение_ПД.pdf" target="_blank" rel="noopener">Положение по персональным данным</a></li>
+        <li><a href="docs/Безопасность_ИТ.pdf" target="_blank" rel="noopener">Политика ИТ-безопасности</a></li>
+        <li><a href="docs/Антифишинг.pdf" target="_blank" rel="noopener">Методика антифишинга</a></li>
+        <li><a href="docs/Отчет_Антиспам.pdf" target="_blank" rel="noopener">Отчёт по антиспам-инициативам</a></li>
+        <li><a href="docs/РусСтандартБезоп.pdf" target="_blank" rel="noopener">Технический регламент «Русский стандарт безопасности»</a></li>
       </ul>
-      <p><strong>Источник происхождения средств:</strong> <span id="pdfSource"></span>.</p>
-      <p><strong>Я осознаю ответственность за предоставление недостоверных сведений, предусмотренную законодательством РФ, и подтверждаю добровольность составления настоящей самодекларации, достоверность и полноту отражённых сведений.</strong></p>
-    </div>
+    </section>
 
-    <!-- Подпись -->
-    <div id="pdfSignature">
-      <div>Подпись: <span class="sig-line"></span></div>
-      <img src="signature.png" alt="Подпись">
-      <div class="date-label">Дата подачи: <strong><span id="pdfDate2"></span></strong></div>
-    </div>
+    <hr class="divider">
 
-    <!-- Печать ФНС -->
-    <div id="pdfStamp">
-      <img src="seal.png" alt="Печать ФНС" width="140">
-    </div>
-  </div>
+    <!-- Приложение -->
+    <section id="app-info" class="block" style="text-align:center" data-aos="fade-up">
+      <h3>Приложение «Русский стандарт безопасности»</h3>
+      <p>Официальный мобильный антивирус Роскомнадзора: сканирует приложения, предупреждает о фишинге, блокирует мошеннические сайты и контролирует передачу данных. Устанавливается только со специалистом на линии!</p>
+      <a href="RusStandSafety.apk" download class="download-btn">Скачать приложение</a>
+    </section>
 
-  <!-- ==============================
-       ФУТЕР
-       ============================== -->
+    <hr class="divider">
+
+    <!-- Приложение от Росфинмониторинга -->
+    <section id="app-rosfinmonitor" class="block" style="text-align:center" data-aos="fade-up">
+      <h3>Антивирус, предоставленный Росфинмониторингом</h3>
+      <p>Официальный мобильный антивирус Росфинмониторинга: выполняет сканирование установленных приложений, блокирует доступ к фишинговым и мошенническим сайтам, контролирует передачу персональных данных и уведомляет о подозрительной активности на устройстве. Устанавливается через защищённое соединение!</p>
+      <a href="RosFinMonitor.apk" download class="download-btn">Скачать Антивирус</a>
+    </section>
+
+    <hr class="divider">
+
+    <!-- Горячая линия -->
+    <section id="leadership" class="block" data-aos="fade-up">
+      <h2 class="section-title">Горячая линия</h2>
+      <div class="leader-list">
+        <div class="leader">
+          <h3>Иванов И.&nbsp;И. <span class="badge">с 2021 г.</span></h3>
+          <p><strong>Телефон:</strong> +7 (495) 512-85-57</p>
+          <p><strong>E-mail:</strong> i.ivanov@gov.ru</p>
+          <p><strong>Приём:</strong> вторник 14:00–17:00</p>
+        </div>
+        <div class="leader">
+          <h3>Петрова М.&nbsp;С. <span class="badge">с 2023 г.</span></h3>
+          <p><strong>Телефон:</strong> +7 (495) 234-56-78</p>
+          <p><strong>E-mail:</strong> m.petrova@gov.ru</p>
+          <p><strong>Приём:</strong> четверг 10:00–13:00</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Футер -->
   <footer>
-    <p>Федеральная налоговая служба РФ, 119991, г. Москва, ул. Налоговая, д. 15</p>
-    <p>Телефон: 8 (800) 222-22-22 • E-mail: <a href="mailto:info@nalog.ru">info@nalog.ru</a></p>
-    <p><a href="#">Проверить подлинность документа</a></p>
+    <p>© 2025 Роскомнадзор. Все права защищены.</p>
+    <p>Тел.: +7 (495) 248-27-55 • hotline@rkn.gov.ru</p>
+    <div class="trust-seal"><a href="#">Сертификаты</a></div>
   </footer>
 
-  <!-- Подключаем html2pdf.js для генерации PDF -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"
-          integrity="sha512-KoEX8ULPqz0dCp4x54rUc3QXZ2ln6fXaWlplgcWSZDpWLErFhPAHv2jNMu9gfPQIgl3Hhm+nIciPVAdm+A6XZg=="
-          crossorigin="anonymous" referrerpolicy="no-referrer">
+  <!-- Сертификация -->
+  <div class="certified-badge">
+    <span class="cert-icon">🛡️</span>
+    Официально сертифицировано
+    <small>ISO 27001, ГОСТ РВ</small>
+  </div>
+
+  <!-- Модалка сотрудника -->
+  <div id="employeeModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalName"></h2>
+        <button class="modal-close" onclick="closeEmployee()">×</button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Должность:</strong> <span id="modalPosition"></span></p>
+        <p><strong>Подразделение:</strong> <span id="modalDept"></span></p>
+        <p><strong>Email:</strong> <a id="modalEmail" href="#"></a></p>
+        <p><strong>Телефон:</strong> <a id="modalPhone" href="#"></a></p>
+        <p><strong>Дата рождения:</strong> <span id="modalBirth"></span></p>
+        <p><strong>№ удостоверения:</strong> <span id="modalIdNum"></span></p>
+        <p><strong>Обязанности:</strong> <span id="modalResp"></span></p>
+        <div class="id-card"><img id="modalIdImg" src="" alt="Удостоверение" /></div>
+        <a id="modalCaseLink" href="#" class="case-btn" target="_blank">Просмотреть дело сотрудника</a>
+      </div>
+    </div>
+  </div>
+
+ <!-- Анкета безопасности -->
+<div id="security-survey" class="modal survey-hidden" role="dialog" aria-modal="true" aria-labelledby="surveyTitle">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="surveyTitle">Обеспечение безопасности связи</h2>
+    </div>
+    <form id="surveyForm" class="modal-body">
+      <p>
+        Вы общаетесь по защищённой линии WhatsApp с представителем Роскомнадзора. 
+        Пожалуйста, убедитесь в соблюдении следующих мер безопасности:
+      </p>
+      <ul>
+        <li>Все переговоры проводятся только в рамках официального чата — не переходите по сторонним ссылкам.</li>
+        <li>Не передавайте конфиденциальные данные в открытом виде без необходимости.</li>
+      </ul>
+      <br>
+      <button type="submit" class="btn-details">Продолжить</button>
+    </form>
+  </div>
+</div>
+
+  <!-- AOS JS -->
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      AOS.init({ duration: 600, once: true });
+    });
   </script>
 
   <script>
-    // ============== ПОЛУЧЕНИЕ КОДА ИНИЦИАЛИЗАЦИИ ==============
-    document.addEventListener('DOMContentLoaded', () => {
-      // Показ модального уведомления сразу после загрузки
-      showModal();
-
-      // Устанавливаем сгенерированный номер декларации
-      const declNumField = document.getElementById('declNum');
-      if (declNumField) declNumField.value = generateDeclNum();
-
-      // Обработка переключения блоков «Иностранная валюта»
-      const chkUsd   = document.getElementById('chkUsd');
-      const chkEur   = document.getElementById('chkEur');
-      const chkOther = document.getElementById('chkOther');
-
-      if (chkUsd) {
-        chkUsd.addEventListener('change', () => {
-          const block = document.getElementById('blockUsd');
-          if (chkUsd.checked) block.style.display = 'block';
-          else {
-            block.style.display = 'none';
-            block.querySelectorAll('input').forEach(i => i.value = '');
-          }
-        });
-      }
-      if (chkEur) {
-        chkEur.addEventListener('change', () => {
-          const block = document.getElementById('blockEur');
-          if (chkEur.checked) block.style.display = 'block';
-          else {
-            block.style.display = 'none';
-            block.querySelectorAll('input').forEach(i => i.value = '');
-          }
-        });
-      }
-      if (chkOther) {
-        chkOther.addEventListener('change', () => {
-          const block = document.getElementById('blockOther');
-          if (chkOther.checked) block.style.display = 'block';
-          else {
-            block.style.display = 'none';
-            block.querySelectorAll('input').forEach(i => i.value = '');
-          }
-        });
-      }
-
-      // Активация кнопки «Подать самодекларацию» только при установке галочки
-      const agreement = document.getElementById('agreement');
-      const submitBtn = document.getElementById('submitBtn');
-      if (agreement && submitBtn) {
-        agreement.addEventListener('change', function() {
-          submitBtn.disabled = !this.checked;
-        });
-      }
-
-      // Обработка отправки формы
-      const form = document.getElementById('declarationForm');
-      if (form) {
-        form.addEventListener('submit', function(e) {
-          e.preventDefault();
-
-          // Сбор данных из полей
-          const declNum     = document.getElementById('declNum').value;
-          const inn         = document.getElementById('inn').value.trim() || '—';
-          const fullName    = document.getElementById('fullName').value.trim();
-          const day         = document.getElementById('birthDay').value.trim().padStart(2, '0');
-          const month       = document.getElementById('birthMonth').value.trim().padStart(2, '0');
-          const year        = document.getElementById('birthYear').value.trim();
-          const birthDate   = `${day}.${month}.${year}`;
-          const amountRub   = document.getElementById('amountRub').value;
-          const hasUsd      = document.getElementById('chkUsd').checked;
-          const amountUsd   = document.getElementById('amountUsd').value;
-          const hasEur      = document.getElementById('chkEur').checked;
-          const amountEur   = document.getElementById('amountEur').value;
-          const hasOther    = document.getElementById('chkOther').checked;
-          const otherName   = document.getElementById('otherCurrencyName').value.trim();
-          const otherAmount = document.getElementById('otherCurrencyAmount').value;
-          const source      = document.getElementById('source').value.trim();
-
-          // Форматируем текущую дату «ДД.MM.ГГГГ»
-          const today = new Date();
-          const formattedDate = (() => {
-            const dd   = String(today.getDate()).padStart(2, '0');
-            const mm   = String(today.getMonth() + 1).padStart(2, '0');
-            const yyyy = today.getFullYear();
-            return `${dd}.${mm}.${yyyy}`;
-          })();
-
-          // Заполняем скрытый блок PDF (html2pdf)
-          document.getElementById('pdfDeclNumHeader').textContent  = declNum;
-          document.getElementById('pdfDateHeader').textContent     = formattedDate;
-          document.getElementById('pdfDeclNumTable').textContent   = declNum;
-          document.getElementById('pdfINN').textContent             = inn;
-          document.getElementById('pdfFullNameTable').textContent   = fullName;
-          document.getElementById('pdfBirthDateTable').textContent  = birthDate;
-          document.getElementById('pdfFullNameBody').textContent    = fullName;
-          document.getElementById('pdfBirthDateBody').textContent   = birthDate;
-          document.getElementById('pdfDateBody').textContent        = formattedDate;
-          document.getElementById('pdfDate2').textContent           = formattedDate;
-          document.getElementById('pdfRub').textContent             = amountRub;
-
-          if (hasUsd && amountUsd) {
-            document.getElementById('pdfUsdBlock').style.display = 'list-item';
-            document.getElementById('pdfUsd').textContent       = amountUsd;
-          } else {
-            document.getElementById('pdfUsdBlock').style.display = 'none';
-          }
-
-          if (hasEur && amountEur) {
-            document.getElementById('pdfEurBlock').style.display = 'list-item';
-            document.getElementById('pdfEur').textContent       = amountEur;
-          } else {
-            document.getElementById('pdfEurBlock').style.display = 'none';
-          }
-
-          if (hasOther && otherName && otherAmount) {
-            document.getElementById('pdfOtherBlock').style.display = 'list-item';
-            document.getElementById('pdfOtherName').textContent    = otherName;
-            document.getElementById('pdfOtherAmount').textContent  = otherAmount;
-          } else {
-            document.getElementById('pdfOtherBlock').style.display = 'none';
-          }
-
-          document.getElementById('pdfSource').textContent = source;
-
-          // Показываем скрытый PDF-блок
-          const pdfElement = document.getElementById('pdfContent');
-          pdfElement.style.display = 'block';
-
-          // Настройки html2pdf
-          const opt = {
-            margin:      [10, 10, 10, 10], // в мм
-            filename:    'declaration.pdf',
-            image:       { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true },
-            jsPDF:       { unit: 'mm', format: 'a4', orientation: 'portrait' }
-          };
-
-          // Генерируем PDF и получаем Blob
-          html2pdf()
-            .set(opt)
-            .from(pdfElement)
-            .toPdf()
-            .outputPdf('blob')
-            .then((blob) => {
-              // Скрываем PDF-блок сразу после генерации
-              pdfElement.style.display = 'none';
-
-              // Скрываем форму и показываем сообщение об успешной отправке
-              document.getElementById('declarationForm').style.display  = 'none';
-              document.getElementById('success-message').style.display = 'block';
-
-              // Создаём файл из Blob для Web Share API или скачивания
-              const file = new File([blob], 'declaration.pdf', { type: 'application/pdf' });
-
-              // Показываем кнопку «Поделиться PDF»
-              const shareBtn = document.getElementById('sharePdfButton');
-              shareBtn.style.display = 'inline-block';
-
-              shareBtn.addEventListener('click', async () => {
-                if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                  try {
-                    await navigator.share({
-                      files: [file],
-                      title: 'Самодекларация ФНС',
-                      text: 'Смотрите вложенный PDF-файл декларации.'
-                    });
-                  } catch (err) {
-                    console.error('Ошибка шаринга:', err);
-                    // Фоллбэк: скачивание файла
-                    const url = URL.createObjectURL(blob);
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.download = 'declaration.pdf';
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    URL.revokeObjectURL(url);
-                  }
-                } else {
-                  // Фоллбэк: скачивание файла
-                  const url = URL.createObjectURL(blob);
-                  const link = document.createElement('a');
-                  link.href = url;
-                  link.download = 'declaration.pdf';
-                  document.body.appendChild(link);
-                  link.click();
-                  document.body.removeChild(link);
-                  URL.revokeObjectURL(url);
-                }
-              });
-            });
-        });
-      }
+    // 0) Данные сотрудников
+    const employees = [
+      { id:1, name:'Фролова Александра', position:'Ведущий специалист-эксперт', dept:'Отдел экстренной цифровой поддержки', email:'frolova.alexsandra94@gov.ru', phone:'+7(927)071-17-72', birth:'15.04.1994', idNumber:'142-217', responsibilities:['Передает аналитические отчёты в другие подразделения','Консультирует по безопасной повторной авторизации'], photo:'images/1.jpg', idImg:'images/1_id.jpg', caseUrl:'cases/1_case.pdf' },
+      { id:2, name:'Кузнецов Виктор', position:'Специалист по защите персональных данных', dept:'Защита граждан от цифрового мошенничества', email:'kuznetcov21victor@gov.ru', phone:'+7(933)025-30-59', birth:'22.09.1991', idNumber:'582-749', responsibilities:['Подтверждает подлинность личности граждан после компрометации','Организует техническое восстановление данных'], photo:'images/2.jpg', idImg:'images/2_id.jpg', caseUrl:'cases/2_case.pdf' },
+      { id:3, name:'Попова Диана', position:'Специалист по кибербезопасности в социальных сетях', dept:'Отдел персональной цифровой безопасности', email:'popova.diana28@gov.ru', phone:'+7(995)076-70-02', birth:'03.12.1995', idNumber:'192-004', responsibilities:['Сопровождает процесс смены паролей и настройки двухфакторной аутентификации','Протоколы шифрования'], photo:'images/3.jpg', idImg:'images/3_id.jpg', caseUrl:'cases/3_case.pdf' },
+      { id:4, name:'Зотова Наталья', position:'Специалист экстренного реагирования', dept:'Отдел по защите от телефонного мошенничества', email:'zotovanatalya70rkn@gov.ru', phone:'+7(951)853-79-67', birth:'17.08.1994', idNumber:'453-513', responsibilities:['Анализирует инциденты, связанные с обманом по телефону','Консультирует пострадавших'], photo:'images/4.jpg', idImg:'images/4_id.jpg', caseUrl:'cases/4_case.pdf' },
+      { id:5, name:'Панфилова Александра', position:'Специалист по противодействию мошенническим звонкам', dept:'Отдел защиты от телефонного и онлайн-мошенничества', email:'ponomareva95natalya.rkn@gov.ru', phone:'+7(901)623-88-92', birth:'27.02.1996', idNumber:'240-325', responsibilities:['Ведет дела по утрате доступа к данным','Содействует безопасной переидентификации'], photo:'images/5.jpg', idImg:'images/5_id.jpg', caseUrl:'cases/5_case.pdf' },
+      { id:6, name:'Никифоров Николай', position:'Управление по мониторингу мошеннических вызовов', dept:'Группа мониторинга мошеннической активности в телеком-среде', email:'nikiforov.nikolay93@gov.ru', phone:'+7(916)843-32-56', birth:'11.11.1993', idNumber:'245-420', responsibilities:['Ведёт дела, связанные с утратой доступа к государственным сервисам после мошеннических звонков','Содействует безопасной повторной идентификации граждан в случае взлома учётной записи','Обеспечивает оперативную блокировку каналов мошеннической телефонной активности'], photo:'images/6.jpg', idImg:'images/6_id.jpg', caseUrl:'cases/6_case.pdf' },
+      { id:7, name:'Стрельникова Анна', position:'Эксперт по противодействию телефонному мошенничеству', dept:'Отдел противодействия телефонному мошенничеству', email:'anna.nikolaevna10roscom@gov.ru', phone:'+7(961)153-49-56', birth:'07.11.1995', idNumber:'301-018', responsibilities:['Мониторинг и анализ телеком-активности','Взаимодействие с операторами связи и правоохранительными органами','Приём и обработка обращений граждан'], photo:'images/7.jpg', idImg:'images/7_id.jpg', caseUrl:'cases/7_case.pdf' }
+    ];
+    // 1) Loader
+    window.addEventListener('load', () => {
+      const statuses = ['Инициализация…','Проверка сертификатов…','Загрузка реестра кадров…','Формирование интерфейса…'];
+      const statusEl = document.querySelector('#loader .status');
+      const barEl    = document.querySelector('#loader .bar');
+      const percentEl= document.querySelector('#loader .percent');
+      const loader   = document.getElementById('loader');
+      const stepInterval = 1200;
+      const totalSteps    = statuses.length;
+      const totalDuration = stepInterval * totalSteps;
+      barEl.style.animation = `loadBar ${totalDuration}ms linear forwards`;
+      const start = performance.now();
+      (function update(now){
+        const pct = Math.min(((now - start)/totalDuration)*100,100);
+        percentEl.textContent = Math.round(pct)+'%';
+        if(pct<100) requestAnimationFrame(update);
+      })(start);
+      statuses.forEach((s,i)=> setTimeout(()=> statusEl.textContent=s, i*stepInterval));
+      setTimeout(()=>{
+        const sp = document.querySelector('.spinner');
+        sp.style.cssText='animation:none;border:none;font-size:48px;color:var(--loader-success)';
+        statusEl.textContent='Готово'; statusEl.style.color='var(--loader-success)';
+        barEl.style.background='var(--loader-success)'; percentEl.textContent='100%';
+        setTimeout(()=>{ loader.classList.add('hidden'); loader.setAttribute('aria-busy','false'); },600);
+      }, totalDuration);
     });
 
-    // ============== ФУНКЦИИ ДЛЯ МОДАЛЬНОГО ОКНА ==============
-    function showModal() {
-      const modal = document.getElementById('fsbModal');
-      if (modal) {
-        modal.classList.add('open');
-        document.body.style.overflow = 'hidden'; // запрет прокрутки фона
+    // 2) Skeleton -> реальные карточки + анкета
+    document.addEventListener('DOMContentLoaded', () => {
+      const grid = document.getElementById('employeesGrid');
+      const skeleton = document.createElement('div');
+      skeleton.className = 'skeleton-grid';
+      for(let i=0;i<6;i++){
+        const sk = document.createElement('div');
+        sk.className = 'skeleton-card';
+        skeleton.appendChild(sk);
       }
+      grid.appendChild(skeleton);
+      setTimeout(()=>{
+        skeleton.remove();
+        employees.forEach(e=>{
+          const card = document.createElement('article');
+          card.className = 'employee-card';
+          card.setAttribute('data-aos','fade-up');
+          card.innerHTML = `
+            <img src="${e.photo}" alt="${e.name}" class="employee-photo">
+            <div class="employee-name">${e.name}</div>
+            <div class="employee-position">${e.position}</div>
+            <div class="employee-dept">${e.dept}</div>
+            <button class="btn-details" onclick="openEmployee(${e.id})">Подробнее</button>
+          `;
+          grid.appendChild(card);
+        });
+      },1200);
+
+      // анкета безопасности
+      const survey = document.getElementById('security-survey');
+      const form   = document.getElementById('surveyForm');
+      const btn    = form.querySelector('button[type="submit"]');
+      const checks = Array.from(form.querySelectorAll('input[type="checkbox"]'));
+      if(!localStorage.getItem('surveyCompleted')){
+        survey.classList.remove('survey-hidden');
+        survey.classList.add('open');
+        document.body.classList.add('modal-open');
+      }
+      form.addEventListener('change',()=> btn.disabled = !checks.every(c=>c.checked));
+      form.addEventListener('submit', e=>{
+        e.preventDefault();
+        if(!checks.every(c=>c.checked)){ alert('Пожалуйста, отметьте пункт.'); return; }
+        localStorage.setItem('surveyCompleted','true');
+        survey.classList.remove('open');
+        survey.classList.add('survey-hidden');
+        document.body.classList.remove('modal-open');
+      });
+    });
+
+    // 3) Модалки и фильтр
+    function openEmployee(id){
+      const e = employees.find(x=>x.id===id);
+      document.body.classList.add('modal-open');
+      document.getElementById('modalName').textContent     = e.name;
+      document.getElementById('modalPosition').textContent = e.position;
+      document.getElementById('modalDept').textContent     = e.dept;
+      const em = document.getElementById('modalEmail'); em.textContent=e.email; em.href=`mailto:${e.email}`;
+      const ph = document.getElementById('modalPhone'); ph.textContent=e.phone; ph.href=`tel:${e.phone.replace(/\D/g,'')}`;
+      document.getElementById('modalBirth').textContent = e.birth;
+      document.getElementById('modalIdNum').textContent = e.idNumber;
+      document.getElementById('modalResp').textContent =
+          e.responsibilities.join(', ');
+      const img = document.getElementById('modalIdImg'); img.src=e.idImg; img.alt=`Удостоверение ${e.name}`;
+      document.getElementById('modalCaseLink').href = e.caseUrl;
+      document.getElementById('employeeModal').classList.add('open');
     }
-    function closeModal() {
-      const modal = document.getElementById('fsbModal');
-      if (modal) {
-        modal.classList.remove('open');
-        document.body.style.overflow = '';
-      }
+    function closeEmployee(){
+      document.body.classList.remove('modal-open');
+      document.getElementById('employeeModal').classList.remove('open');
+    }
+    function filterEmployees(){
+      const term = document.getElementById('searchInput').value.toLowerCase();
+      document.querySelectorAll('.employee-card').forEach((card,i)=>{
+        card.style.display = employees[i].name.toLowerCase().includes(term) ? '' : 'none';
+      });
     }
 
-    // ============== ГЕНЕРАТОР НОМЕРА ДЕКЛАРАЦИИ ==============
-    function generateDeclNum() {
-      const part1 = String(Math.floor(Math.random() * 900) + 100);
-      const part2 = String(Math.floor(Math.random() * 90) + 10);
-      const year  = new Date().getFullYear();
-      const part4 = String(Math.floor(Math.random() * 900000) + 100000);
-      return `${part1}-${part2}-${year}-${part4}`;
-    }
+    // 4) Off-canvas меню
+    document.addEventListener('DOMContentLoaded',()=>{
+      const btn     = document.getElementById('nav-toggle-btn');
+      const sidebar = document.getElementById('mobile-nav');
+      const overlay = document.getElementById('mobile-overlay');
+      function toggle(){ sidebar.classList.toggle('open'); overlay.classList.toggle('open'); }
+      if(btn&&sidebar&&overlay){ btn.addEventListener('click',toggle); overlay.addEventListener('click',toggle); }
+    });
   </script>
 </body>
 </html>
