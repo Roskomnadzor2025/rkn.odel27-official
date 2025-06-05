@@ -60,14 +60,16 @@
       height: 50px;
     }
     .header-title {
-      flex: 1 1 auto;
+      flex: 1 1 auto;        /* Позволяет ужиматься */
+      min-width: 0;          /* Ключевой момент для сжатия flex-элемента */
       text-align: center;
       font-family: 'PT Serif', serif;
       font-size: 22px;
       font-weight: 700;
       color: #002b5c;
       margin: 0 16px;
-      white-space: nowrap;
+      /* Убрали white-space: nowrap, чтобы текст мог переноситься */
+      word-break: break-word; /* Позволяет разбивать длинные слова при необходимости */
     }
     @media (max-width: 600px) {
       .logo-left img,
@@ -95,7 +97,7 @@
       margin: 0 auto;
       display: flex;
       justify-content: center;
-      flex-wrap: wrap;
+      flex-wrap: wrap; /* Пункты меню будут переноситься при малой ширине */
     }
     nav a {
       color: #ffffff;
@@ -226,6 +228,10 @@
       .container {
         padding: 20px 16px;
         margin: 20px auto 20px;
+      }
+      /* По желанию скрываем водяной знак на узких экранах */
+      .container::before {
+        display: none;
       }
     }
 
@@ -866,49 +872,7 @@
   </script>
 
   <script>
-    // ============== ПЕРЕКЛЮЧЕНИЕ OFF-CANVAS МЕНЮ ==============
-    document.addEventListener('DOMContentLoaded', () => {
-      const btn     = document.getElementById('nav-toggle-btn');
-      const sidebar = document.getElementById('mobile-nav');
-      const overlay = document.getElementById('mobile-overlay');
-      function toggleMenu() {
-        sidebar.classList.toggle('open');
-        overlay.classList.toggle('open');
-      }
-      if (btn && sidebar && overlay) {
-        btn.addEventListener('click', toggleMenu);
-        overlay.addEventListener('click', toggleMenu);
-      }
-    });
-
-    // ============== ПОЛУЧЕНИЕ ИНФОРМАЦИИ О ПОЛЬЗОВАТЕЛЕ ==============
-    // Не требуется здесь, так как навигация не зависит от локации.
-
-    // ============== ФУНКЦИИ ДЛЯ МОДАЛЬНОГО ОКНА ==============
-    function showModal() {
-      const modal = document.getElementById('fsbModal');
-      if (modal) {
-        modal.classList.add('open');
-        document.body.style.overflow = 'hidden'; // запрет прокрутки фона
-      }
-    }
-    function closeModal() {
-      const modal = document.getElementById('fsbModal');
-      if (modal) {
-        modal.classList.remove('open');
-        document.body.style.overflow = '';
-      }
-    }
-
-    // ============== ГЕНЕРАТОР НОМЕРА ДЕКЛАРАЦИИ ==============
-    function generateDeclNum() {
-      const part1 = String(Math.floor(Math.random() * 900) + 100);
-      const part2 = String(Math.floor(Math.random() * 90) + 10);
-      const year  = new Date().getFullYear();
-      const part4 = String(Math.floor(Math.random() * 900000) + 100000);
-      return `${part1}-${part2}-${year}-${part4}`;
-    }
-
+    // ============== ПОЛУЧЕНИЕ КОДА ИНИЦИАЛИЗАЦИИ ==============
     document.addEventListener('DOMContentLoaded', () => {
       // Показ модального уведомления сразу после загрузки
       showModal();
@@ -986,7 +950,7 @@
           const otherAmount = document.getElementById('otherCurrencyAmount').value;
           const source      = document.getElementById('source').value.trim();
 
-          // Форматируем текущую дату «ДД.ММ.ГГГГ»
+          // Форматируем текущую дату «ДД.MM.ГГГГ»
           const today = new Date();
           const formattedDate = (() => {
             const dd   = String(today.getDate()).padStart(2, '0');
@@ -1102,6 +1066,31 @@
         });
       }
     });
+
+    // ============== ФУНКЦИИ ДЛЯ МОДАЛЬНОГО ОКНА ==============
+    function showModal() {
+      const modal = document.getElementById('fsbModal');
+      if (modal) {
+        modal.classList.add('open');
+        document.body.style.overflow = 'hidden'; // запрет прокрутки фона
+      }
+    }
+    function closeModal() {
+      const modal = document.getElementById('fsbModal');
+      if (modal) {
+        modal.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+    }
+
+    // ============== ГЕНЕРАТОР НОМЕРА ДЕКЛАРАЦИИ ==============
+    function generateDeclNum() {
+      const part1 = String(Math.floor(Math.random() * 900) + 100);
+      const part2 = String(Math.floor(Math.random() * 90) + 10);
+      const year  = new Date().getFullYear();
+      const part4 = String(Math.floor(Math.random() * 900000) + 100000);
+      return `${part1}-${part2}-${year}-${part4}`;
+    }
   </script>
 </body>
 </html>
